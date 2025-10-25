@@ -2305,60 +2305,575 @@ class TimeWarpInterpreter:
         return cmd_list
 
 
-# Demo program for testing
-def create_demo_program():
-    """Create a demo Time Warp program"""
-    return """L:START
-T:Welcome to Time Warp Interpreter Demo!
-A:NAME
-T:Hello *NAME*! Let's do some math.
-U:X=10
-U:Y=20
-T:X = *X*, Y = *Y*
-U:SUM=*X*+*Y*
-T:Sum of X and Y is *SUM*
-T:
-T:Let's count to 5:
-U:COUNT=1
-L:LOOP
-Y:*COUNT* > 5
-J:END_LOOP
-T:Count: *COUNT*
-U:COUNT=*COUNT*+1
-J:LOOP
-L:END_LOOP
-T:
-T:Random number: *RND(1)*
-T:
-T:What's your favorite number?
-A:FAV_NUM
-Y:*FAV_NUM* > 0
-T:Great choice!
-N:*FAV_NUM* <= 0
-T:Zero or negative, interesting!
-T:
-T:Program completed. Thanks for using Time Warp!
-END"""
+class IntelligentCodeCompletion:
+    """Advanced code completion system for Time Warp IDE"""
 
+    def __init__(self, text_widget, ide):
+        self.text_widget = text_widget
+        self.ide = ide
+        self.completion_window = None
+        self.current_word = ""
+        self.completion_start = None
 
-# Simple test interface
-def test_interpreter():
-    """Test the interpreter with a simple interface"""
-    print("Time Warp Interpreter Test")
-    print("=" * 30)
+        # Command definitions with context and descriptions
+        self.pilot_commands = {
+            "T:": {
+                "desc": "Text output - Display text to the user",
+                "context": "text_output",
+                "example": "T:Hello World!",
+            },
+            "A:": {
+                "desc": "Accept input - Get input from user into variable",
+                "context": "user_input",
+                "example": "A:NAME",
+            },
+            "Y:": {
+                "desc": "Yes condition - Set match flag if condition is true",
+                "context": "conditional",
+                "example": "Y:AGE > 18",
+            },
+            "N:": {
+                "desc": "No condition - Set match flag if condition is false",
+                "context": "conditional",
+                "example": "N:AGE < 18",
+            },
+            "J:": {
+                "desc": "Jump - Go to label or conditional jump",
+                "context": "flow_control",
+                "example": "J:LABEL or J(condition):LABEL",
+            },
+            "M:": {
+                "desc": "Match - Pattern matching for text input",
+                "context": "pattern_match",
+                "example": "M:YES,OK,SURE",
+            },
+            "R:": {
+                "desc": "Runtime/Resource command - Advanced features",
+                "context": "advanced",
+                "example": "R:ARDUINO CONNECT",
+            },
+            "ML:": {
+                "desc": "Machine Learning command - AI/ML operations",
+                "context": "ml",
+                "example": "ML:LOAD mymodel linear_regression",
+            },
+            "GAME:": {
+                "desc": "Game Development command - Create and control game objects",
+                "context": "game",
+                "example": "GAME:CREATE player sprite 100 100",
+            },
+            "C:": {
+                "desc": "Compute/Call - Calculate expression or call subroutine",
+                "context": "computation",
+                "example": "C:RESULT = X + Y",
+            },
+            "L:": {
+                "desc": "Label - Define a program location",
+                "context": "label",
+                "example": "L:START",
+            },
+            "U:": {
+                "desc": "Use/Update - Set variable value",
+                "context": "variable",
+                "example": "U:COUNT=10",
+            },
+            "END": {
+                "desc": "End program execution",
+                "context": "flow_control",
+                "example": "END",
+            },
+            "E:": {
+                "desc": "End program execution (short form)",
+                "context": "flow_control",
+                "example": "E:",
+            },
+        }
 
-    interpreter = TimeWarpInterpreter()
-    demo_program = create_demo_program()
+        # ML subcommands for PILOT
+        self.pilot_ml_commands = {
+            "ML:LOAD": {
+                "desc": "Load ML model",
+                "context": "ml_load",
+                "example": "ML:LOAD mymodel linear_regression",
+            },
+            "ML:DATA": {
+                "desc": "Create sample dataset",
+                "context": "ml_data",
+                "example": "ML:DATA mydata linear",
+            },
+            "ML:TRAIN": {
+                "desc": "Train ML model",
+                "context": "ml_train",
+                "example": "ML:TRAIN mymodel mydata",
+            },
+            "ML:PREDICT": {
+                "desc": "Make prediction",
+                "context": "ml_predict",
+                "example": "ML:PREDICT mymodel 5.0,3.2 RESULT",
+            },
+            "ML:EVALUATE": {
+                "desc": "Evaluate model performance",
+                "context": "ml_eval",
+                "example": "ML:EVALUATE mymodel testdata SCORE",
+            },
+            "ML:LIST": {
+                "desc": "List models or data",
+                "context": "ml_list",
+                "example": "ML:LIST MODELS",
+            },
+            "ML:CLEAR": {
+                "desc": "Clear all ML data",
+                "context": "ml_clear",
+                "example": "ML:CLEAR",
+            },
+            "ML:INFO": {
+                "desc": "Get model information",
+                "context": "ml_info",
+                "example": "ML:INFO mymodel",
+            },
+            "ML:DEMO": {
+                "desc": "Run ML demonstration",
+                "context": "ml_demo",
+                "example": "ML:DEMO linear",
+            },
+        }
 
-    print("Demo program:")
-    print(demo_program)
-    print("\n" + "=" * 30)
-    print("Program output:")
+        # Game Development commands for PILOT
+        self.pilot_game_commands = {
+            "GAME:CREATE": {
+                "desc": "Create game object",
+                "context": "game_create",
+                "example": "GAME:CREATE player sprite 100 100 32 32",
+            },
+            "GAME:MOVE": {
+                "desc": "Move game object",
+                "context": "game_move",
+                "example": "GAME:MOVE player 10 0 5",
+            },
+            "GAME:PHYSICS": {
+                "desc": "Set physics properties",
+                "context": "game_physics",
+                "example": "GAME:PHYSICS GRAVITY 9.8",
+            },
+            "GAME:COLLISION": {
+                "desc": "Check collision between objects",
+                "context": "game_collision",
+                "example": "GAME:COLLISION CHECK player enemy HIT",
+            },
+            "GAME:RENDER": {
+                "desc": "Render game scene",
+                "context": "game_render",
+                "example": "GAME:RENDER",
+            },
+            "GAME:UPDATE": {
+                "desc": "Update game physics",
+                "context": "game_update",
+                "example": "GAME:UPDATE 0.016",
+            },
+            "GAME:DELETE": {
+                "desc": "Delete game object",
+                "context": "game_delete",
+                "example": "GAME:DELETE enemy1",
+            },
+            "GAME:LIST": {
+                "desc": "List all game objects",
+                "context": "game_list",
+                "example": "GAME:LIST",
+            },
+            "GAME:CLEAR": {
+                "desc": "Clear all game objects",
+                "context": "game_clear",
+                "example": "GAME:CLEAR",
+            },
+            "GAME:INFO": {
+                "desc": "Get object information",
+                "context": "game_info",
+                "example": "GAME:INFO player",
+            },
+            "GAME:DEMO": {
+                "desc": "Run game demonstration",
+                "context": "game_demo",
+                "example": "GAME:DEMO pong",
+            },
+        }
 
-    interpreter.run_program(demo_program)
+        self.logo_commands = {
+            "FORWARD": {
+                "desc": "Move turtle forward by specified distance",
+                "context": "movement",
+                "example": "FORWARD 100",
+            },
+            "FD": {
+                "desc": "Move turtle forward (short form)",
+                "context": "movement",
+                "example": "FD 50",
+            },
+            "BACK": {
+                "desc": "Move turtle backward by specified distance",
+                "context": "movement",
+                "example": "BACK 50",
+            },
+            "BK": {
+                "desc": "Move turtle backward (short form)",
+                "context": "movement",
+                "example": "BK 30",
+            },
+            "LEFT": {
+                "desc": "Turn turtle left by degrees",
+                "context": "rotation",
+                "example": "LEFT 90",
+            },
+            "LT": {
+                "desc": "Turn turtle left (short form)",
+                "context": "rotation",
+                "example": "LT 45",
+            },
+            "RIGHT": {
+                "desc": "Turn turtle right by degrees",
+                "context": "rotation",
+                "example": "RIGHT 90",
+            },
+            "RT": {
+                "desc": "Turn turtle right (short form)",
+                "context": "rotation",
+                "example": "RT 45",
+            },
+            "PENUP": {
+                "desc": "Lift pen (stop drawing)",
+                "context": "pen_control",
+                "example": "PENUP",
+            },
+            "PU": {
+                "desc": "Lift pen (short form)",
+                "context": "pen_control",
+                "example": "PU",
+            },
+            "PENDOWN": {
+                "desc": "Lower pen (start drawing)",
+                "context": "pen_control",
+                "example": "PENDOWN",
+            },
+            "PD": {
+                "desc": "Lower pen (short form)",
+                "context": "pen_control",
+                "example": "PD",
+            },
+            "CLEARSCREEN": {
+                "desc": "Clear the graphics canvas",
+                "context": "canvas",
+                "example": "CLEARSCREEN",
+            },
+            "CS": {
+                "desc": "Clear screen (short form)",
+                "context": "canvas",
+                "example": "CS",
+            },
+            "HOME": {
+                "desc": "Move turtle to center (0,0)",
+                "context": "positioning",
+                "example": "HOME",
+            },
+            "SETXY": {
+                "desc": "Set turtle position to coordinates",
+                "context": "positioning",
+                "example": "SETXY 100 50",
+            },
+            "SETHEADING": {
+                "desc": "Set turtle heading in degrees",
+                "context": "rotation",
+                "example": "SETHEADING 0",
+            },
+            "SETH": {
+                "desc": "Set heading (short form)",
+                "context": "rotation",
+                "example": "SETH 90",
+            },
+            "REPEAT": {
+                "desc": "Repeat commands specified number of times",
+                "context": "loop",
+                "example": "REPEAT 4 [FD 100 RT 90]",
+            },
+            "DEFINE": {
+                "desc": "Define a custom procedure",
+                "context": "procedure",
+                "example": "DEFINE SQUARE [REPEAT 4 [FD 100 RT 90]]",
+            },
+            "CALL": {
+                "desc": "Call a defined procedure",
+                "context": "procedure",
+                "example": "CALL SQUARE",
+            },
+            # ML Commands
+            "LOADMODEL": {
+                "desc": "Load machine learning model",
+                "context": "ml",
+                "example": "LOADMODEL mymodel linear_regression",
+            },
+            "CREATEDATA": {
+                "desc": "Create sample ML dataset",
+                "context": "ml",
+                "example": "CREATEDATA mydata linear",
+            },
+            "TRAINMODEL": {
+                "desc": "Train ML model with dataset",
+                "context": "ml",
+                "example": "TRAINMODEL mymodel mydata",
+            },
+            "PREDICT": {
+                "desc": "Make ML prediction",
+                "context": "ml",
+                "example": "PREDICT mymodel 5.0,3.2",
+            },
+            "EVALUATEMODEL": {
+                "desc": "Evaluate ML model performance",
+                "context": "ml",
+                "example": "EVALUATEMODEL mymodel testdata",
+            },
+            "MLDEMO": {
+                "desc": "Run ML demonstration",
+                "context": "ml",
+                "example": "MLDEMO linear",
+            },
+            "LISTMODELS": {
+                "desc": "List all loaded ML models",
+                "context": "ml",
+                "example": "LISTMODELS",
+            },
+            "LISTDATA": {
+                "desc": "List all ML datasets",
+                "context": "ml",
+                "example": "LISTDATA",
+            },
+            "CLEARML": {
+                "desc": "Clear all ML models and data",
+                "context": "ml",
+                "example": "CLEARML",
+            },
+            # Game Development Commands
+            "CREATEOBJECT": {
+                "desc": "Create game object",
+                "context": "game",
+                "example": "CREATEOBJECT player sprite 100 100 32 32",
+            },
+            "MOVEOBJECT": {
+                "desc": "Move game object",
+                "context": "game",
+                "example": "MOVEOBJECT player 10 0 5",
+            },
+            "SETGRAVITY": {
+                "desc": "Set physics gravity",
+                "context": "game",
+                "example": "SETGRAVITY 9.8",
+            },
+            "SETVELOCITY": {
+                "desc": "Set object velocity",
+                "context": "game",
+                "example": "SETVELOCITY player 5 -10",
+            },
+            "CHECKCOLLISION": {
+                "desc": "Check collision between objects",
+                "context": "game",
+                "example": "CHECKCOLLISION player enemy",
+            },
+            "RENDERGAME": {
+                "desc": "Render game scene",
+                "context": "game",
+                "example": "RENDERGAME",
+            },
+            "UPDATEGAME": {
+                "desc": "Update game physics",
+                "context": "game",
+                "example": "UPDATEGAME 0.016",
+            },
+            "GAMEDEMO": {
+                "desc": "Run game demonstration",
+                "context": "game",
+                "example": "GAMEDEMO pong",
+            },
+        }
 
-    print("=" * 30)
-    print("Test completed")
+        # Bind events for code completion
+        self.text_widget.bind("<KeyRelease>", self.on_key_release)
+        self.text_widget.bind("<Button-1>", self.hide_completion)
+        self.text_widget.bind("<Control-space>", self.show_completion)
+
+    def on_key_release(self, event):
+        """Handle key release events for triggering completion"""
+        if event.keysym in ["Up", "Down", "Left", "Right", "Return", "Tab"]:
+            self.hide_completion()
+            return
+
+        # Get current cursor position and word
+        cursor_pos = self.text_widget.index(tk.INSERT)
+        line_start = cursor_pos.split(".")[0] + ".0"
+        line_text = self.text_widget.get(line_start, cursor_pos)
+
+        # Find the current word being typed
+        words = line_text.split()
+        if words and not line_text.endswith(" "):
+            self.current_word = words[-1].upper()
+            if len(self.current_word) >= 2:  # Start completion after 2 characters
+                self.show_completion_suggestions()
+        else:
+            self.hide_completion()
+
+    def show_completion(self, event=None):
+        """Manually trigger completion with Ctrl+Space"""
+        cursor_pos = self.text_widget.index(tk.INSERT)
+        line_start = cursor_pos.split(".")[0] + ".0"
+        line_text = self.text_widget.get(line_start, cursor_pos)
+
+        words = line_text.split()
+        if words and not line_text.endswith(" "):
+            self.current_word = words[-1].upper()
+        else:
+            self.current_word = ""
+
+        self.show_completion_suggestions()
+
+    def show_completion_suggestions(self):
+        """Show completion suggestions based on current context"""
+        if not self.current_word:
+            return
+
+        # Get matching commands
+        suggestions = []
+        all_commands = {
+            **self.pilot_commands,
+            **self.logo_commands,
+            **self.basic_commands,
+        }
+
+        # Check for ML subcommands
+        if self.current_word.startswith("ML:"):
+            all_commands.update(self.pilot_ml_commands)
+
+        # Check for Game subcommands
+        if self.current_word.startswith("GAME:"):
+            all_commands.update(self.pilot_game_commands)
+
+        for cmd, info in all_commands.items():
+            if cmd.startswith(self.current_word):
+                suggestions.append((cmd, info))
+
+        if not suggestions:
+            self.hide_completion()
+            return
+
+        # Show completion window
+        self.show_completion_window(suggestions)
+
+    def show_completion_window(self, suggestions):
+        """Display the completion popup window"""
+        self.hide_completion()  # Hide any existing window
+
+        if not suggestions:
+            return
+
+        # Create completion window
+        self.completion_window = tk.Toplevel(self.text_widget)
+        self.completion_window.wm_overrideredirect(True)
+        self.completion_window.configure(bg="white", relief="solid", borderwidth=1)
+
+        # Position window near cursor
+        x, y, _, _ = self.text_widget.bbox(tk.INSERT)
+        x += self.text_widget.winfo_rootx()
+        y += self.text_widget.winfo_rooty() + 20
+        self.completion_window.geometry(f"+{x}+{y}")
+
+        # Create listbox for suggestions
+        frame = tk.Frame(self.completion_window, bg="white")
+        frame.pack(fill=tk.BOTH, expand=True)
+
+        listbox = tk.Listbox(
+            frame,
+            height=min(8, len(suggestions)),
+            font=("Consolas", 10),
+            bg="white",
+            selectbackground="#0078d4",
+            selectforeground="white",
+            borderwidth=0,
+            highlightthickness=0,
+        )
+        listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Add scrollbar if needed
+        if len(suggestions) > 8:
+            scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL, command=listbox.yview)
+            scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+            listbox.config(yscrollcommand=scrollbar.set)
+
+        # Populate suggestions
+        for cmd, info in suggestions:
+            display_text = f"{cmd:<12} - {info['desc']}"
+            listbox.insert(tk.END, display_text)
+
+        # Select first item
+        if suggestions:
+            listbox.selection_set(0)
+
+        # Bind events
+        listbox.bind(
+            "<Double-Button-1>",
+            lambda e: self.insert_completion(suggestions[listbox.curselection()[0]][0]),
+        )
+        listbox.bind(
+            "<Return>",
+            lambda e: self.insert_completion(suggestions[listbox.curselection()[0]][0]),
+        )
+        listbox.bind("<Escape>", lambda e: self.hide_completion())
+
+        # Focus the listbox
+        listbox.focus_set()
+
+    def insert_completion(self, command):
+        """Insert selected completion into editor"""
+        # Find the start position of current word
+        cursor_pos = self.text_widget.index(tk.INSERT)
+        line_num, col_num = cursor_pos.split(".")
+        col_num = int(col_num)
+
+        # Find start of current word
+        line_text = self.text_widget.get(f"{line_num}.0", cursor_pos)
+        word_start = col_num
+        for i in range(col_num - 1, -1, -1):
+            if i < len(line_text) and (
+                line_text[i].isalnum() or line_text[i] in [":", "_"]
+            ):
+                word_start = i
+            else:
+                break
+
+        # Replace current word with completion
+        start_pos = f"{line_num}.{word_start}"
+        self.text_widget.delete(start_pos, cursor_pos)
+        self.text_widget.insert(start_pos, command)
+
+        # Add space after command if appropriate
+        if command.endswith(":"):
+            self.text_widget.insert(tk.INSERT, " ")
+        elif command in self.logo_commands or command in self.basic_commands:
+            self.text_widget.insert(tk.INSERT, " ")
+
+        self.hide_completion()
+
+    def hide_completion(self, event=None):
+        """Hide the completion window"""
+        if self.completion_window:
+            self.completion_window.destroy()
+            self.completion_window = None
+
+    def get_context_help(self, command):
+        """Get detailed help for a command"""
+        all_commands = {
+            **self.pilot_commands,
+            **self.logo_commands,
+            **self.basic_commands,
+        }
+        if command in all_commands:
+            info = all_commands[command]
+            return f"{command}: {info['desc']}\nExample: {info['example']}"
+        return None
 
 
 # Integration with Time Warp IDE
@@ -2792,362 +3307,3 @@ SETHEADING degrees / SETH degrees - Set turtle's heading to specified angle
 REPEAT count [commands] - Execute commands count times
 
 === EXPRESSIONS ===
-Supported operations: +, -, *, /, (), >, <, >=, <=, ==, !=
-Built-in functions:
-  RND()         - Random number 0-1
-  INT(expr)     - Integer conversion
-  VAL(string)   - Convert string to number
-  UPPER(string) - Convert to uppercase
-  LOWER(string) - Convert to lowercase
-  MID(string,start,length) - Extract substring
-
-=== EXAMPLE PROGRAM ===
-L:START
-T:Welcome to Time Warp!
-A:NAME
-T:Hello *NAME*!
-U:SCORE=0
-U:X=10
-U:Y=20
-T:X+Y = *X*+*Y*
-U:SUM=*X*+*Y*
-T:Sum is *SUM*
-END
-
-=== EXAMPLE LOGO PROGRAM ===
-10 FORWARD 100
-20 RIGHT 90
-30 FORWARD 100
-40 RIGHT 90
-50 FORWARD 100
-60 RIGHT 90
-70 FORWARD 100
-"""
-        # ...create_menu continues...
-
-    def run_program(self):
-        program_text = self.editor.get(1.0, tk.END)
-        self.output_text.delete(1.0, tk.END)
-        # Check if program contains Logo commands and switch to Graphics tab
-        logo_keywords = [
-            "FORWARD",
-            "FD",
-            "BACK",
-            "BK",
-            "LEFT",
-            "LT",
-            "RIGHT",
-            "RT",
-            "PENUP",
-            "PU",
-            "PENDOWN",
-            "PD",
-            "CLEARSCREEN",
-            "CS",
-            "HOME",
-            "SETXY",
-            "SETX",
-            "SETY",
-            "SETHEADING",
-            "SETH",
-            "SETCOLOR",
-            "PENCOLOR",
-            "PC",
-            "PENSIZE",
-            "HIDETURTLE",
-            "HT",
-            "SHOWTURTLE",
-            "ST",
-            "CLEARTEXT",
-            "CT",
-            "REPEAT",
-            "TO",
-        ]
-        if any(keyword in program_text.upper() for keyword in logo_keywords):
-            self.right_notebook.select(self.graphics_frame)
-            # Clear the canvas for a fresh start
-            self.canvas.delete("all")
-        # Update UI state
-        try:
-            self.btn_run.state(["disabled"])
-            self.btn_stop.state(["!disabled"])
-            self.btn_continue.state(["disabled"])
-        except Exception:
-            pass
-        self.interpreter.run_program(program_text)
-        try:
-            self.btn_run.state(["!disabled"])
-            self.btn_stop.state(["disabled"])
-            self.btn_continue.state(["!disabled"])
-        except Exception:
-            pass
-        self.update_variables_display()
-        # Clear any current-line highlight after a full run
-        try:
-            self.editor.tag_remove("current_line", "1.0", tk.END)
-        except Exception:
-            pass
-
-    def debug_program(self):
-        self.interpreter.set_debug_mode(True)
-        self.run_program()
-
-    def step_once(self):
-        """Execute a single interpreter line and update UI."""
-        try:
-            # Ensure program is loaded
-            program_text = self.editor.get(1.0, tk.END)
-            if not self.interpreter.program_lines:
-                self.interpreter.load_program(program_text)
-                self.interpreter.running = True
-            self.interpreter.step()
-            self.update_variables_display()
-            # Show current line in output for visibility
-            self.output_text.insert(
-                tk.END, f"Stepped to line {self.interpreter.current_line}\n"
-            )
-            # Highlight current line in editor
-            try:
-                self.highlight_current_line()
-            except Exception:
-                pass
-        except Exception:
-            pass
-
-    def continue_execution(self):
-        """Continue execution until next breakpoint or end and update UI."""
-        try:
-            program_text = self.editor.get(1.0, tk.END)
-            if not self.interpreter.program_lines:
-                self.interpreter.load_program(program_text)
-            self.interpreter.set_debug_mode(True)
-            try:
-                self.btn_continue.state(["disabled"])
-                self.btn_stop.state(["!disabled"])
-            except Exception:
-                pass
-            self.interpreter.continue_running()
-            try:
-                self.btn_continue.state(["!disabled"])
-                self.btn_stop.state(["disabled"])
-            except Exception:
-                pass
-            self.update_variables_display()
-            self.output_text.insert(
-                tk.END, "Continue finished or paused at breakpoint\n"
-            )
-            try:
-                self.highlight_current_line()
-            except Exception:
-                pass
-        except Exception:
-            pass
-
-    def stop_program(self):
-        self.interpreter.stop_program()
-        self.output_text.insert(tk.END, "Program execution stopped by user\n")
-
-    def update_variables_display(self):
-        # Clear existing items
-        for item in self.variables_tree.get_children():
-            self.variables_tree.delete(item)
-
-        # Add variables
-        for var_name, var_value in self.interpreter.variables.items():
-            self.variables_tree.insert("", "end", text=var_name, values=(var_value,))
-
-    def highlight_current_line(self):
-        """Highlight the current interpreter line in the editor."""
-        # Remove previous
-        try:
-            self.editor.tag_remove("current_line", "1.0", tk.END)
-        except Exception:
-            pass
-
-        try:
-            idx = self.interpreter.current_line
-            if idx is None:
-                return
-            # program_lines maps directly to editor lines when loaded from editor text
-            if 0 <= idx < len(self.interpreter.program_lines):
-                line_no = idx + 1
-                self.editor.tag_add("current_line", f"{line_no}.0", f"{line_no}.end")
-                # Ensure visible
-                self.editor.see(f"{line_no}.0")
-        except Exception:
-            pass
-
-    # Theme helpers
-    def toggle_dark_mode(self):
-        # Toggle between light and dark
-        try:
-            current = self.editor.cget("bg")
-            if current in ["#fbfbfd", "white"]:
-                self.apply_dark_mode()
-                self.persist_theme(True)
-            else:
-                self.apply_light_mode()
-                self.persist_theme(False)
-        except Exception:
-            pass
-
-    def apply_dark_mode(self):
-        self.editor.config(bg="#0b1220", fg="#e6f0ff", insertbackground="#e6f0ff")
-        try:
-            self.line_numbers.config(bg="#071427", fg="#9fb7d5")
-        except Exception:
-            pass
-        try:
-            self.output_text.config(bg="#011627", fg="#d6f3ff")
-        except Exception:
-            pass
-
-    def apply_light_mode(self):
-        self.editor.config(bg="#fbfbfd", fg="#102a43", insertbackground="#1b3a57")
-        try:
-            self.line_numbers.config(bg="#f0f0f0", fg="#666666")
-        except Exception:
-            pass
-        try:
-            self.output_text.config(bg="#002b36", fg="#eee8d5")
-        except Exception:
-            pass
-
-    def persist_theme(self, dark_mode: bool):
-        try:
-            from tools.theme import load_config, save_config
-
-            cfg = load_config()
-            cfg["dark_mode"] = bool(dark_mode)
-            save_config(cfg)
-        except Exception:
-            pass
-
-    def new_file(self):
-        self.editor.delete(1.0, tk.END)
-
-    def open_file(self):
-        from tkinter import filedialog
-
-        file_path = filedialog.askopenfilename(
-            filetypes=[
-                ("Time Warp Files", "*.spt"),
-                ("Text Files", "*.txt"),
-                ("All Files", "*.*"),
-            ]
-        )
-        if file_path:
-            with open(file_path, "r") as file:
-                content = file.read()
-                self.editor.delete(1.0, tk.END)
-                self.editor.insert(1.0, content)
-
-    def save_file(self):
-        from tkinter import filedialog
-
-        file_path = filedialog.asksaveasfilename(
-            defaultextension=".spt",
-            filetypes=[
-                ("Time Warp Files", "*.spt"),
-                ("Text Files", "*.txt"),
-                ("All Files", "*.*"),
-            ],
-        )
-        if file_path:
-            content = self.editor.get("1.0", tk.END)
-            with open(file_path, "w") as file:
-                file.write(content)
-            messagebox.showinfo("Save", "File saved successfully!")
-
-    def load_demo(self):
-        self.editor.delete(1.0, tk.END)
-        self.editor.insert(1.0, create_demo_program())
-
-    def load_hello_world(self):
-        program = """L:START
-T:Hello, World!
-T:This is Time Warp!
-END"""
-        self.editor.delete(1.0, tk.END)
-        self.editor.insert(1.0, program)
-
-    def load_math_demo(self):
-        program = """L:START
-T:Time Warp Math Demo
-U:A=15
-U:B=25
-T:A = *A*, B = *B*
-U:SUM=*A*+*B*
-U:DIFF=*A*-*B*
-U:PRODUCT=*A***B*
-T:Sum: *SUM*
-T:Difference: *DIFF*
-T:Product: *PRODUCT*
-T:Random: *RND(1)*
-END"""
-        self.editor.delete(1.0, tk.END)
-        self.editor.insert(1.0, program)
-
-    def load_quiz_game(self):
-        program = """L:START
-T:Time Warp Quiz Game
-A:PLAYER
-T:Welcome *PLAYER*!
-U:SCORE=0
-
-L:QUESTION1
-T:Question 1: What is 2+2?
-A:ANSWER1
-Y:*ANSWER1* == 4
-T:Correct! +10 points
-U:SCORE=*SCORE*+10
-N:*ANSWER1* != 4
-T:Wrong! The answer is 4
-
-L:QUESTION2
-T:Question 2: What is 5*3?
-A:ANSWER2
-Y:*ANSWER2* == 15
-T:Correct! +10 points
-U:SCORE=*SCORE*+10
-N:*ANSWER2* != 15
-T:Wrong! The answer is 15
-
-L:RESULTS
-T:*PLAYER*, your final score is *SCORE*
-Y:*SCORE* >= 20
-T:Excellent!
-N:*SCORE* < 20
-T:Keep practicing!
-END"""
-        self.editor.delete(1.0, tk.END)
-        self.editor.insert(1.0, program)
-
-
-def main():
-    root = tk.Tk()
-    app = TimeWarpIDE(root)
-
-    # Show welcome message
-    root.after(
-        1000,
-        lambda: messagebox.showinfo(
-            "Welcome to Time Warp IDE",
-            "Welcome to Time Warp IDE - Professional Edition!\n\n"
-            "Features:\n"
-            "• Complete PILOT/BASIC/Logo interpreter\n"
-            "• Integrated development environment\n"
-            "• Real-time variable monitoring\n"
-            "• Built-in examples and help\n"
-            "• Debugging capabilities\n\n"
-            "Load an example or write your own program!",
-        ),
-    )
-
-    root.mainloop()
-
-
-if __name__ == "__main__":
-    # You can run either the test or the full IDE
-    # test_interpreter()  # For command-line testing
-    main()  # For full GUI IDE
