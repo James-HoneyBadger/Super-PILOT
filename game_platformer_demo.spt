@@ -1,0 +1,59 @@
+T:🏃 SuperPILOT Platformer Demo
+T:Simple platformer with player and platforms
+
+T:Setting up physics...
+GAME:PHYSICS GRAVITY 9.8
+
+T:Creating player character...
+GAME:CREATE player rectangle 100 400 32 48
+
+T:Creating platforms...
+GAME:CREATE platform1 rectangle 200 500 200 20
+GAME:CREATE platform2 rectangle 500 350 150 20
+GAME:CREATE platform3 rectangle 300 200 100 20
+GAME:CREATE ground rectangle 400 600 800 40
+
+T:Game controls simulation...
+U:ACTION=1
+L:GAMELOOP
+
+Y:ACTION = 1
+T:Moving player right...
+GAME:MOVE player 10 0
+
+Y:ACTION = 2
+T:Player jumping!
+GAME:PHYSICS player VELOCITY 0 -15
+
+Y:ACTION = 3
+T:Moving player left...
+GAME:MOVE player -10 0
+
+T:Updating physics...
+GAME:UPDATE 0.016
+
+T:Checking platform collisions...
+GAME:COLLISION CHECK player platform1 ONPLAT1
+GAME:COLLISION CHECK player platform2 ONPLAT2
+GAME:COLLISION CHECK player platform3 ONPLAT3
+GAME:COLLISION CHECK player ground ONGROUND
+
+Y:ONPLAT1 = 1
+T:Player on Platform 1!
+
+Y:ONPLAT2 = 1
+T:Player on Platform 2!
+
+Y:ONPLAT3 = 1
+T:Player on Platform 3!
+
+Y:ONGROUND = 1
+T:Player on ground
+
+T:Player position: X=*GAME_PLAYER_X* Y=*GAME_PLAYER_Y*
+
+U:ACTION=ACTION+1
+Y:ACTION < 4
+J:GAMELOOP
+
+T:Platformer demo complete!

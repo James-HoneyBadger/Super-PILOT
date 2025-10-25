@@ -1,0 +1,10 @@
+[package]
+name = "time-warp-ide"
+version = "2.0.0"
+edition = "2021"
+
+[dependencies]
+eframe = "0.24"
+egui = "0.24"
+rfd = "0.14"
+chrono = { version = "0.4", features = ["serde"] }

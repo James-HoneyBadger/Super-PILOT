@@ -1,0 +1,62 @@
+CLEARSCREEN
+PENUP
+SETXY -200 150
+PENDOWN
+SETCOLOR red
+
+TEXT "🤖 Logo Machine Learning Demo"
+
+PENUP
+SETXY -200 100
+PENDOWN
+SETCOLOR blue
+
+TEXT "Step 1: Creating sample data"
+CREATEDATA logodata linear
+TEXT " ✅ Dataset ready"
+
+PENUP
+SETXY -200 50
+PENDOWN
+SETCOLOR green
+
+TEXT "Step 2: Loading ML model"
+LOADMODEL logomodel linear_regression
+TEXT " ✅ Model loaded"
+
+PENUP
+SETXY -200 0
+PENDOWN
+SETCOLOR purple
+
+TEXT "Step 3: Training model"
+TRAINMODEL logomodel logodata
+TEXT " ✅ Training complete"
+
+PENUP
+SETXY -200 -50
+PENDOWN
+SETCOLOR orange
+
+TEXT "Step 4: Making predictions"
+PREDICT logomodel 4.5
+TEXT " 📊 Prediction: "
+SETXY 50 -50
+TEXT :ML_PREDICTION
+
+PREDICT logomodel 8.2
+PENUP
+SETXY -200 -100
+PENDOWN
+SETCOLOR teal
+TEXT " 📊 Prediction: "
+SETXY 50 -100
+TEXT :ML_PREDICTION
+
+PENUP
+SETXY -200 -150
+PENDOWN
+SETCOLOR black
+TEXT "🎉 Logo ML Demo Complete!"
+
+HOME

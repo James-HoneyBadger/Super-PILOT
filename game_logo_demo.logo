@@ -1,0 +1,70 @@
+; 🎨 Logo Game Development Demo
+; Combining turtle graphics with game physics
+
+; Clear the screen and set up
+CLEARSCREEN
+HOME
+PENUP
+
+; Create game objects
+PRINT [Setting up game world...]
+CREATEOBJECT player rectangle 0 0 30 30
+CREATEOBJECT target circle 150 150 25 25
+CREATEOBJECT obstacle rectangle 75 75 40 20
+
+; Set physics properties
+SETGRAVITY 5.0
+SETVELOCITY player 3 2
+SETVELOCITY target -2 1
+
+; Visual representation with turtle
+DEFINE DRAWGAME [
+  CLEARSCREEN
+  HOME
+  
+  ; Draw player (blue square)
+  SETXY GAME_PLAYER_X GAME_PLAYER_Y
+  PENDOWN
+  SETHEADING 0
+  REPEAT 4 [FORWARD 15 RIGHT 90]
+  PENUP
+  
+  ; Draw target (red circle) 
+  SETXY GAME_TARGET_X GAME_TARGET_Y
+  PENDOWN
+  REPEAT 36 [FORWARD 2 RIGHT 10]
+  PENUP
+  
+  ; Draw obstacle (green rectangle)
+  SETXY GAME_OBSTACLE_X GAME_OBSTACLE_Y
+  PENDOWN
+  SETHEADING 0
+  REPEAT 2 [FORWARD 20 RIGHT 90 FORWARD 10 RIGHT 90]
+  PENUP
+]
+
+; Game simulation loop
+REPEAT 30 [
+  PRINT [--- Game Step ---]
+  
+  ; Update physics
+  UPDATEGAME 0.02
+  
+  ; Check for collision between player and target
+  CHECKCOLLISION player target
+  IF GAME_COLLISION = 1 [PRINT [Player caught the target!]]
+  
+  ; Check for collision with obstacle
+  CHECKCOLLISION player obstacle  
+  IF GAME_COLLISION = 1 [PRINT [Player hit obstacle!]]
+  
+  ; Visual update every 5 steps
+  IF (REMAINDER STEP 5) = 0 [
+    CALL DRAWGAME
+    PRINT (LIST [Player at] GAME_PLAYER_X GAME_PLAYER_Y)
+  ]
+]
+
+PRINT [Game demo complete!]
+PRINT [Final positions drawn on screen]
+CALL DRAWGAME
