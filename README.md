@@ -1,4 +1,4 @@
-# SuperPILOT
+# Time Warp
 
 CI: ![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)
 
@@ -23,7 +23,7 @@ python pilot.py
 ```
 
 
-![CI](https://github.com/James-HoneyBadger/SuperPILOT/actions/workflows/ci.yml/badge.svg?branch=main)
+![CI](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml/badge.svg?branch=main)
 
 ## Recent changes and semantics
 

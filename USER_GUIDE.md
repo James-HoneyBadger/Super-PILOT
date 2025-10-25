@@ -1,13 +1,13 @@
-# SuperPILOT IDE - User Guide
+# Time Warp IDE - User Guide
 
 **© 2025 Honey Badger Universe**
 **For support, contact: james@honey-badger.org**
 
 ---
 
-## Welcome to SuperPILOT IDE
+## Welcome to Time Warp IDE
 
-SuperPILOT IDE is a comprehensive educational programming environment that supports three integrated programming languages:
+Time Warp IDE is a comprehensive educational programming environment that supports three integrated programming languages:
 
 - **PILOT** - A teaching language designed for computer-assisted instruction
 - **BASIC** - Classic structured programming constructs  
@@ -15,7 +15,7 @@ SuperPILOT IDE is a comprehensive educational programming environment that suppo
 
 ## Getting Started
 
-### Running SuperPILOT IDE
+### Running Time Warp IDE
 
 ```bash
 python3 SuperPILOT.py
@@ -107,7 +107,7 @@ python3 SuperPILOT.py
 ```
 L:START
 T:Hello, World!
-T:This is SuperPILOT!
+T:This is Time Warp!
 END
 ```
 
@@ -155,8 +155,8 @@ HOME
 
 ## File Formats
 
-SuperPILOT IDE supports:
-- `.spt` - SuperPILOT program files
+Time Warp IDE supports:
+- `.spt` - Time Warp program files
 - `.txt` - Plain text files
 - `.pil` - PILOT program files
 
@@ -184,7 +184,7 @@ SuperPILOT IDE supports:
 
 ---
 
-**SuperPILOT IDE - Empowering Educational Programming**
+**Time Warp IDE - Empowering Educational Programming**
 
 *© 2025 Honey Badger Universe - All Rights Reserved*
 

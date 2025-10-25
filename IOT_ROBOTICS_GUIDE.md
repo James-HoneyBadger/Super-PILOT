@@ -1,7 +1,7 @@
-# SuperPILOT Advanced IoT & Robotics Features
+# Time Warp Advanced IoT & Robotics Features
 
 ## Overview
-SuperPILOT now includes comprehensive IoT (Internet of Things) and advanced robotics capabilities, making it perfect for educational projects involving smart homes, sensor networks, and intelligent robots.
+Time Warp now includes comprehensive IoT (Internet of Things) and advanced robotics capabilities, making it perfect for educational projects involving smart homes, sensor networks, and intelligent robots.
 
 ## New Classes Added
 

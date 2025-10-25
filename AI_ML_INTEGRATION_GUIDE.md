@@ -1,8 +1,8 @@
-# SuperPILOT AI/ML Integration Guide
+# Time Warp AI/ML Integration Guide
 
 ## Overview
 
-SuperPILOT now includes comprehensive AI/ML integration, making it an ideal platform for learning machine learning concepts through educational programming. This integration supports all three SuperPILOT languages (PILOT, BASIC, and Logo) with easy-to-use commands for model management, training, and prediction.
+Time Warp now includes comprehensive AI/ML integration, making it an ideal platform for learning machine learning concepts through educational programming. This integration supports all three Time Warp languages (PILOT, BASIC, and Logo) with easy-to-use commands for model management, training, and prediction.
 
 ## 🤖 Features
 
@@ -217,7 +217,7 @@ Models are pre-configured for educational use but provide realistic results:
 - K-means: 2 clusters by default for clear visualization
 
 ### Variable Integration
-ML results automatically integrate with SuperPILOT variables:
+ML results automatically integrate with Time Warp variables:
 - `ML_PREDICTION` - Last prediction result
 - `ML_LAST_SCORE` - Last evaluation score
 - `MODEL_NAME_TRAINED` - Training status flags
@@ -331,4 +331,4 @@ The ML integration is designed for easy extension:
 
 ---
 
-**SuperPILOT AI/ML Integration** transforms programming education by making machine learning accessible through familiar educational programming languages. Start with simple demos and progress to creating your own intelligent programs!
+**Time Warp AI/ML Integration** transforms programming education by making machine learning accessible through familiar educational programming languages. Start with simple demos and progress to creating your own intelligent programs!

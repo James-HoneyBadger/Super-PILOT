@@ -1,7 +1,7 @@
 <<<<<<< HEAD
-# Time_Warp IDE Copilot Instructions
+# Time Warp IDE Copilot Instructions
 
-Time_Warp IDE is an educational programming IDE supporting multiple languages with turtle graphics, built in Python using tkinter.
+Time Warp IDE is an educational programming IDE supporting multiple languages with turtle graphics, built in Python using tkinter.
 
 ## Architecture Overview
 
@@ -107,7 +107,7 @@ See `plugins/sample_plugin/` for complete plugin template including:
 
 ---
 
-purpose: Workspace-specific instructions for Copilot in Time_Warp IDE project
+purpose: Workspace-specific instructions for Copilot in Time Warp IDE project
 
 last-updated: October 22, 2025
 
@@ -115,7 +115,7 @@ contact: James-HoneyBadger
 
 ---
 
-Time_Warp IDE is an educational programming IDE supporting multiple languages with turtle graphics, built in Rust using egui and eframe.
+Time Warp IDE is an educational programming IDE supporting multiple languages with turtle graphics, built in Python using tkinter.
 
 ## Architecture Overview
 

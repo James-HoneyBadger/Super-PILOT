@@ -1,6 +1,4 @@
-"""
-pytest configuration and fixtures for SuperPILOT testing framework
-"""
+"""pytest configuration and fixtures for Time Warp testing framework"""
 
 import pytest
 import sys
@@ -10,7 +8,7 @@ import shutil
 from unittest.mock import Mock, patch
 from pathlib import Path
 
-# Add SuperPILOT to Python path
+# Add Time Warp to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from Super_PILOT import SuperPILOTInterpreter, SuperPILOTII
@@ -19,7 +17,7 @@ import tkinter as tk
 
 @pytest.fixture
 def interpreter():
-    """Create a clean SuperPILOT interpreter instance for testing"""
+    """Create a clean Time Warp interpreter instance for testing"""
     interp = SuperPILOTInterpreter()
     interp.output_widget = None  # Disable GUI output for testing
     return interp
@@ -59,7 +57,7 @@ def headless_ide():
 @pytest.fixture
 def temp_project_dir():
     """Create a temporary directory for testing file operations"""
-    temp_dir = tempfile.mkdtemp(prefix="superpilot_test_")
+    temp_dir = tempfile.mkdtemp(prefix="time_warp_test_")
     yield Path(temp_dir)
     shutil.rmtree(temp_dir, ignore_errors=True)
 
@@ -67,7 +65,7 @@ def temp_project_dir():
 @pytest.fixture
 def sample_pilot_program():
     """Sample PILOT program for testing"""
-    return """T:Welcome to SuperPILOT!
+    return """T:Welcome to Time Warp!
 T:What's your name?
 A:NAME
 T:Hello *NAME*!

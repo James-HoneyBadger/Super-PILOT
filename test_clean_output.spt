@@ -1,4 +1,4 @@
-T:Welcome to SuperPILOT!
+T:Welcome to Time Warp!
 A:NAME
 T:Hello *NAME*!
 A:AGE
@@ -8,4 +8,4 @@ J:END
 L:ADULT
 T:You are an adult.
 L:END
-T:Thanks for using SuperPILOT!
+T:Thanks for using Time Warp!

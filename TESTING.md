@@ -1,6 +1,6 @@
-# SuperPILOT Testing Framework
+# Time Warp Testing Framework
 
-A comprehensive testing framework for the SuperPILOT educational programming environment, providing thorough coverage of all features and ensuring code quality, security, and performance.
+A comprehensive testing framework for the Time Warp educational programming environment, providing thorough coverage of all features and ensuring code quality, security, and performance.
 
 ## 🧪 Test Suite Overview
 
@@ -177,7 +177,7 @@ Comprehensive pytest configuration with:
 ### conftest.py
 
 Shared fixtures and utilities:
-- `interpreter` - Clean SuperPILOT interpreter instance
+- `interpreter` - Clean Time Warp interpreter instance
 - `mock_output` - Mock output widget for testing
 - `headless_ide` - UI instance without actual windows
 - `temp_project_dir` - Temporary directory for file operations
@@ -370,4 +370,4 @@ def test_theme_switching(self, headless_ide):
 - **Quality Standards**: Shows professional development practices
 - **Learning Tool**: Students can learn from test structure
 
-This testing framework ensures SuperPILOT maintains high quality, security, and performance standards while supporting educational goals and professional development practices.
+This testing framework ensures Time Warp maintains high quality, security, and performance standards while supporting educational goals and professional development practices.

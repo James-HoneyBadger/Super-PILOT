@@ -2466,14 +2466,14 @@ mod tests {
         let mut app = TimeWarpApp::default();
 
         // Test simple BASIC program execution
-        let basic_code = "10 PRINT \"Hello from Time_Warp!\"\n20 PRINT \"Testing output console...\"\n30 PRINT \"Count: 1\"\n40 PRINT \"Count: 2\"\n50 PRINT \"Count: 3\"\n60 PRINT \"Test complete!\"";
+        let basic_code = "10 PRINT \"Hello from Time Warp!\"\n20 PRINT \"Testing output console...\"\n30 PRINT \"Count: 1\"\n40 PRINT \"Count: 2\"\n50 PRINT \"Count: 3\"\n60 PRINT \"Test complete!\"";
         let result = app.execute_tw_basic(basic_code);
 
         // Debug: print the actual result
         println!("Actual result: {:?}", result);
 
         // Verify the output contains expected strings
-        assert!(result.contains("Hello from Time_Warp!"));
+        assert!(result.contains("Hello from Time Warp!"));
         assert!(result.contains("Testing output console..."));
         assert!(result.contains("Count: 1"));
         assert!(result.contains("Count: 2"));
