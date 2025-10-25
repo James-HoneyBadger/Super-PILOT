@@ -88,7 +88,7 @@ class TestModernUI(TestCase):
         assert headless_ide.current_theme_name == original_theme
         assert headless_ide.colors == original_colors
 
-    @patch("SuperPILOT.ttk.Style")
+    @patch("Time_Warp.ttk.Style")
     def test_modern_styling_application(self, mock_style_class, headless_ide):
         """Test that modern styling is applied correctly"""
         mock_style = Mock()

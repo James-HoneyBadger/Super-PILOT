@@ -1,11 +1,11 @@
 """
-Comprehensive test suite for SuperPILOT Core Interpreter
+Comprehensive test suite for Time Warp Core Interpreter
 Tests basic PILOT commands, variable handling, and program flow
 """
 
 import pytest
 from conftest import TestCase
-from Super_PILOT import SuperPILOTInterpreter
+from Time_Warp import TimeWarpInterpreter
 
 
 class TestCoreInterpreter(TestCase):

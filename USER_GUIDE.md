@@ -18,7 +18,7 @@ Time Warp IDE is a comprehensive educational programming environment that suppor
 ### Running Time Warp IDE
 
 ```bash
-python3 SuperPILOT.py
+python3 Time_Warp.py
 ```
 
 ### Basic Operation

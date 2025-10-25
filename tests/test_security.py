@@ -1,5 +1,5 @@
 """
-Security and safety tests for SuperPILOT
+# Security and safety tests for Time Warp
 Tests for code injection, eval security, and safe execution
 """
 
@@ -7,7 +7,7 @@ import pytest
 import os
 import tempfile
 from conftest import TestCase
-from Super_PILOT import SuperPILOTInterpreter
+from Time_Warp import TimeWarpInterpreter
 
 
 class TestSecuritySafety(TestCase):

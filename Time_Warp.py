@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# SuperPILOT Interpreter - Complete Implementation
-# For integration with SuperPILOT II IDE
+# Time Warp Interpreter - Complete Implementation
+# For integration with Time Warp IDE
 
 import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox, simpledialog
@@ -184,7 +184,7 @@ class ToolTip:
             self.tipwindow = None
 
 
-class SuperPILOTInterpreter:
+class TimeWarpInterpreter:
     def __init__(self, output_widget=None):
         self.output_widget = output_widget
         self.variables = {}
@@ -953,7 +953,7 @@ class SuperPILOTInterpreter:
                         # Save current state
                         import os
 
-                        save_dir = os.path.expanduser("~/.superpilot_saves")
+                        save_dir = os.path.expanduser("~/.time_warp_saves")
                         os.makedirs(save_dir, exist_ok=True)
                         save_path = os.path.join(save_dir, f"{slot}.json")
                         import json
@@ -980,7 +980,7 @@ class SuperPILOTInterpreter:
                         import os
 
                         save_path = os.path.expanduser(
-                            f"~/.superpilot_saves/{slot}.json"
+                            f"~/.time_warp_saves/{slot}.json"
                         )
                         if os.path.exists(save_path):
                             import json
@@ -2307,9 +2307,9 @@ class SuperPILOTInterpreter:
 
 # Demo program for testing
 def create_demo_program():
-    """Create a demo SuperPILOT program"""
+    """Create a demo Time Warp program"""
     return """L:START
-T:Welcome to SuperPILOT Interpreter Demo!
+T:Welcome to Time Warp Interpreter Demo!
 A:NAME
 T:Hello *NAME*! Let's do some math.
 U:X=10
@@ -2337,17 +2337,17 @@ T:Great choice!
 N:*FAV_NUM* <= 0
 T:Zero or negative, interesting!
 T:
-T:Program completed. Thanks for using SuperPILOT!
+T:Program completed. Thanks for using Time Warp!
 END"""
 
 
 # Simple test interface
 def test_interpreter():
     """Test the interpreter with a simple interface"""
-    print("SuperPILOT Interpreter Test")
+    print("Time Warp Interpreter Test")
     print("=" * 30)
 
-    interpreter = SuperPILOTInterpreter()
+    interpreter = TimeWarpInterpreter()
     demo_program = create_demo_program()
 
     print("Demo program:")
@@ -2361,17 +2361,17 @@ def test_interpreter():
     print("Test completed")
 
 
-# Integration with SuperPILOT II IDE
-class SuperPILOTII:
+# Integration with Time Warp IDE
+class TimeWarpIDE:
     def __init__(self, root):
         self.root = root
-        self.root.title("SuperPILOT IDE - Professional Edition")
+        self.root.title("Time Warp IDE - Professional Edition")
         self.root.geometry("1000x700")
         # Apply a friendly theme and fonts
         self.setup_theme()
 
         # Initialize interpreter
-        self.interpreter = SuperPILOTInterpreter()
+        self.interpreter = TimeWarpInterpreter()
 
         self.create_widgets()
         self.create_menu()
@@ -2707,7 +2707,7 @@ class SuperPILOTII:
 
     def get_help_text(self):
         return """
-SUPERPILOT LANGUAGE REFERENCE
+TIME WARP LANGUAGE REFERENCE
 
 === PILOT COMMANDS ===
 T:text          - Output text (variables in *VAR* format). If a T: immediately
@@ -2803,7 +2803,7 @@ Built-in functions:
 
 === EXAMPLE PROGRAM ===
 L:START
-T:Welcome to SuperPILOT!
+T:Welcome to Time Warp!
 A:NAME
 T:Hello *NAME*!
 U:SCORE=0
@@ -3031,7 +3031,7 @@ END
 
         file_path = filedialog.askopenfilename(
             filetypes=[
-                ("SuperPILOT Files", "*.spt"),
+                ("Time Warp Files", "*.spt"),
                 ("Text Files", "*.txt"),
                 ("All Files", "*.*"),
             ]
@@ -3048,7 +3048,7 @@ END
         file_path = filedialog.asksaveasfilename(
             defaultextension=".spt",
             filetypes=[
-                ("SuperPILOT Files", "*.spt"),
+                ("Time Warp Files", "*.spt"),
                 ("Text Files", "*.txt"),
                 ("All Files", "*.*"),
             ],
@@ -3066,14 +3066,14 @@ END
     def load_hello_world(self):
         program = """L:START
 T:Hello, World!
-T:This is SuperPILOT!
+T:This is Time Warp!
 END"""
         self.editor.delete(1.0, tk.END)
         self.editor.insert(1.0, program)
 
     def load_math_demo(self):
         program = """L:START
-T:SuperPILOT Math Demo
+T:Time Warp Math Demo
 U:A=15
 U:B=25
 T:A = *A*, B = *B*
@@ -3090,7 +3090,7 @@ END"""
 
     def load_quiz_game(self):
         program = """L:START
-T:SuperPILOT Quiz Game
+T:Time Warp Quiz Game
 A:PLAYER
 T:Welcome *PLAYER*!
 U:SCORE=0
@@ -3126,14 +3126,14 @@ END"""
 
 def main():
     root = tk.Tk()
-    app = SuperPILOTII(root)
+    app = TimeWarpIDE(root)
 
     # Show welcome message
     root.after(
         1000,
         lambda: messagebox.showinfo(
-            "Welcome to SuperPILOT IDE",
-            "Welcome to SuperPILOT IDE - Professional Edition!\n\n"
+            "Welcome to Time Warp IDE",
+            "Welcome to Time Warp IDE - Professional Edition!\n\n"
             "Features:\n"
             "• Complete PILOT/BASIC/Logo interpreter\n"
             "• Integrated development environment\n"

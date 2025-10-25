@@ -1,22 +1,23 @@
 import pytest
 
-from Super_PILOT import SuperPILOTInterpreter, create_demo_program
+from Time_Warp import TimeWarpInterpreter, create_demo_program
 
 
 class DummyOut:
     """Simple output collector compatible with the interpreter's output_widget API."""
+
     def __init__(self):
         self.lines = []
 
     def insert(self, _index, text):
         # store lines without trailing newline so assertions are easier
-        self.lines.append(text.rstrip('\n'))
+        self.lines.append(text.rstrip("\n"))
 
     def see(self, *a):
         return None
 
     def get_text(self):
-        return '\n'.join(self.lines)
+        return "\n".join(self.lines)
 
 
 @pytest.fixture
@@ -24,10 +25,10 @@ def run_demo():
     """Return a helper that runs the demo with the provided user input value."""
 
     def _run(value):
-        interp = SuperPILOTInterpreter()
+        interp = TimeWarpInterpreter()
         out = DummyOut()
         interp.output_widget = out
-        interp.get_user_input = lambda prompt='': str(value)
+        interp.get_user_input = lambda prompt="": str(value)
         interp.run_program(create_demo_program())
         return out.get_text(), interp
 
@@ -41,7 +42,9 @@ def run_demo():
         (0, "Zero or negative", "Great choice!", 0),
     ],
 )
-def test_demo_fav_number(run_demo, value, expected_present, expected_absent, expected_var):
+def test_demo_fav_number(
+    run_demo, value, expected_present, expected_absent, expected_var
+):
     """Regression test for the demo favorite-number branch selection.
 
     Verifies that positive numbers take the positive branch and zero/negative
@@ -53,4 +56,4 @@ def test_demo_fav_number(run_demo, value, expected_present, expected_absent, exp
 
     assert expected_present in out_text
     assert expected_absent not in out_text
-    assert interp.variables.get('FAV_NUM') == expected_var
+    assert interp.variables.get("FAV_NUM") == expected_var

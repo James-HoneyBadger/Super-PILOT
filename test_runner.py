@@ -166,7 +166,7 @@ class TimeWarpTestRunner:
         print("  Running flake8...")
         flake8_cmd = [
             "flake8",
-            "SuperPILOT.py",
+            "Time_Warp.py",
             "--max-line-length=120",
             "--ignore=E203,W503",
         ]
@@ -176,14 +176,14 @@ class TimeWarpTestRunner:
 
         # Run black for formatting check
         print("  Checking code formatting...")
-        black_cmd = ["black", "--check", "--line-length=120", "SuperPILOT.py"]
+        black_cmd = ["black", "--check", "--line-length=120", "Time_Warp.py"]
         results["black"] = subprocess.call(
             black_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
         # Run isort for import sorting
         print("  Checking import sorting...")
-        isort_cmd = ["isort", "--check-only", "SuperPILOT.py"]
+        isort_cmd = ["isort", "--check-only", "Time_Warp.py"]
         results["isort"] = subprocess.call(
             isort_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )

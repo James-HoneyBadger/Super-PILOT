@@ -183,10 +183,10 @@ pip install scikit-learn pandas numpy
 ### Running with ML Support
 ```bash
 # With virtual environment (recommended)
-./HoneyBadger/bin/python SuperPILOT.py
+./HoneyBadger/bin/python Time_Warp.py
 
 # Or install system-wide (if permitted)
-python3 SuperPILOT.py
+python3 Time_Warp.py
 ```
 
 ## 🎓 Educational Features

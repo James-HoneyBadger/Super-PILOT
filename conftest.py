@@ -11,14 +11,14 @@ from pathlib import Path
 # Add Time Warp to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from Super_PILOT import SuperPILOTInterpreter, SuperPILOTII
+from Time_Warp import TimeWarpInterpreter, TimeWarpIDE
 import tkinter as tk
 
 
 @pytest.fixture
 def interpreter():
     """Create a clean Time Warp interpreter instance for testing"""
-    interp = SuperPILOTInterpreter()
+    interp = TimeWarpInterpreter()
     interp.output_widget = None  # Disable GUI output for testing
     return interp
 
@@ -49,8 +49,8 @@ def headless_ide():
         mock_root.clipboard_clear = Mock()
         mock_root.clipboard_append = Mock()
 
-        with patch("SuperPILOT.ttk.Style"):
-            ide = SuperPILOTII(mock_root)
+        with patch("Time_Warp.ttk.Style"):
+            ide = TimeWarpIDE(mock_root)
             return ide
 
 

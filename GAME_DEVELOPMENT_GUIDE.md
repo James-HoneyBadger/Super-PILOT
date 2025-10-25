@@ -1,8 +1,8 @@
-# 🎮 SuperPILOT Game Development Framework
+# 🎮 Time Warp Game Development Framework
 
 ## Overview
 
-SuperPILOT now includes a comprehensive game development framework with advanced physics simulation, collision detection, and interactive graphics. This guide covers all aspects of creating games in SuperPILOT across all three supported languages: PILOT, BASIC, and Logo.
+Time Warp now includes a comprehensive game development framework with advanced physics simulation, collision detection, and interactive graphics. This guide covers all aspects of creating games in Time Warp across all three supported languages: PILOT, BASIC, and Logo.
 
 ## Quick Start
 
@@ -150,7 +150,7 @@ T:Collision detected!
 
 ### 1. Pong Game
 ```pilot
-T:🏓 SuperPILOT Pong Game
+T:🏓 Time Warp Pong Game
 GAME:CREATE paddle1 rectangle 50 200 20 80
 GAME:CREATE paddle2 rectangle 750 200 20 80  
 GAME:CREATE ball circle 400 200 20 20
@@ -358,10 +358,10 @@ The game framework is designed to be extensible. Key areas for enhancement:
 
 ## Conclusion
 
-The SuperPILOT Game Development Framework provides a powerful yet educational platform for creating interactive games while learning programming and physics concepts. The integration across all three languages (PILOT, BASIC, Logo) ensures flexibility in teaching and learning approaches.
+The Time Warp Game Development Framework provides a powerful yet educational platform for creating interactive games while learning programming and physics concepts. The integration across all three languages (PILOT, BASIC, Logo) ensures flexibility in teaching and learning approaches.
 
 Whether creating simple collision detection demos or complex physics simulations, the framework provides the tools needed for engaging, educational game development experiences.
 
 ---
 
-*For more information, use the Game Manager interface or explore the sample game files provided with SuperPILOT.*
+*For more information, use the Game Manager interface or explore the sample game files provided with Time Warp.*

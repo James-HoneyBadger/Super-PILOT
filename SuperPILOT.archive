@@ -951,7 +951,7 @@ class AdvancedRobotInterface:
 # ---------------------- AI/ML Integration ----------------------
 
 class AIMLIntegration:
-    """Educational AI/ML integration for SuperPILOT"""
+    """Educational AI/ML integration for Time Warp"""
     
     def __init__(self):
         self.models = {}  # name -> model_info
@@ -3389,7 +3389,7 @@ class CollaborationManager:
         return None
 
 
-class SuperPILOTInterpreter:
+class TimeWarpInterpreter:
     def __init__(self, output_widget=None):
         self.output_widget = output_widget
         self.variables = {}
@@ -3986,7 +3986,7 @@ class SuperPILOTInterpreter:
             elif u.startswith('SAVE '):
                 slot = argument[5:].strip().strip('"')
                 data = {"variables": self.variables}
-                save_dir = os.path.expanduser("~/.superpilot_saves/")
+                save_dir = os.path.expanduser("~/.time_warp_saves/")
                 os.makedirs(save_dir, exist_ok=True)
                 save_path = os.path.join(save_dir, f"{slot}.json")
                 with open(save_path, 'w', encoding='utf-8') as f:
@@ -3995,7 +3995,7 @@ class SuperPILOTInterpreter:
                 
             elif u.startswith('LOAD '):
                 slot = argument[5:].strip().strip('"') 
-                save_path = os.path.join(os.path.expanduser("~/.superpilot_saves/"), f"{slot}.json")
+                save_path = os.path.join(os.path.expanduser("~/.time_warp_saves/"), f"{slot}.json")
                 if os.path.exists(save_path):
                     with open(save_path, 'r', encoding='utf-8') as f:
                         data = json.load(f)
@@ -5056,7 +5056,7 @@ class SuperPILOTInterpreter:
                     if len(parts) >= 5:
                         x = float(parts[3])
                         y = float(parts[4])
-                        from SuperPILOT import Vector2D  # Make sure we have Vector2D available
+                        from Time_Warp import Vector2D  # Make sure we have Vector2D available
                         try:
                             position = Vector2D(x, y)
                         except:
@@ -7928,9 +7928,9 @@ class SuperPILOTInterpreter:
 
 
 def create_demo_program():
-    """Create a demo SuperPILOT program (copied from pilot.py demo)."""
+    """Create a demo Time Warp program (copied from pilot.py demo)."""
     return '''L:START
-T:Welcome to SuperPILOT Interpreter Demo!
+T:Welcome to Time Warp Interpreter Demo!
 A:NAME
 T:Hello *NAME*! Let\'s do some math.
 U:X=10
@@ -7958,7 +7958,7 @@ T:Great choice!
 N:*FAV_NUM* <= 0
 T:Zero or negative, interesting!
 T:
-T:Program completed. Thanks for using SuperPILOT!
+T:Program completed. Thanks for using Time Warp!
 END'''
 
 # --- End embedded interpreter ---
@@ -8062,7 +8062,7 @@ class AutoCompletionEngine:
         self.all_commands = self.pilot_commands + self.logo_commands + self.basic_keywords
 
 class IntelligentCodeCompletion:
-    """Advanced code completion system for SuperPILOT IDE"""
+    """Advanced code completion system for Time Warp IDE"""
     
     def __init__(self, text_widget, ide):
         self.text_widget = text_widget
@@ -8815,7 +8815,7 @@ class CodeFoldingSystem:
             self.toggle_fold(line_num)
 
 class ProjectExplorer:
-    """File tree view for managing SuperPILOT projects and files"""
+    """File tree view for managing Time Warp projects and files"""
     
     def __init__(self, ide):
         self.ide = ide
@@ -8865,7 +8865,7 @@ class ProjectExplorer:
         
         # Tree widget with scrollbars
         self.tree_widget = ttk.Treeview(tree_frame, show='tree headings')
-        self.tree_widget.heading('#0', text='SuperPILOT Files', anchor=tk.W)
+        self.tree_widget.heading('#0', text='Time Warp Files', anchor=tk.W)
         
         # Scrollbars
         v_scrollbar = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=self.tree_widget.yview)    
@@ -8884,10 +8884,10 @@ class ProjectExplorer:
         # Set default project path to current directory
         import os
         current_dir = os.getcwd()
-        superpilot_projects = os.path.join(current_dir, "SuperPILOT_Projects")
+        time_warp_projects = os.path.join(current_dir, "Time_Warp_Projects")
         
-        if os.path.exists(superpilot_projects):
-            self.load_project(superpilot_projects)
+        if os.path.exists(time_warp_projects):
+            self.load_project(time_warp_projects)
         else:
             self.load_project(current_dir)
     
@@ -8955,7 +8955,7 @@ class ProjectExplorer:
         """Get icon for file based on extension"""
         ext = filename.lower().split('.')[-1] if '.' in filename else ''
         icons = {
-            'spt': '🎯',    # SuperPILOT files
+            'spt': '🎯',    # Time Warp files
             'pil': '✈️',    # PILOT files
             'pilot': '✈️',  # PILOT files  
             'logo': '🐢',   # Logo files
@@ -9018,7 +9018,7 @@ class ProjectExplorer:
             messagebox.showerror("Error", f"Could not open file:\n{str(e)}")
     
     def new_file(self):
-        """Create a new SuperPILOT file"""
+        """Create a new Time Warp file"""
         if not self.current_project_path:
             messagebox.showwarning("Warning", "Please open a project folder first")
             return
@@ -10274,7 +10274,7 @@ Object Details:
             self.window.destroy()
             self.window = None
 
-class SuperPILOTII:
+class TimeWarpIDE:
     def __init__(self, root):
         self.debug_mode_persistent = False
         self.root = root
@@ -10310,7 +10310,7 @@ class SuperPILOTII:
         # Attach a headless interpreter for debugging features
         try:
             # Use the embedded interpreter defined in this file
-            self.interpreter = SuperPILOTInterpreter()
+            self.interpreter = TimeWarpInterpreter()
             self.interpreter.output_widget = None
         except Exception:
             self.interpreter = None
@@ -10577,7 +10577,7 @@ class SuperPILOTII:
         
         # Connect interpreter to output and turtle graphics (create if needed)
         if not hasattr(self, 'interpreter') or self.interpreter is None:
-            self.interpreter = SuperPILOTInterpreter()
+            self.interpreter = TimeWarpInterpreter()
         
         self.interpreter.output_widget = self.output_text
         self.interpreter.ide_turtle_canvas = self.turtle_canvas
@@ -11116,7 +11116,7 @@ class SuperPILOTII:
         ))
         
         # Title
-        title_label = tk.Label(settings_window, text="⚙️ SuperPILOT Settings", 
+        title_label = tk.Label(settings_window, text="⚙️ Time Warp Settings", 
                               font=('Segoe UI', 16, 'bold'),
                               bg=self.colors.get('bg_primary', '#F8F9FA'),
                               fg=self.colors['text_primary'])
@@ -11952,7 +11952,7 @@ class SuperPILOTII:
     def show_tutorials(self):
         """Show comprehensive programming tutorials"""
         tutorial_window = tk.Toplevel(self.root)
-        tutorial_window.title("📚 SuperPILOT Programming Tutorials")
+        tutorial_window.title("📚 Time Warp Programming Tutorials")
         tutorial_window.geometry("800x600")
         tutorial_window.transient(self.root)
         
@@ -12507,7 +12507,7 @@ END
         
     def open_file(self):
         file_path = filedialog.askopenfilename(
-            filetypes=[("SuperPILOT Files", "*.spt"), ("Text Files", "*.txt"), ("All Files", "*.*")]
+            filetypes=[("Time Warp Files", "*.spt"), ("Text Files", "*.txt"), ("All Files", "*.*")]
         )
         if file_path:
             with open(file_path, "r") as file:
@@ -12525,7 +12525,7 @@ END
     def save_file_as(self):
         file_path = filedialog.asksaveasfilename(
             defaultextension=".spt",
-            filetypes=[("SuperPILOT Files", "*.spt"), ("Text Files", "*.txt"), ("All Files", "*.*")]
+            filetypes=[("Time Warp Files", "*.spt"), ("Text Files", "*.txt"), ("All Files", "*.*")]
         )
         if file_path:
             content = self.editor.get("1.0", tk.END)
@@ -13270,7 +13270,7 @@ END
         def save_as_snippet():
             filename = filedialog.asksaveasfilename(
                 defaultextension=".spt",
-                filetypes=[("SuperPILOT files", "*.spt"), ("All files", "*.*")]
+                filetypes=[("Time Warp files", "*.spt"), ("All files", "*.*")]
             )
             if filename:
                 with open(filename, 'w') as f:
@@ -13300,7 +13300,7 @@ END
         
         def load_from_file():
             filename = filedialog.askopenfilename(
-                filetypes=[("SuperPILOT files", "*.spt"), ("PILOT files", "*.pil"), ("Text files", "*.txt"), ("All files", "*.*")]
+                filetypes=[("Time Warp files", "*.spt"), ("PILOT files", "*.pil"), ("Text files", "*.txt"), ("All files", "*.*")]
             )
             if filename:
                 try:
@@ -13385,9 +13385,9 @@ END
         tips_text.config(state=tk.DISABLED)
 
     def get_help_text(self):
-        """Return comprehensive help text for SuperPILOT language reference"""
+        """Return comprehensive help text for Time Warp language reference"""
         return """
-SUPERPILOT LANGUAGE REFERENCE
+TIME WARP LANGUAGE REFERENCE
 
 === PILOT COMMANDS ===
 T:text          - Output text (variables in *VAR* format). If a T: immediately
@@ -13517,7 +13517,7 @@ R: HOME TEMP room [temp]          - Set room temperature
 
 === EXAMPLE PROGRAM ===
 L:START
-T:Welcome to SuperPILOT!
+T:Welcome to Time Warp!
 A:NAME
 T:Hello *NAME*!
 U:SCORE=0
@@ -13550,7 +13550,7 @@ END
         """Load a simple hello world program"""
         program = '''L:START
 T:Hello, World!
-T:This is SuperPILOT!
+T:This is Time Warp!
 END'''
         self.editor.delete(1.0, tk.END)
         self.editor.insert(1.0, program)
@@ -13558,7 +13558,7 @@ END'''
     def load_math_demo(self):
         """Load a math demonstration program"""
         program = '''L:START
-T:SuperPILOT Math Demo
+T:Time Warp Math Demo
 U:A=15
 U:B=25
 T:A = *A*, B = *B*
@@ -13576,7 +13576,7 @@ END'''
     def load_quiz_game(self):
         """Load a quiz game program"""
         program = '''L:START
-T:SuperPILOT Quiz Game
+T:Time Warp Quiz Game
 A:PLAYER
 T:Welcome *PLAYER*!
 U:SCORE=0
@@ -13624,7 +13624,7 @@ END'''
         header_frame = ttk.Frame(main_frame)
         header_frame.pack(fill=tk.X, pady=(0, 10))
         
-        ttk.Label(header_frame, text="🔌 SuperPILOT Plugin Manager", font=("Arial", 16, "bold")).pack(side=tk.LEFT)
+        ttk.Label(header_frame, text="🔌 Time Warp Plugin Manager", font=("Arial", 16, "bold")).pack(side=tk.LEFT)
         ttk.Button(header_frame, text="🔄 Refresh", command=lambda: refresh_plugins()).pack(side=tk.RIGHT)
         
         # Create notebook for different plugin sections
@@ -13744,10 +13744,10 @@ END'''
         guide_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
         guide_scroll.pack(side=tk.RIGHT, fill=tk.Y, pady=10)
         
-        plugin_guide = """🛠️ SUPERPILOT PLUGIN DEVELOPMENT GUIDE
+        plugin_guide = """🛠️ TIME WARP PLUGIN DEVELOPMENT GUIDE
 
 📋 Plugin Structure:
-A SuperPILOT plugin is a Python module that extends the IDE functionality.
+A Time Warp plugin is a Python module that extends the IDE functionality.
 
 Required Files:
 • plugin.py - Main plugin code
@@ -13766,7 +13766,7 @@ Required Files:
 }
 
 🐍 Sample plugin.py:
-class SuperPILOTPlugin:
+class TimeWarpPlugin:
     def __init__(self, ide_instance):
         self.ide = ide_instance
         self.name = "My Plugin"
@@ -13801,7 +13801,7 @@ class SuperPILOTPlugin:
 1. Create a new folder for your plugin
 2. Write the manifest.json file
 3. Implement the plugin class in plugin.py
-4. Test with the SuperPILOT Plugin API
+4. Test with the Time Warp Plugin API
 5. Package and distribute
 
 💡 Best Practices:
@@ -14071,7 +14071,7 @@ class SuperPILOTPlugin:
 🎓 LONG-TERM GOALS (This Quarter):
 🔄 Build a complete PILOT application
 🔄 Help others learn PILOT programming
-🔄 Contribute to SuperPILOT community
+🔄 Contribute to Time Warp community
 🔄 Explore advanced programming concepts
 
 💡 SKILL FOCUS AREAS:
@@ -14200,7 +14200,7 @@ class SuperPILOTPlugin:
         """Show game development help"""
         help_text = """🎮 GAME DEVELOPMENT HELP
 
-SuperPILOT supports comprehensive game development with physics simulation,
+Time Warp supports comprehensive game development with physics simulation,
 collision detection, and interactive graphics.
 
 PILOT Game Commands:
@@ -14329,7 +14329,7 @@ T:Platformer created! Player can jump between platforms
         
     def show_ml_help(self):
         """Show ML help and documentation"""
-        help_text = """🤖 SuperPILOT AI/ML Integration Help
+        help_text = """🤖 Time Warp AI/ML Integration Help
 
 PILOT Language ML Commands:
 • ML:LOAD model_name model_type - Load a machine learning model
@@ -14536,7 +14536,7 @@ END"""
 
 def main():
     root = tk.Tk()
-    app = SuperPILOTII(root)
+    app = TimeWarpIDE(root)
     
     # Show welcome message
     root.after(1000, lambda: messagebox.showinfo("Welcome to HB Code", 

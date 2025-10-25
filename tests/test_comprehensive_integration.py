@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
 """
-Integration test that exercises all major SuperPILOT features together.
+Integration test that exercises all major Time Warp features together.
 This serves as a comprehensive smoke test for the latest changes.
 """
 
 import unittest
-from Super_PILOT import SuperPILOTInterpreter, create_demo_program
+from Time_Warp import TimeWarpInterpreter, create_demo_program
 
 
 class ComprehensiveIntegrationTest(unittest.TestCase):
     def setUp(self):
         """Set up interpreter for each test"""
-        self.interp = SuperPILOTInterpreter()
+        self.interp = TimeWarpInterpreter()
         self.interp.output_widget = None
-        
+
     def test_comprehensive_feature_integration(self):
         """Test all major features work together without conflicts"""
-        prog = '''
+        prog = """
 # Test PILOT commands
 L:START
-T:🚀 SuperPILOT Comprehensive Integration Test
+T:🚀 Time Warp Comprehensive Integration Test
 U:TEST_COUNT=0
 U:SUCCESS_COUNT=0
 
@@ -122,32 +122,32 @@ T:🎉 All integration tests passed!
 
 L:END
 T:Integration test completed
-END'''
-        
+END"""
+
         result = self.interp.run_program(prog)
         self.assertTrue(result)
-        
+
         # Verify all systems were exercised
-        self.assertGreater(self.interp.variables.get('TEST_COUNT', 0), 0)
-        self.assertGreater(self.interp.variables.get('SUCCESS_COUNT', 0), 0)
-        
+        self.assertGreater(self.interp.variables.get("TEST_COUNT", 0), 0)
+        self.assertGreater(self.interp.variables.get("SUCCESS_COUNT", 0), 0)
+
         # Check hardware systems were initialized
         self.assertIsNotNone(self.interp.arduino)
         self.assertIsNotNone(self.interp.rpi)
         self.assertIsNotNone(self.interp.robot)
         self.assertIsNotNone(self.interp.controller)
-        
+
         # Check templecode systems were used
         self.assertGreater(len(self.interp.sprites), 0)
         self.assertGreater(len(self.interp.particles), 0)
-        
+
         # Check home automation variables were set
-        self.assertEqual(self.interp.variables.get('TEMP_testroom'), 25.5)
-        self.assertEqual(self.interp.variables.get('LIGHT_testlight'), 1)
-        
+        self.assertEqual(self.interp.variables.get("TEMP_testroom"), 25.5)
+        self.assertEqual(self.interp.variables.get("LIGHT_testlight"), 1)
+
     def test_error_recovery_and_robustness(self):
         """Test that the system recovers gracefully from various errors"""
-        prog = '''
+        prog = """
 T:Testing error recovery...
 
 # Test invalid expressions (should not crash)
@@ -172,21 +172,21 @@ R: EMIT "test", 0, 0, 100, 1000, 50
 U:RECOVERY_TEST=42
 T:Successfully recovered! Test value: *RECOVERY_TEST*
 
-END'''
-        
+END"""
+
         result = self.interp.run_program(prog)
         self.assertTrue(result)  # Should complete despite errors
-        
+
         # Should have recovered and set the recovery test variable
-        self.assertEqual(self.interp.variables.get('RECOVERY_TEST'), 42)
-        
+        self.assertEqual(self.interp.variables.get("RECOVERY_TEST"), 42)
+
         # Should have created particles despite other errors
         self.assertGreater(len(self.interp.particles), 0)
-        
+
     def test_cross_platform_compatibility_verification(self):
         """Verify the system works on any platform without hardware"""
         # This test exercises all hardware-dependent features in simulation mode
-        prog = '''
+        prog = """
 T:Testing cross-platform compatibility...
 
 # RPi commands (should work in simulation)
@@ -209,24 +209,24 @@ R: CONTROLLER UPDATE
 R: CONTROLLER BUTTON 0 BTN_STATE
 
 T:Cross-platform test completed
-END'''
-        
+END"""
+
         result = self.interp.run_program(prog)
         self.assertTrue(result)
-        
+
         # All hardware controllers should be in simulation mode
         self.assertFalse(self.interp.rpi.gpio_available)
         self.assertFalse(self.interp.arduino.connected)
-        
+
         # Some variables should be set by simulated sensors
-        self.assertIn('PIN19_VALUE', self.interp.variables)
-        self.assertIn('DIST_READING', self.interp.variables)
-        self.assertIn('LIGHT_READING', self.interp.variables)
-        self.assertIn('BTN_STATE', self.interp.variables)
-        
+        self.assertIn("PIN19_VALUE", self.interp.variables)
+        self.assertIn("DIST_READING", self.interp.variables)
+        self.assertIn("LIGHT_READING", self.interp.variables)
+        self.assertIn("BTN_STATE", self.interp.variables)
+
     def test_performance_with_all_systems_active(self):
         """Test performance when all systems are active simultaneously"""
-        prog = '''
+        prog = """
 T:Testing performance with all systems active...
 
 # Activate templecode systems
@@ -254,34 +254,39 @@ END
 
 L:TIMER_LABEL
 T:Timer triggered during performance test
-END'''
-        
+END"""
+
         result = self.interp.run_program(prog)
         self.assertTrue(result)
-        
+
         # Should complete within reasonable time
-        self.assertEqual(self.interp.variables.get('I'), 100)
-        
+        self.assertEqual(self.interp.variables.get("I"), 100)
+
         # All systems should be active
         self.assertGreater(len(self.interp.tweens), 0)
         self.assertGreater(len(self.interp.timers), 0)
         self.assertGreater(len(self.interp.particles), 0)
         self.assertGreater(len(self.interp.sprites), 0)
-        
+
     def test_original_demo_still_works(self):
         """Test that the original demo program still works after all changes"""
         # Mock user input for the demo
         inputs = ["TestUser", "42"]
         input_index = [0]  # Use list to make it mutable in lambda
-        self.interp.get_user_input = lambda prompt="": inputs[input_index[0]] if input_index[0] < len(inputs) and not input_index.__setitem__(0, input_index[0] + 1) else ""
-        
+        self.interp.get_user_input = lambda prompt="": (
+            inputs[input_index[0]]
+            if input_index[0] < len(inputs)
+            and not input_index.__setitem__(0, input_index[0] + 1)
+            else ""
+        )
+
         result = self.interp.run_program(create_demo_program())
         self.assertTrue(result)
-        
+
         # Should have created variables from the demo
-        self.assertIn('SUM', self.interp.variables)
-        self.assertEqual(self.interp.variables.get('SUM'), 30)
+        self.assertIn("SUM", self.interp.variables)
+        self.assertEqual(self.interp.variables.get("SUM"), 30)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
