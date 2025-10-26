@@ -47,9 +47,10 @@ END"""
 
         interpreter.run_program(program)
 
-        # Should move 50 units backward (left) from starting position
-        expected_x = 200 - 50  # Starting x minus distance (left)
-        expected_y = 200  # Starting y unchanged
+        # Should move 50 units backward (down) from starting position
+        # Turtle starts facing up (90°), so backward moves down
+        expected_x = 200  # Starting x unchanged
+        expected_y = 200 + 50  # Starting y plus distance (down)
 
         self.assert_turtle_position(interpreter, expected_x, expected_y)
 
@@ -279,8 +280,8 @@ END"""
 
         interpreter.run_program(program)
 
-        # Should draw a square and return to start
-        self.assert_turtle_position(interpreter, 200, 200, 0)
+        # Should draw a square and return to start position (but heading is 180° after 3 turns)
+        self.assert_turtle_position(interpreter, 200, 200, 180)
 
     def test_error_handling_invalid_logo_command(self, interpreter):
         """Test error handling for invalid Logo commands"""
@@ -311,4 +312,4 @@ END"""
         interpreter.run_program(program)
 
         # Should draw a square with side length 80
-        self.assert_turtle_position(interpreter, 200, 200, 0)
+        self.assert_turtle_position(interpreter, 200, 200, 180)

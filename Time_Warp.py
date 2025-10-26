@@ -656,7 +656,7 @@ class TimeWarpInterpreter:
             ]
         ):
             self.log_output("Expression contains forbidden characters")
-            return 0
+            raise ValueError("Expression contains forbidden characters")
 
         # Replace variables.
         # First substitute explicit *VAR* interpolation (used in many programs).
@@ -777,10 +777,10 @@ class TimeWarpInterpreter:
             return result
         except SyntaxError as e:
             self.log_output(f"Syntax error in expression '{expr}': {e}")
-            return 0
+            raise e
         except Exception as e:
             self.log_output(f"Expression error: {e}")
-            return 0
+            raise e
 
     def interpolate_text(self, text: str) -> str:
         """Interpolate *VAR* tokens and evaluate *expr* tokens inside a text string.
@@ -861,10 +861,15 @@ class TimeWarpInterpreter:
                 var_name = command[2:].strip()
                 prompt = f"Enter value for {var_name}: "
                 value = self.get_user_input(prompt).strip()
+                # Try to convert to number, otherwise keep as string
                 try:
-                    val = self.evaluate_expression(value)
+                    # Try int first
+                    if "." not in value and "e" not in value.lower():
+                        val = int(value)
+                    else:
+                        val = float(value)
                     self.variables[var_name] = val
-                except Exception:
+                except ValueError:
                     self.variables[var_name] = value
                 return "continue"
 
@@ -1035,11 +1040,30 @@ class TimeWarpInterpreter:
                     var_name, expr = assignment.split("=", 1)
                     var_name = var_name.strip()
                     expr = expr.strip()
-                    try:
-                        value = self.evaluate_expression(expr)
+                    # Check for quoted strings first
+                    if (expr.startswith('"') and expr.endswith('"')) or (
+                        expr.startswith("'") and expr.endswith("'")
+                    ):
+                        value = expr[1:-1]  # Remove quotes
                         self.variables[var_name] = value
-                    except Exception as e:
-                        self.log_output(f"Error in assignment {assignment}: {e}")
+                    else:
+                        # Try to evaluate as expression
+                        try:
+                            value = self.evaluate_expression(expr)
+                            self.variables[var_name] = value
+                        except Exception as e:
+                            # If evaluation fails, check if it's a security issue
+                            if (
+                                "forbidden" in str(e).lower()
+                                or "dangerous" in str(e).lower()
+                            ):
+                                # Don't store dangerous expressions
+                                self.log_output(f"Assignment rejected: {e}")
+                                return "error"
+                            else:
+                                # For other errors, treat as literal string
+                                value = expr  # Keep as-is
+                                self.variables[var_name] = value
                 return "continue"
 
             elif cmd_type == "GAME:":
@@ -1459,11 +1483,19 @@ class TimeWarpInterpreter:
                     var_name = input_part.strip()
                     prompt = f"Enter value for {var_name}: "
                 value = self.get_user_input(prompt).strip()
+                # Try to convert to number, otherwise keep as string
                 try:
-                    val = self.evaluate_expression(value)
+                    # Try int first
+                    val = int(value)
                     self.variables[var_name] = val
-                except Exception:
-                    self.variables[var_name] = value
+                except ValueError:
+                    try:
+                        # Try float
+                        val = float(value)
+                        self.variables[var_name] = val
+                    except ValueError:
+                        # Keep as string
+                        self.variables[var_name] = value
                 return "continue"
 
             elif cmd == "GOTO":
@@ -2575,6 +2607,8 @@ class TimeWarpInterpreter:
 
             cmd = parts[0]
 
+            print(f"DEBUG: Executing Logo command: {cmd}")  # Debug print
+
             if cmd in ["FORWARD", "FD"]:
                 if len(parts) > 1:
                     distance = self.evaluate_expression(parts[1])
@@ -2600,18 +2634,16 @@ class TimeWarpInterpreter:
                     self.graphics_widget.delete("all")
                 self.reset_turtle()
             elif cmd == "HOME":
-                self.turtle_x = 0
-                self.turtle_y = 0
-                self.turtle_heading = 0
+                self.turtle_x = 200
+                self.turtle_y = 200
+                self.turtle_heading = 90
                 self.pen_down = True
                 self.pen_color = "black"
                 self.pen_width = 1
-            elif cmd == "SETXY":
-                if len(parts) > 2:
-                    x = self.evaluate_expression(parts[1])
-                    y = self.evaluate_expression(parts[2])
-                    self.turtle_x = x
-                    self.turtle_y = y
+            elif cmd in ["SETHEADING", "SETH"]:
+                if len(parts) > 1:
+                    degrees = self.evaluate_expression(parts[1])
+                    self.turtle_heading = degrees
 
             elif cmd == "SETX":
                 if len(parts) > 1:
@@ -2620,6 +2652,12 @@ class TimeWarpInterpreter:
             elif cmd == "SETY":
                 if len(parts) > 1:
                     y = self.evaluate_expression(parts[1])
+                    self.turtle_y = y
+            elif cmd == "SETXY":
+                if len(parts) > 2:
+                    x = self.evaluate_expression(parts[1])
+                    y = self.evaluate_expression(parts[2])
+                    self.turtle_x = x
                     self.turtle_y = y
             elif cmd in ["PENCOLOR", "PC"]:
                 if len(parts) > 1:
@@ -2640,11 +2678,21 @@ class TimeWarpInterpreter:
                 # Turtle visibility - for now just log since we don't draw turtle cursor
                 self.log_output("Turtle shown")
             elif cmd in ["SETCOLOR", "SC"]:
+                print(
+                    f"DEBUG: SETCOLOR command detected with parts: {parts}"
+                )  # Debug print
                 if len(parts) > 1:
                     color_arg = parts[1]
+                    print(f"DEBUG: color_arg = {color_arg}")  # Debug print
                     if color_arg.isdigit():
                         index = int(color_arg) % len(self.colors)
+                        print(
+                            f"DEBUG: index = {index}, color = {self.colors[index]}"
+                        )  # Debug print
                         self.pen_color = self.colors[index]
+                        print(
+                            f"DEBUG: pen_color set to {self.pen_color}"
+                        )  # Debug print
                     else:
                         self.pen_color = color_arg
             elif cmd in ["CLEARTEXT", "CT"]:
@@ -2709,9 +2757,15 @@ class TimeWarpInterpreter:
                                 if sub_cmd.strip():
                                     self.execute_logo_command(sub_cmd.strip())
             elif cmd == "TO":
-                # Define a procedure: TO procname :param commands END
+                # Define a procedure: TO procname :param1 :param2 ... commands END
                 if len(parts) > 1:
                     proc_name = parts[1].upper()
+                    # Extract parameters from TO line (everything after proc name starting with :)
+                    params = []
+                    for part in parts[2:]:
+                        if part.startswith(":"):
+                            params.append(part[1:].upper())  # Remove : and uppercase
+
                     # Find the END
                     end_idx = -1
                     for i, line in enumerate(self.program_lines):
@@ -2723,52 +2777,55 @@ class TimeWarpInterpreter:
                             end_idx = i
                             break
                     if end_idx > self.current_line:
-                        # Extract procedure body
+                        # Extract procedure body (skip the TO line itself)
                         body_lines = []
                         for i in range(self.current_line + 1, end_idx):
                             if self.program_lines[i][1]:
                                 body_lines.append(self.program_lines[i][1])
-                        # Store procedure
+                        # Store procedure with parameters
                         if not hasattr(self, "logo_procedures"):
                             self.logo_procedures = {}
-                        self.logo_procedures[proc_name] = body_lines
+                        self.logo_procedures[proc_name] = {
+                            "params": params,
+                            "body": body_lines,
+                        }
                         # Skip to END
                         return f"jump:{end_idx}"
             elif cmd in self.logo_procedures:
                 # Call a defined procedure
-                proc_body = self.logo_procedures[cmd]
+                proc = self.logo_procedures[cmd]
                 # Handle parameters if any
                 params = parts[1:] if len(parts) > 1 else []
                 param_vars = {}
-                if params:
-                    # Parse parameters from TO definition (simplified)
-                    # Assume parameters are :param format
-                    param_names = []
-                    for line in proc_body:
-                        if line.strip().startswith("TO "):
-                            # Extract parameters from TO line
-                            to_parts = line.split()
-                            for part in to_parts[2:]:
-                                if part.startswith(":"):
-                                    param_names.append(part[1:])
-                            break
-                    # Assign parameters
-                    for i, param_name in enumerate(param_names):
-                        if i < len(params):
-                            param_vars[param_name] = self.evaluate_expression(params[i])
 
-                # Execute procedure body with parameter substitution
+                # Check parameter count
+                expected_params = len(proc["params"])
+                if len(params) != expected_params:
+                    self.display_error(
+                        f"Procedure {cmd} expects {expected_params} parameters, got {len(params)}"
+                    )
+                    return "continue"
+
+                # Assign parameters to variables
+                for i, param_name in enumerate(proc["params"]):
+                    if i < len(params):
+                        param_vars[param_name] = self.evaluate_expression(params[i])
+
+                # Execute procedure body with parameter variables
                 old_vars = self.variables.copy()
                 self.variables.update(param_vars)
-                for body_line in proc_body:
-                    if not body_line.strip().startswith("TO "):
-                        # Substitute parameters in the line
-                        for param_name, param_value in param_vars.items():
-                            body_line = body_line.replace(
-                                f":{param_name}", str(param_value)
-                            )
-                        self.execute_line(body_line)
-                self.variables = old_vars
+                try:
+                    for body_line in proc["body"]:
+                        if body_line.strip():
+                            # Substitute Logo :param syntax with actual values
+                            substituted_line = body_line
+                            for param_name, param_value in param_vars.items():
+                                substituted_line = substituted_line.replace(
+                                    f":{param_name}", str(param_value)
+                                )
+                            self.execute_line(substituted_line)
+                finally:
+                    self.variables = old_vars
 
         except Exception as e:
             error_msg = f"❌ Error in Logo command '{command}': {str(e)}"
@@ -2823,6 +2880,10 @@ class TimeWarpInterpreter:
             "TO",
         ]
         if command.split()[0].upper() in logo_commands:
+            return "logo"
+
+        # Check if it's a Logo procedure call
+        if command.split()[0].upper() in self.logo_procedures:
             return "logo"
 
         # BASIC commands
@@ -2910,7 +2971,7 @@ class TimeWarpInterpreter:
             self.variables = old_vars
             return "continue"
 
-        if parts and parts[0].upper() in ["TO", "END"]:
+        if parts and parts[0].upper() == "END":
             return "continue"
 
         # Determine command type and execute
@@ -2944,12 +3005,31 @@ class TimeWarpInterpreter:
                 label = command[2:].strip()
                 self.labels[label] = i
 
-        # Parse procedures
+        # Parse procedures (skip Logo TO commands as they are handled
+        # during execution)
         self.procedures = {}
         i = 0
         while i < len(self.program_lines):
             _, command = self.program_lines[i]
-            if command and command.upper().startswith("TO "):
+            # Skip Logo TO commands - they are handled during execution,
+            # not loading
+            if (
+                command
+                and command.upper().startswith("TO ")
+                and self.determine_command_type(command) == "logo"
+            ):
+                i += 1
+                # Skip the procedure body until END
+                while (
+                    i < len(self.program_lines)
+                    and self.program_lines[i][1]
+                    and self.program_lines[i][1].upper() != "END"
+                ):
+                    i += 1
+                if i < len(self.program_lines):
+                    i += 1  # Skip the END
+            elif command and command.upper().startswith("TO "):
+                # Parse as other language procedures (if any)
                 parts = command.split()
                 name = parts[1].upper()
                 params = parts[2:] if len(parts) > 2 else []
@@ -4530,7 +4610,8 @@ class TimeWarpIDE:
         self.status_bar = ttk.Label(self.root, text="Ready", anchor="w")
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
-        # Bind editor events to update status (update_status may be defined elsewhere)
+        # Bind editor events to update status
+        # (update_status may be defined elsewhere)
         try:
             self.editor.bind("<KeyRelease>", lambda e: self.update_status())
             self.editor.bind("<ButtonRelease>", lambda e: self.update_status())
@@ -4773,7 +4854,8 @@ TIME WARP LANGUAGE REFERENCE
 
 === PILOT COMMANDS ===
 T:text          - Output text (variables in *VAR* format). If a T: immediately
-                  follows Y: or N: the T: is conditional and only prints when the
+                  follows Y: or N: the T: is conditional and only prints when\n"
+                  "the
                   match flag is set; the sentinel is consumed by this T:.
 A:variable      - Accept input into variable
 Y:condition     - Set the match flag when condition is TRUE (and mark the next
@@ -4865,14 +4947,15 @@ END"""
 
 def main():
     root = tk.Tk()
-    app = TimeWarpIDE(root)
+    TimeWarpIDE(root)
 
     # Show welcome message
     root.after(
         1000,
         lambda: messagebox.showinfo(
             "Welcome to Time Warp IDE",
-            "Welcome to Time Warp IDE - Educational Programming Environment!\n\n"
+            "Welcome to Time Warp IDE - Educational Programming\n"
+            "Environment!\n\n"
             "Features:\n"
             "• Multi-language support (PILOT, BASIC, Logo)\n"
             "• Turtle graphics\n"
