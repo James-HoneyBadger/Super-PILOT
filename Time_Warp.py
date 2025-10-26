@@ -9,19 +9,6 @@ import math
 import re
 import time
 from datetime import datetime
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Union,
-    Callable,
-    Set,
-    Type,
-    cast,
-    TYPE_CHECKING,
-)
 
 # Import plugin system
 from core.plugin_system import PluginManager
@@ -41,24 +28,24 @@ from core.async_support import (
 class ArduinoController:
     """Arduino hardware controller with simulation support"""
 
-    def __init__(self, simulation_mode: bool = True) -> None:
-        self.simulation_mode: bool = simulation_mode
+    def __init__(self, simulation_mode=True):
+        self.simulation_mode = simulation_mode
 
 
 class RPiController:
     """Raspberry Pi hardware controller with simulation support"""
 
-    def __init__(self, simulation_mode: bool = True) -> None:
-        self.simulation_mode: bool = simulation_mode
+    def __init__(self, simulation_mode=True):
+        self.simulation_mode = simulation_mode
 
 
 class AudioMixer:
     """Audio mixer for playing sounds with play/aplay support"""
 
-    def __init__(self) -> None:
-        self.registry: Dict[str, str] = {}  # name -> path
-        self.has_play: bool = self._has_exe("play")
-        self.has_aplay: bool = self._has_exe("aplay")
+    def __init__(self):
+        self.registry = {}  # name -> path
+        self.has_play = self._has_exe("play")
+        self.has_aplay = self._has_exe("aplay")
 
     def _has_exe(self, name: str) -> bool:
         import os
@@ -69,22 +56,18 @@ class AudioMixer:
                 return True
         return False
 
-    def register_sound(self, name: str, path: str) -> None:
+    def register_sound(self, name, path):
         """Register a sound file with a name"""
         self.registry[name] = path
 
-    def play_sound(self, name: str) -> None:
+    def play_sound(self, name):
         """Play a registered sound"""
         path = self.registry.get(name)
         if not path:
             return
         if self.has_play:
-            import os
-
             os.system(f"play -q {path}")
         elif self.has_aplay and path.lower().endswith(".wav"):
-            import os
-
             os.system(f"aplay -q {path}")
         else:
             # Fallback: system bell

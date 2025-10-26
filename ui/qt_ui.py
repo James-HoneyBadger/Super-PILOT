@@ -521,7 +521,7 @@ class QtSplitter(Splitter):
 
 
 class QtMainWindow(MainWindow):
-    """Modern PySide6 main window implementation with Material Design and advanced features"""
+    """Modern PySide6 main window implementation with advanced features"""
 
     def __init__(
         self, title: str = "Time Warp IDE", width: int = 1400, height: int = 900
@@ -536,9 +536,51 @@ class QtMainWindow(MainWindow):
         self.window.setWindowTitle(title)
         self.window.resize(width, height)
 
-        # Initialize theme
-        self.dark_mode = False
-        self.setup_theme()
+        # Set up modern styling
+        self.window.setStyleSheet(
+            """
+            QMainWindow {
+                background-color: #f8f9fa;
+            }
+            QMenuBar {
+                background-color: #ffffff;
+                border-bottom: 1px solid #e1e5e9;
+                padding: 4px;
+            }
+            QMenuBar::item {
+                padding: 8px 12px;
+                margin: 0px 2px;
+                border-radius: 4px;
+            }
+            QMenuBar::item:selected {
+                background-color: #e3f2fd;
+                color: #1976d2;
+            }
+            QStatusBar {
+                background-color: #ffffff;
+                border-top: 1px solid #e1e5e9;
+                padding: 4px;
+            }
+            QTabWidget::pane {
+                border: 1px solid #e1e5e9;
+                border-radius: 4px;
+            }
+            QTabBar::tab {
+                background-color: #f5f5f5;
+                border: 1px solid #e1e5e9;
+                padding: 8px 16px;
+                margin-right: 2px;
+                border-radius: 4px 4px 0 0;
+            }
+            QTabBar::tab:selected {
+                background-color: #ffffff;
+                border-bottom: 2px solid #1976d2;
+            }
+            QTabBar::tab:hover {
+                background-color: #e3f2fd;
+            }
+        """
+        )
 
         # Create central widget with modern layout
         self.setup_central_widget()
@@ -551,487 +593,6 @@ class QtMainWindow(MainWindow):
         self._canvas = None
         self._variables_tree = None
 
-        # Setup window properties
-        self.window.setMinimumSize(1000, 700)
-        self.window.setWindowIcon(QIcon())  # TODO: Add app icon
-
-    def setup_theme(self) -> None:
-        """Setup modern Material Design theme"""
-        if self.dark_mode:
-            self.apply_dark_theme()
-        else:
-            self.apply_light_theme()
-
-    def apply_light_theme(self) -> None:
-        """Apply light Material Design theme"""
-        self.window.setStyleSheet(
-            """
-            /* Main Window */
-            QMainWindow {
-                background-color: #fafafa;
-                color: #212121;
-            }
-
-            /* Menu Bar */
-            QMenuBar {
-                background-color: #ffffff;
-                border-bottom: 1px solid #e0e0e0;
-                padding: 4px 8px;
-                font-size: 13px;
-            }
-            QMenuBar::item {
-                padding: 6px 12px;
-                margin: 0px 2px;
-                border-radius: 4px;
-                color: #424242;
-            }
-            QMenuBar::item:selected {
-                background-color: #e3f2fd;
-                color: #1976d2;
-            }
-            QMenuBar::item:pressed {
-                background-color: #bbdefb;
-            }
-
-            /* Menus */
-            QMenu {
-                background-color: #ffffff;
-                border: 1px solid #e0e0e0;
-                border-radius: 6px;
-                padding: 4px;
-            }
-            QMenu::item {
-                padding: 8px 20px;
-                border-radius: 4px;
-                color: #424242;
-            }
-            QMenu::item:selected {
-                background-color: #e3f2fd;
-                color: #1976d2;
-            }
-            QMenu::separator {
-                height: 1px;
-                background-color: #e0e0e0;
-                margin: 4px 8px;
-            }
-
-            /* Status Bar */
-            QStatusBar {
-                background-color: #ffffff;
-                border-top: 1px solid #e0e0e0;
-                padding: 4px 8px;
-                font-size: 12px;
-                color: #757575;
-            }
-
-            /* Toolbar */
-            QToolBar {
-                background-color: #ffffff;
-                border-bottom: 1px solid #e0e0e0;
-                padding: 8px;
-                spacing: 8px;
-            }
-            QToolButton {
-                background-color: transparent;
-                border: 1px solid transparent;
-                border-radius: 6px;
-                padding: 8px 12px;
-                color: #424242;
-                font-weight: 500;
-                font-size: 13px;
-            }
-            QToolButton:hover {
-                background-color: #f5f5f5;
-                border: 1px solid #e0e0e0;
-            }
-            QToolButton:pressed {
-                background-color: #e0e0e0;
-            }
-
-            /* Tab Widget */
-            QTabWidget::pane {
-                border: 1px solid #e0e0e0;
-                border-radius: 6px;
-                background-color: #ffffff;
-            }
-            QTabBar::tab {
-                background-color: #f5f5f5;
-                border: 1px solid #e0e0e0;
-                padding: 10px 16px;
-                margin-right: 2px;
-                border-radius: 6px 6px 0 0;
-                color: #424242;
-                font-weight: 500;
-            }
-            QTabBar::tab:selected {
-                background-color: #ffffff;
-                border-bottom: 2px solid #1976d2;
-                color: #1976d2;
-            }
-            QTabBar::tab:hover {
-                background-color: #e8f5e8;
-            }
-
-            /* Buttons */
-            QPushButton {
-                background-color: #ffffff;
-                border: 1px solid #e0e0e0;
-                border-radius: 6px;
-                padding: 8px 16px;
-                color: #424242;
-                font-weight: 500;
-                font-size: 13px;
-            }
-            QPushButton:hover {
-                background-color: #f5f5f5;
-                border: 1px solid #bdbdbd;
-            }
-            QPushButton:pressed {
-                background-color: #e0e0e0;
-            }
-            QPushButton:disabled {
-                background-color: #f5f5f5;
-                color: #bdbdbd;
-                border: 1px solid #e0e0e0;
-            }
-
-            /* Combo Box */
-            QComboBox {
-                background-color: #ffffff;
-                border: 1px solid #e0e0e0;
-                border-radius: 6px;
-                padding: 6px 12px;
-                color: #424242;
-                font-size: 13px;
-                min-width: 100px;
-            }
-            QComboBox:hover {
-                border: 1px solid #bdbdbd;
-            }
-            QComboBox::drop-down {
-                border: none;
-                width: 20px;
-            }
-            QComboBox::down-arrow {
-                image: url(down_arrow.png);
-                width: 12px;
-                height: 12px;
-            }
-            QComboBox QAbstractItemView {
-                background-color: #ffffff;
-                border: 1px solid #e0e0e0;
-                border-radius: 4px;
-                selection-background-color: #e3f2fd;
-                selection-color: #1976d2;
-            }
-
-            /* Tree Widget */
-            QTreeWidget {
-                background-color: #ffffff;
-                border: 1px solid #e0e0e0;
-                border-radius: 6px;
-                alternate-background-color: #fafafa;
-            }
-            QTreeWidget::item {
-                padding: 4px;
-                border-bottom: 1px solid #f5f5f5;
-            }
-            QTreeWidget::item:selected {
-                background-color: #e3f2fd;
-                color: #1976d2;
-            }
-            QTreeWidget::item:hover {
-                background-color: #f5f5f5;
-            }
-            QHeaderView::section {
-                background-color: #f5f5f5;
-                border: none;
-                border-bottom: 1px solid #e0e0e0;
-                padding: 8px;
-                font-weight: bold;
-                color: #424242;
-            }
-
-            /* Text Edit */
-            QPlainTextEdit {
-                background-color: #ffffff;
-                border: 1px solid #e0e0e0;
-                border-radius: 6px;
-                padding: 8px;
-                font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
-                font-size: 13px;
-                color: #212121;
-                selection-background-color: #e3f2fd;
-            }
-            QPlainTextEdit:focus {
-                border: 2px solid #1976d2;
-            }
-
-            /* Graphics View */
-            QGraphicsView {
-                background-color: #ffffff;
-                border: 1px solid #e0e0e0;
-                border-radius: 6px;
-            }
-
-            /* Scroll Bars */
-            QScrollBar:vertical {
-                background-color: #f5f5f5;
-                width: 16px;
-                border-radius: 8px;
-                margin: 2px;
-            }
-            QScrollBar::handle:vertical {
-                background-color: #bdbdbd;
-                border-radius: 6px;
-                min-height: 30px;
-            }
-            QScrollBar::handle:vertical:hover {
-                background-color: #9e9e9e;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                border: none;
-                background: none;
-            }
-            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-                background: none;
-            }
-        """
-        )
-
-    def apply_dark_theme(self) -> None:
-        """Apply dark Material Design theme"""
-        self.window.setStyleSheet(
-            """
-            /* Main Window */
-            QMainWindow {
-                background-color: #121212;
-                color: #ffffff;
-            }
-
-            /* Menu Bar */
-            QMenuBar {
-                background-color: #1e1e1e;
-                border-bottom: 1px solid #333333;
-                padding: 4px 8px;
-                font-size: 13px;
-            }
-            QMenuBar::item {
-                padding: 6px 12px;
-                margin: 0px 2px;
-                border-radius: 4px;
-                color: #ffffff;
-            }
-            QMenuBar::item:selected {
-                background-color: #333333;
-                color: #64b5f6;
-            }
-            QMenuBar::item:pressed {
-                background-color: #424242;
-            }
-
-            /* Menus */
-            QMenu {
-                background-color: #1e1e1e;
-                border: 1px solid #333333;
-                border-radius: 6px;
-                padding: 4px;
-            }
-            QMenu::item {
-                padding: 8px 20px;
-                border-radius: 4px;
-                color: #ffffff;
-            }
-            QMenu::item:selected {
-                background-color: #333333;
-                color: #64b5f6;
-            }
-            QMenu::separator {
-                height: 1px;
-                background-color: #333333;
-                margin: 4px 8px;
-            }
-
-            /* Status Bar */
-            QStatusBar {
-                background-color: #1e1e1e;
-                border-top: 1px solid #333333;
-                padding: 4px 8px;
-                font-size: 12px;
-                color: #9e9e9e;
-            }
-
-            /* Toolbar */
-            QToolBar {
-                background-color: #1e1e1e;
-                border-bottom: 1px solid #333333;
-                padding: 8px;
-                spacing: 8px;
-            }
-            QToolButton {
-                background-color: transparent;
-                border: 1px solid transparent;
-                border-radius: 6px;
-                padding: 8px 12px;
-                color: #ffffff;
-                font-weight: 500;
-                font-size: 13px;
-            }
-            QToolButton:hover {
-                background-color: #333333;
-                border: 1px solid #424242;
-            }
-            QToolButton:pressed {
-                background-color: #424242;
-            }
-
-            /* Tab Widget */
-            QTabWidget::pane {
-                border: 1px solid #333333;
-                border-radius: 6px;
-                background-color: #1e1e1e;
-            }
-            QTabBar::tab {
-                background-color: #2d2d2d;
-                border: 1px solid #333333;
-                padding: 10px 16px;
-                margin-right: 2px;
-                border-radius: 6px 6px 0 0;
-                color: #ffffff;
-                font-weight: 500;
-            }
-            QTabBar::tab:selected {
-                background-color: #1e1e1e;
-                border-bottom: 2px solid #64b5f6;
-                color: #64b5f6;
-            }
-            QTabBar::tab:hover {
-                background-color: #333333;
-            }
-
-            /* Buttons */
-            QPushButton {
-                background-color: #2d2d2d;
-                border: 1px solid #424242;
-                border-radius: 6px;
-                padding: 8px 16px;
-                color: #ffffff;
-                font-weight: 500;
-                font-size: 13px;
-            }
-            QPushButton:hover {
-                background-color: #333333;
-                border: 1px solid #616161;
-            }
-            QPushButton:pressed {
-                background-color: #424242;
-            }
-            QPushButton:disabled {
-                background-color: #1e1e1e;
-                color: #616161;
-                border: 1px solid #424242;
-            }
-
-            /* Combo Box */
-            QComboBox {
-                background-color: #2d2d2d;
-                border: 1px solid #424242;
-                border-radius: 6px;
-                padding: 6px 12px;
-                color: #ffffff;
-                font-size: 13px;
-                min-width: 100px;
-            }
-            QComboBox:hover {
-                border: 1px solid #616161;
-            }
-            QComboBox::drop-down {
-                border: none;
-                width: 20px;
-            }
-            QComboBox QAbstractItemView {
-                background-color: #1e1e1e;
-                border: 1px solid #333333;
-                border-radius: 4px;
-                selection-background-color: #333333;
-                selection-color: #64b5f6;
-            }
-
-            /* Tree Widget */
-            QTreeWidget {
-                background-color: #1e1e1e;
-                border: 1px solid #333333;
-                border-radius: 6px;
-                alternate-background-color: #2d2d2d;
-            }
-            QTreeWidget::item {
-                padding: 4px;
-                border-bottom: 1px solid #333333;
-                color: #ffffff;
-            }
-            QTreeWidget::item:selected {
-                background-color: #333333;
-                color: #64b5f6;
-            }
-            QTreeWidget::item:hover {
-                background-color: #424242;
-            }
-            QHeaderView::section {
-                background-color: #2d2d2d;
-                border: none;
-                border-bottom: 1px solid #333333;
-                padding: 8px;
-                font-weight: bold;
-                color: #ffffff;
-            }
-
-            /* Text Edit */
-            QPlainTextEdit {
-                background-color: #1e1e1e;
-                border: 1px solid #333333;
-                border-radius: 6px;
-                padding: 8px;
-                font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
-                font-size: 13px;
-                color: #ffffff;
-                selection-background-color: #333333;
-            }
-            QPlainTextEdit:focus {
-                border: 2px solid #64b5f6;
-            }
-
-            /* Graphics View */
-            QGraphicsView {
-                background-color: #1e1e1e;
-                border: 1px solid #333333;
-                border-radius: 6px;
-            }
-
-            /* Scroll Bars */
-            QScrollBar:vertical {
-                background-color: #2d2d2d;
-                width: 16px;
-                border-radius: 8px;
-                margin: 2px;
-            }
-            QScrollBar::handle:vertical {
-                background-color: #616161;
-                border-radius: 6px;
-                min-height: 30px;
-            }
-            QScrollBar::handle:vertical:hover {
-                background-color: #757575;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                border: none;
-                background: none;
-            }
-            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-                background: none;
-            }
-        """
-        )
-
     def setup_central_widget(self) -> None:
         """Set up the central widget with modern layout"""
         central_widget = QWidget()
@@ -1039,8 +600,8 @@ class QtMainWindow(MainWindow):
 
         # Main layout
         main_layout = QVBoxLayout(central_widget)
-        main_layout.setContentsMargins(12, 12, 12, 12)
-        main_layout.setSpacing(8)
+        main_layout.setContentsMargins(10, 10, 10, 10)
+        main_layout.setSpacing(5)
 
         # Create toolbar
         self.setup_toolbar()
@@ -1059,23 +620,46 @@ class QtMainWindow(MainWindow):
         self.main_splitter.setSizes([800, 600])
 
     def setup_toolbar(self) -> None:
-        """Set up modern toolbar with icons and better organization"""
+        """Set up modern toolbar"""
         self.toolbar = self.window.addToolBar("Main Toolbar")
         self.toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.toolbar.setMovable(False)
-        self.toolbar.setFloatable(False)
 
-        # File operations
-        self.new_action = self.toolbar.addAction("New")
-        self.open_action = self.toolbar.addAction("Open")
-        self.save_action = self.toolbar.addAction("Save")
-        self.toolbar.addSeparator()
+        # Style toolbar
+        self.toolbar.setStyleSheet(
+            """
+            QToolBar {
+                background-color: #ffffff;
+                border-bottom: 1px solid #e1e5e9;
+                padding: 4px;
+                spacing: 8px;
+            }
+            QToolButton {
+                background-color: transparent;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                padding: 8px 12px;
+                color: #424242;
+                font-weight: 500;
+            }
+            QToolButton:hover {
+                background-color: #e3f2fd;
+                border: 1px solid #bbdefb;
+            }
+            QToolButton:pressed {
+                background-color: #bbdefb;
+            }
+        """
+        )
 
-        # Run/Debug operations
-        self.run_action = self.toolbar.addAction("▶ Run")
-        self.stop_action = self.toolbar.addAction("⏹ Stop")
-        self.debug_action = self.toolbar.addAction("🐛 Debug")
-        self.toolbar.addSeparator()
+    def setup_editor_panel(self) -> None:
+        """Set up the editor panel"""
+        editor_container = QWidget()
+        editor_layout = QVBoxLayout(editor_container)
+        editor_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Editor controls
+        controls_layout = QHBoxLayout()
 
         # Language selector
         self.language_combo = QComboBox()
@@ -1084,208 +668,97 @@ class QtMainWindow(MainWindow):
         )
         self.language_combo.setCurrentText("PILOT")
         self.language_combo.setMaximumWidth(120)
-        self.language_combo.setMinimumWidth(100)
-        self.toolbar.addWidget(QLabel("Language:"))
-        self.toolbar.addWidget(self.language_combo)
-        self.toolbar.addSeparator()
+        controls_layout.addWidget(QLabel("Language:"))
+        controls_layout.addWidget(self.language_combo)
 
-        # View options
-        self.theme_action = self.toolbar.addAction("🌙 Theme")
-        self.fullscreen_action = self.toolbar.addAction("⛶ Fullscreen")
+        controls_layout.addStretch()
 
-        # Connect toolbar actions
-        self.run_action.triggered.connect(lambda: self.run_program())
-        self.stop_action.triggered.connect(lambda: self.stop_program())
-        self.theme_action.triggered.connect(self.toggle_theme)
-        self.fullscreen_action.triggered.connect(self.toggle_fullscreen)
+        # Run button
+        self.run_button = QPushButton("▶ Run")
+        self.run_button.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+            QPushButton:pressed {
+                background-color: #3d8b40;
+            }
+        """
+        )
+        controls_layout.addWidget(self.run_button)
 
-    def setup_editor_panel(self) -> None:
-        """Set up the editor panel with modern design"""
-        editor_container = QWidget()
-        editor_layout = QVBoxLayout(editor_container)
-        editor_layout.setContentsMargins(0, 0, 0, 0)
-        editor_layout.setSpacing(8)
+        # Stop button
+        self.stop_button = QPushButton("⏹ Stop")
+        self.stop_button.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #da190b;
+            }
+            QPushButton:pressed {
+                background-color: #b71c1c;
+            }
+        """
+        )
+        controls_layout.addWidget(self.stop_button)
 
-        # Editor header with controls
-        header_widget = QWidget()
-        header_layout = QHBoxLayout(header_widget)
-        header_layout.setContentsMargins(0, 0, 0, 0)
+        editor_layout.addLayout(controls_layout)
 
-        # File info
-        self.file_label = QLabel("Untitled.tw")
-        self.file_label.setStyleSheet("font-weight: bold; color: #666;")
-        header_layout.addWidget(self.file_label)
-
-        header_layout.addStretch()
-
-        # Editor controls
-        self.find_button = QPushButton("🔍 Find")
-        self.find_button.setMaximumWidth(80)
-        header_layout.addWidget(self.find_button)
-
-        self.replace_button = QPushButton("🔄 Replace")
-        self.replace_button.setMaximumWidth(90)
-        header_layout.addWidget(self.replace_button)
-
-        self.format_button = QPushButton("⚡ Format")
-        self.format_button.setMaximumWidth(80)
-        header_layout.addWidget(self.format_button)
-
-        editor_layout.addWidget(header_widget)
-
-        # Editor widget container
+        # Editor widget will be added here
         self.editor_container = QWidget()
         editor_layout.addWidget(self.editor_container)
 
         self.main_splitter.addWidget(editor_container)
 
     def setup_right_panel(self) -> None:
-        """Set up the right panel with modern tabs and better organization"""
+        """Set up the right panel with tabs"""
         self.right_tabs = QTabWidget()
-        self.right_tabs.setMovable(True)
-        self.right_tabs.setTabsClosable(False)
 
-        # Output tab with enhanced features
+        # Output tab
         self.output_tab = QWidget()
         output_layout = QVBoxLayout(self.output_tab)
-        output_layout.setContentsMargins(8, 8, 8, 8)
-
-        # Output controls
-        output_controls = QHBoxLayout()
-        self.clear_output_button = QPushButton("🗑 Clear")
-        self.clear_output_button.setMaximumWidth(80)
-        output_controls.addWidget(self.clear_output_button)
-
-        output_controls.addStretch()
-
-        self.output_filter_combo = QComboBox()
-        self.output_filter_combo.addItems(["All", "Errors", "Warnings", "Info"])
-        self.output_filter_combo.setMaximumWidth(100)
-        output_controls.addWidget(QLabel("Filter:"))
-        output_controls.addWidget(self.output_filter_combo)
-
-        output_layout.addLayout(output_controls)
-
         # Output widget will be added here
-        self.right_tabs.addTab(self.output_tab, "📄 Output")
+        self.right_tabs.addTab(self.output_tab, "Output")
 
-        # Variables tab with search
+        # Variables tab
         self.variables_tab = QWidget()
         variables_layout = QVBoxLayout(self.variables_tab)
-        variables_layout.setContentsMargins(8, 8, 8, 8)
-
-        # Variables controls
-        var_controls = QHBoxLayout()
-        self.var_search = QLineEdit()
-        self.var_search.setPlaceholderText("Search variables...")
-        self.var_search.setMaximumWidth(150)
-        var_controls.addWidget(self.var_search)
-
-        var_controls.addStretch()
-
-        self.refresh_vars_button = QPushButton("🔄 Refresh")
-        self.refresh_vars_button.setMaximumWidth(90)
-        var_controls.addWidget(self.refresh_vars_button)
-
-        variables_layout.addLayout(var_controls)
-
         # Variables widget will be added here
-        self.right_tabs.addTab(self.variables_tab, "📊 Variables")
+        self.right_tabs.addTab(self.variables_tab, "Variables")
 
-        # Graphics tab with controls
+        # Graphics tab
         self.graphics_tab = QWidget()
         graphics_layout = QVBoxLayout(self.graphics_tab)
-        graphics_layout.setContentsMargins(8, 8, 8, 8)
-
-        # Graphics controls
-        graphics_controls = QHBoxLayout()
-        self.clear_canvas_button = QPushButton("🗑 Clear")
-        self.clear_canvas_button.setMaximumWidth(80)
-        graphics_controls.addWidget(self.clear_canvas_button)
-
-        graphics_controls.addStretch()
-
-        self.save_canvas_button = QPushButton("💾 Save")
-        self.save_canvas_button.setMaximumWidth(70)
-        graphics_controls.addWidget(self.save_canvas_button)
-
-        self.snapshot_button = QPushButton("📸 Snapshot")
-        self.snapshot_button.setMaximumWidth(100)
-        graphics_controls.addWidget(self.snapshot_button)
-
-        graphics_layout.addLayout(graphics_controls)
-
         # Graphics widget will be added here
-        self.right_tabs.addTab(self.graphics_tab, "🎨 Graphics")
+        self.right_tabs.addTab(self.graphics_tab, "Graphics")
 
-        # Help tab with search
+        # Help tab
         self.help_tab = QWidget()
         help_layout = QVBoxLayout(self.help_tab)
-        help_layout.setContentsMargins(8, 8, 8, 8)
-
-        # Help controls
-        help_controls = QHBoxLayout()
-        self.help_search = QLineEdit()
-        self.help_search.setPlaceholderText("Search help...")
-        help_controls.addWidget(self.help_search)
-
-        help_controls.addStretch()
-
-        self.help_language_combo = QComboBox()
-        self.help_language_combo.addItems(["All", "PILOT", "BASIC", "Logo"])
-        self.help_language_combo.setMaximumWidth(100)
-        help_controls.addWidget(QLabel("Language:"))
-        help_controls.addWidget(self.help_language_combo)
-
-        help_layout.addLayout(help_controls)
-
         help_text = QTextEdit()
         help_text.setReadOnly(True)
         help_text.setPlainText(
             "Time Warp IDE Help\n\nSelect a language and start coding!"
         )
         help_layout.addWidget(help_text)
-        self.right_tabs.addTab(self.help_tab, "❓ Help")
-
-        # Plugins tab (if plugins are available)
-        self.plugins_tab = QWidget()
-        plugins_layout = QVBoxLayout(self.plugins_tab)
-        plugins_layout.setContentsMargins(8, 8, 8, 8)
-
-        plugins_label = QLabel("Plugin Manager - Coming Soon")
-        plugins_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        plugins_layout.addWidget(plugins_label)
-
-        self.right_tabs.addTab(self.plugins_tab, "🔌 Plugins")
+        self.right_tabs.addTab(self.help_tab, "Help")
 
         self.main_splitter.addWidget(self.right_tabs)
-
-    def toggle_theme(self) -> None:
-        """Toggle between light and dark themes"""
-        self.dark_mode = not self.dark_mode
-        self.setup_theme()
-        theme_name = "Dark" if self.dark_mode else "Light"
-        if self._status_bar:
-            self._status_bar.set_text(f"Switched to {theme_name} theme")
-
-    def toggle_fullscreen(self) -> None:
-        """Toggle fullscreen mode"""
-        if self.window.isFullScreen():
-            self.window.showNormal()
-            self.fullscreen_action.setText("⛶ Fullscreen")
-        else:
-            self.window.showFullScreen()
-            self.fullscreen_action.setText("⛶ Windowed")
-
-    def run_program(self) -> None:
-        """Placeholder for run program functionality"""
-        if self._status_bar:
-            self._status_bar.set_text("Running program...")
-
-    def stop_program(self) -> None:
-        """Placeholder for stop program functionality"""
-        if self._status_bar:
-            self._status_bar.set_text("Program stopped")
 
     def show(self) -> None:
         self.window.show()
@@ -1341,28 +814,27 @@ class QtMainWindow(MainWindow):
         tree = QTreeWidget()
         tree.setHeaderLabels(["Variable", "Value"])
         tree.setColumnWidth(0, 150)
-        tree.setAlternatingRowColors(True)
+        tree.setStyleSheet(
+            """
+            QTreeWidget {
+                background-color: #ffffff;
+                border: 1px solid #e1e5e9;
+                border-radius: 4px;
+            }
+            QHeaderView::section {
+                background-color: #f5f5f5;
+                border: none;
+                border-bottom: 1px solid #e1e5e9;
+                padding: 8px;
+                font-weight: bold;
+            }
+        """
+        )
         self.variables_tab.layout().addWidget(tree)
         return tree
 
     def create_splitter(self) -> Splitter:
         return QtSplitter()
-
-    @property
-    def window(self) -> QMainWindow:
-        return self.window
-
-    @property
-    def run_button(self) -> QAction:
-        return self.run_action
-
-    @property
-    def stop_button(self) -> QAction:
-        return self.stop_action
-
-    @property
-    def language_combo(self) -> QComboBox:
-        return self.language_combo
 
     @property
     def menu_bar(self) -> Optional[QtMenuBar]:
