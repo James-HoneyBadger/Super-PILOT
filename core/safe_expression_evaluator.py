@@ -65,8 +65,6 @@ class SafeExpressionEvaluator:
     ALLOWED_NODES = {
         # Literals
         ast.Constant,  # Python 3.8+
-        ast.Num,  # Python < 3.8
-        ast.Str,  # Python < 3.8
         # Variables and names
         ast.Name,
         # Operations
@@ -228,10 +226,6 @@ class SafeExpressionEvaluator:
         """
         if isinstance(node, ast.Constant):  # Python 3.8+
             return node.value
-        elif isinstance(node, ast.Num):  # Python < 3.8
-            return node.n
-        elif isinstance(node, ast.Str):  # Python < 3.8
-            return node.s
         elif isinstance(node, ast.Name):
             # Variables should have been substituted by the caller
             raise ValueError(f"Undefined variable: {node.id}")
@@ -250,6 +244,8 @@ class SafeExpressionEvaluator:
             comparators = [self._evaluate_ast(comp) for comp in node.comparators]
             return self._apply_compare(left, node.ops, comparators)
         elif isinstance(node, ast.Call):
+            if not isinstance(node.func, ast.Name):
+                raise ValueError("Only simple function names are allowed")
             func_name = node.func.id
             args = [self._evaluate_ast(arg) for arg in node.args]
             kwargs = {kw.arg: self._evaluate_ast(kw.value) for kw in node.keywords}
@@ -259,22 +255,23 @@ class SafeExpressionEvaluator:
 
     def _apply_binop(self, op: ast.operator, left: Any, right: Any) -> Any:
         """Apply a binary operation."""
-        if isinstance(op, ast.Add):
-            return left + right
-        elif isinstance(op, ast.Sub):
-            return left - right
-        elif isinstance(op, ast.Mult):
-            return left * right
-        elif isinstance(op, ast.Div):
-            return left / right
-        elif isinstance(op, ast.FloorDiv):
-            return left // right
-        elif isinstance(op, ast.Mod):
-            return left % right
-        elif isinstance(op, ast.Pow):
-            return left**right
-        else:
-            raise ValueError(f"Unsupported binary operator: {type(op).__name__}")
+        match op:
+            case ast.Add():
+                return left + right
+            case ast.Sub():
+                return left - right
+            case ast.Mult():
+                return left * right
+            case ast.Div():
+                return left / right
+            case ast.FloorDiv():
+                return left // right
+            case ast.Mod():
+                return left % right
+            case ast.Pow():
+                return left**right
+            case _:
+                raise ValueError(f"Unsupported binop: {type(op).__name__}")
 
     def _apply_boolop(self, op: ast.boolop, values: list) -> bool:
         """Apply a boolean operation."""
@@ -340,7 +337,7 @@ class SafeExpressionEvaluator:
 _evaluator = SafeExpressionEvaluator()
 
 
-def safe_eval(expression: str, globals_dict: dict = None) -> Any:
+def safe_eval(expression: str, globals_dict: dict[str, Any] | None = None) -> Any:
     """
     Safely evaluate an expression using AST parsing.
 

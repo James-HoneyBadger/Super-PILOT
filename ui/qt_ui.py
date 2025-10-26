@@ -301,6 +301,16 @@ class QtTextWidget(TextWidget):
         # Enable line numbers and syntax highlighting
         self.highlighter = TimeWarpSyntaxHighlighter(self.widget.document())
 
+    @property
+    def widget(self) -> QPlainTextEdit:
+        """Get the underlying widget"""
+        return self._widget
+
+    @widget.setter
+    def widget(self, widget: QPlainTextEdit) -> None:
+        """Set the underlying widget"""
+        self._widget = widget
+
     def show(self) -> None:
         self.widget.show()
 
@@ -531,6 +541,17 @@ class QtMainWindow(MainWindow):
 
         super().__init__(title, width, height)
 
+        # Initialize components first
+        self._menu_bar = None
+        self._status_bar = None
+        self._editor = None
+        self._output = None
+        self._canvas = None
+        self._variables_tree = None
+        self._run_button = None
+        self._stop_button = None
+        self._language_combo = None
+
         # Create main window
         self.window = QMainWindow()
         self.window.setWindowTitle(title)
@@ -584,14 +605,6 @@ class QtMainWindow(MainWindow):
 
         # Create central widget with modern layout
         self.setup_central_widget()
-
-        # Initialize components
-        self._menu_bar = None
-        self._status_bar = None
-        self._editor = None
-        self._output = None
-        self._canvas = None
-        self._variables_tree = None
 
     def setup_central_widget(self) -> None:
         """Set up the central widget with modern layout"""
@@ -662,20 +675,20 @@ class QtMainWindow(MainWindow):
         controls_layout = QHBoxLayout()
 
         # Language selector
-        self.language_combo = QComboBox()
-        self.language_combo.addItems(
+        self._language_combo = QComboBox()
+        self._language_combo.addItems(
             ["PILOT", "BASIC", "Logo", "Python", "JavaScript", "Perl"]
         )
-        self.language_combo.setCurrentText("PILOT")
-        self.language_combo.setMaximumWidth(120)
+        self._language_combo.setCurrentText("PILOT")
+        self._language_combo.setMaximumWidth(120)
         controls_layout.addWidget(QLabel("Language:"))
-        controls_layout.addWidget(self.language_combo)
+        controls_layout.addWidget(self._language_combo)
 
         controls_layout.addStretch()
 
         # Run button
-        self.run_button = QPushButton("▶ Run")
-        self.run_button.setStyleSheet(
+        self._run_button = QPushButton("▶ Run")
+        self._run_button.setStyleSheet(
             """
             QPushButton {
                 background-color: #4caf50;
@@ -693,11 +706,11 @@ class QtMainWindow(MainWindow):
             }
         """
         )
-        controls_layout.addWidget(self.run_button)
+        controls_layout.addWidget(self._run_button)
 
         # Stop button
-        self.stop_button = QPushButton("⏹ Stop")
-        self.stop_button.setStyleSheet(
+        self._stop_button = QPushButton("⏹ Stop")
+        self._stop_button.setStyleSheet(
             """
             QPushButton {
                 background-color: #f44336;
@@ -715,7 +728,7 @@ class QtMainWindow(MainWindow):
             }
         """
         )
-        controls_layout.addWidget(self.stop_button)
+        controls_layout.addWidget(self._stop_button)
 
         editor_layout.addLayout(controls_layout)
 
@@ -855,6 +868,46 @@ class QtMainWindow(MainWindow):
     @property
     def canvas(self) -> Optional[QtCanvasWidget]:
         return self._canvas
+
+    @property
+    def window(self) -> QMainWindow:
+        """Get the underlying QMainWindow"""
+        return self._window
+
+    @window.setter
+    def window(self, window: QMainWindow) -> None:
+        """Set the underlying QMainWindow"""
+        self._window = window
+
+    @property
+    def run_button(self) -> QPushButton:
+        """Get run button widget"""
+        return self._run_button
+
+    @run_button.setter
+    def run_button(self, button: QPushButton) -> None:
+        """Set run button widget"""
+        self._run_button = button
+
+    @property
+    def stop_button(self) -> QPushButton:
+        """Get stop button widget"""
+        return self._stop_button
+
+    @stop_button.setter
+    def stop_button(self, button: QPushButton) -> None:
+        """Set stop button widget"""
+        self._stop_button = button
+
+    @property
+    def language_combo(self) -> QComboBox:
+        """Get language combo box widget"""
+        return self._language_combo
+
+    @language_combo.setter
+    def language_combo(self, combo: QComboBox) -> None:
+        """Set language combo box widget"""
+        self._language_combo = combo
 
 
 class QtUIApplication(UIApplication):
