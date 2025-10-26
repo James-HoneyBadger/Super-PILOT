@@ -7,6 +7,23 @@ A complete redesign using PySide6 for modern, responsive UI components.
 
 import sys
 import os
+import subprocess
+
+# Ensure required packages are installed
+REQUIRED_PACKAGES = ["PySide6", "Pillow"]
+missing = []
+for pkg in REQUIRED_PACKAGES:
+    try:
+        __import__(pkg if pkg != "Pillow" else "PIL")
+    except ImportError:
+        missing.append(pkg)
+if missing:
+    print(f"❌ Missing required packages: {', '.join(missing)}")
+    print("Attempting to install missing packages...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install"] + missing)
+    print("✅ Packages installed. Please re-run the IDE.")
+    sys.exit(1)
+
 from typing import Optional, Dict, Any, List
 from pathlib import Path
 
@@ -32,5 +49,3 @@ if not PYSIDE6_AVAILABLE:
 
 from PySide6.QtWidgets import QApplication, QMessageBox, QFileDialog, QInputDialog
 from PySide6.QtCore import QTimer, Qt
-
-# ...existing code truncated for brevity...
