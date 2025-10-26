@@ -72,29 +72,13 @@ class SafeExpressionEvaluator:
         # Operations
         ast.BinOp,
         ast.UnaryOp,
+        ast.BoolOp,  # and, or operations
         ast.Compare,
         # Function calls
         ast.Call,
         # Expression containers
         ast.Expression,
         ast.Module,
-        # Operators (these are also nodes in ast.walk)
-        ast.Add,
-        ast.Sub,
-        ast.Mult,
-        ast.Div,
-        ast.FloorDiv,
-        ast.Mod,
-        ast.Pow,
-        ast.UAdd,
-        ast.USub,
-        ast.Not,
-        ast.Eq,
-        ast.NotEq,
-        ast.Lt,
-        ast.LtE,
-        ast.Gt,
-        ast.GtE,
         # Context nodes
         ast.Load,
         ast.Store,
@@ -125,6 +109,11 @@ class SafeExpressionEvaluator:
         ast.LtE,
         ast.Gt,
         ast.GtE,
+    }
+
+    ALLOWED_BOOLOP_OPERATORS = {
+        ast.And,
+        ast.Or,
     }
 
     def __init__(self):
@@ -178,7 +167,11 @@ class SafeExpressionEvaluator:
             ValueError: If forbidden operations are found
         """
         for child in ast.walk(node):
-            if type(child) not in self.ALLOWED_NODES:
+            # Skip operator objects - they are validated in their parent nodes
+            if isinstance(child, (ast.operator, ast.unaryop, ast.cmpop, ast.boolop)):
+                continue
+
+            if isinstance(child, ast.AST) and type(child) not in self.ALLOWED_NODES:
                 raise ValueError(f"Forbidden operation: {type(child).__name__}")
 
             # Additional validation for specific node types
@@ -193,6 +186,11 @@ class SafeExpressionEvaluator:
                 if type(child.op) not in self.ALLOWED_UNARYOP_OPERATORS:
                     raise ValueError(
                         f"Forbidden unary operator: {type(child.op).__name__}"
+                    )
+            elif isinstance(child, ast.BoolOp):
+                if type(child.op) not in self.ALLOWED_BOOLOP_OPERATORS:
+                    raise ValueError(
+                        f"Forbidden boolean operator: {type(child.op).__name__}"
                     )
             elif isinstance(child, ast.Compare):
                 for op in child.ops:
@@ -241,6 +239,9 @@ class SafeExpressionEvaluator:
             left = self._evaluate_ast(node.left)
             right = self._evaluate_ast(node.right)
             return self._apply_binop(node.op, left, right)
+        elif isinstance(node, ast.BoolOp):
+            values = [self._evaluate_ast(value) for value in node.values]
+            return self._apply_boolop(node.op, values)
         elif isinstance(node, ast.UnaryOp):
             operand = self._evaluate_ast(node.operand)
             return self._apply_unaryop(node.op, operand)
@@ -274,6 +275,17 @@ class SafeExpressionEvaluator:
             return left**right
         else:
             raise ValueError(f"Unsupported binary operator: {type(op).__name__}")
+
+    def _apply_boolop(self, op: ast.boolop, values: list) -> bool:
+        """Apply a boolean operation."""
+        if isinstance(op, ast.And):
+            # All values must be truthy
+            return all(values)
+        elif isinstance(op, ast.Or):
+            # At least one value must be truthy
+            return any(values)
+        else:
+            raise ValueError(f"Unsupported boolean operator: {type(op).__name__}")
 
     def _apply_unaryop(self, op: ast.unaryop, operand: Any) -> Any:
         """Apply a unary operation."""
