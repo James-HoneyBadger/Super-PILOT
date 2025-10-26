@@ -9,6 +9,19 @@ import math
 import re
 import time
 from datetime import datetime
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    Callable,
+    Set,
+    Type,
+    cast,
+    TYPE_CHECKING,
+)
 
 # Import plugin system
 from core.plugin_system import PluginManager
@@ -16,28 +29,36 @@ from core.plugin_system import PluginManager
 # Import safe expression evaluator
 from core.safe_expression_evaluator import safe_eval
 
+# Import asyncio support
+from core.async_support import (
+    init_async_support,
+    shutdown_async_support,
+    AsyncInterpreterRunner,
+    get_async_runner,
+)
+
 
 class ArduinoController:
     """Arduino hardware controller with simulation support"""
 
-    def __init__(self, simulation_mode=True):
-        self.simulation_mode = simulation_mode
+    def __init__(self, simulation_mode: bool = True) -> None:
+        self.simulation_mode: bool = simulation_mode
 
 
 class RPiController:
     """Raspberry Pi hardware controller with simulation support"""
 
-    def __init__(self, simulation_mode=True):
-        self.simulation_mode = simulation_mode
+    def __init__(self, simulation_mode: bool = True) -> None:
+        self.simulation_mode: bool = simulation_mode
 
 
 class AudioMixer:
     """Audio mixer for playing sounds with play/aplay support"""
 
-    def __init__(self):
-        self.registry = {}  # name -> path
-        self.has_play = self._has_exe("play")
-        self.has_aplay = self._has_exe("aplay")
+    def __init__(self) -> None:
+        self.registry: Dict[str, str] = {}  # name -> path
+        self.has_play: bool = self._has_exe("play")
+        self.has_aplay: bool = self._has_exe("aplay")
 
     def _has_exe(self, name: str) -> bool:
         import os
@@ -48,18 +69,22 @@ class AudioMixer:
                 return True
         return False
 
-    def register_sound(self, name, path):
+    def register_sound(self, name: str, path: str) -> None:
         """Register a sound file with a name"""
         self.registry[name] = path
 
-    def play_sound(self, name):
+    def play_sound(self, name: str) -> None:
         """Play a registered sound"""
         path = self.registry.get(name)
         if not path:
             return
         if self.has_play:
+            import os
+
             os.system(f"play -q {path}")
         elif self.has_aplay and path.lower().endswith(".wav"):
+            import os
+
             os.system(f"aplay -q {path}")
         else:
             # Fallback: system bell
@@ -4507,6 +4532,9 @@ class TimeWarpIDE:
         # Apply a friendly theme and fonts
         self.setup_theme()
 
+        # Initialize asyncio support
+        init_async_support()
+
         # Initialize interpreter
         self.interpreter = TimeWarpInterpreter()
 
@@ -4880,14 +4908,42 @@ class TimeWarpIDE:
         pass
 
     def run_program(self):
-        """Run the program in the editor"""
+        """Run the program in the editor using asyncio for non-blocking execution"""
         try:
             code = self.editor.get(1.0, tk.END).strip()
             if code:
                 self.interpreter.reset()
                 self.output_text.delete(1.0, tk.END)
-                self.interpreter.execute_program(code)
-                self.update_variables_display()
+
+                # Split code into lines for async execution
+                program_lines = [
+                    line.strip() for line in code.split("\n") if line.strip()
+                ]
+
+                # Create async interpreter runner
+                runner = get_async_runner()
+                async_runner = AsyncInterpreterRunner(
+                    self.interpreter.__class__, runner
+                )
+
+                # Run program asynchronously
+                async def run_async():
+                    try:
+                        result = await async_runner.execute_program_async(
+                            program_lines, self.interpreter.variables.copy()
+                        )
+                        # Update variables after execution
+                        self.interpreter.variables.update(result.get("variables", {}))
+                        self.update_variables_display()
+                        self.status_bar.config(text="Program completed successfully")
+                    except Exception as e:
+                        self.log_output(f"Async execution error: {e}")
+                        self.status_bar.config(text="Program execution failed")
+
+                # Schedule the async task
+                runner.run_async(run_async())
+                self.status_bar.config(text="Program running...")
+
         except Exception as e:
             messagebox.showerror("Error", f"Failed to run program: {e}")
 

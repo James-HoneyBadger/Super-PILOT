@@ -1,0 +1,164 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "time-warp-ide"
+version = "2.0.0"
+description = "Educational programming IDE supporting multiple languages with turtle graphics"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "James HoneyBadger", email = "contact@timewarpide.com"},
+]
+maintainers = [
+    {name = "Time Warp IDE Team"},
+]
+keywords = ["education", "programming", "ide", "turtle-graphics", "pil", "basic", "logo"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Education",
+    "Topic :: Software Development :: Interpreters",
+]
+dependencies = [
+    "pillow>=10.0.0",
+    "setuptools>=61.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "pytest-xdist>=3.0.0",
+    "pytest-html>=3.1.0",
+    "pytest-benchmark>=4.0.0",
+    "flake8>=6.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+    "memory-profiler>=0.60.0",
+    "psutil>=5.9.0",
+    "responses>=0.23.0",
+    "factory-boy>=3.2.0",
+    "freezegun>=1.2.0",
+    "sphinx>=6.0.0",
+    "sphinx-rtd-theme>=1.2.0",
+]
+qt = [
+    "PyQt6>=6.5.0",
+    "PyQt6-Qt6>=6.5.0",
+]
+pyside = [
+    "PySide6>=6.5.0",
+]
+
+[project.scripts]
+time-warp = "Time_Warp:main"
+timewarp = "Time_Warp:main"
+
+[project.urls]
+Homepage = "https://github.com/James-HoneyBadger/Time_Warp"
+Documentation = "https://timewarpide.readthedocs.io/"
+Repository = "https://github.com/James-HoneyBadger/Time_Warp.git"
+Issues = "https://github.com/James-HoneyBadger/Time_Warp/issues"
+Changelog = "https://github.com/James-HoneyBadger/Time_Warp/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+packages = ["core", "plugins", "tools", "tests"]
+package-dir = {"" = "."}
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.md", "*.txt"]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["core", "plugins", "tools"]
+skip = ["__init__.py"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = [
+    "PIL.*",
+    "tkinter.*",
+    "setuptools.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --cov=core --cov-report=html --cov-report=term-missing"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[tool.coverage.run]
+source = ["core", "Time_Warp"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "setup.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

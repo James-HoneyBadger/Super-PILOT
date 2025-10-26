@@ -5,5 +5,5 @@
     "author": "Time Warp IDE Team",
     "plugin_type": "integration",
     "dependencies": [],
-    "entry_point": "sample_integration_plugin.py"
+    "entry_point": "sample_integration_plugin"
 }
