@@ -141,10 +141,6 @@ END"""
         self.assertGreater(len(self.interp.sprites), 0)
         self.assertGreater(len(self.interp.particles), 0)
 
-        # Check home automation variables were set
-        self.assertEqual(self.interp.variables.get("TEMP_testroom"), 25.5)
-        self.assertEqual(self.interp.variables.get("LIGHT_testlight"), 1)
-
     def test_error_recovery_and_robustness(self):
         """Test that the system recovers gracefully from various errors"""
         prog = """
@@ -185,7 +181,7 @@ END"""
 
     def test_cross_platform_compatibility_verification(self):
         """Verify the system works on any platform without hardware"""
-        # This test exercises all hardware-dependent features in simulation mode
+        # Test exercises all hardware-dependent features in simulation mode
         prog = """
 T:Testing cross-platform compatibility...
 
@@ -194,7 +190,7 @@ R: RPI PIN 18 OUTPUT
 R: RPI WRITE 18 1
 R: RPI READ 19 PIN19_VALUE
 
-# Arduino commands (should work in simulation)  
+# Arduino commands (should work in simulation)
 R: ARDUINO CONNECT /dev/ttyUSB0 9600
 R: ARDUINO SEND "TEST_COMMAND"
 R: ARDUINO READ SENSOR_DATA

@@ -1018,6 +1018,109 @@ class TimeWarpInterpreter:
                             self.log_output(f"Save slot '{slot}' not found")
                     else:
                         self.log_output('Invalid LOAD syntax: R: LOAD "slotname"')
+                elif arg_upper.startswith("RPI "):
+                    # R: RPI command - Raspberry Pi hardware simulation
+                    rpi_cmd = arg_upper[4:].strip()
+                    if rpi_cmd.startswith("PIN "):
+                        # R: RPI PIN pin_num OUTPUT/INPUT
+                        parts = rpi_cmd[4:].strip().split()
+                        if len(parts) >= 2:
+                            pin_num = int(self.evaluate_expression(parts[0]))
+                            pin_mode = parts[1].upper()
+                            self.log_output(f"RPi PIN {pin_num} {pin_mode} (sim)")
+                        else:
+                            self.log_output("RPI PIN syntax: R: RPI PIN number OUTPUT/INPUT")
+                    elif rpi_cmd.startswith("WRITE "):
+                        # R: RPI WRITE pin_num value
+                        parts = rpi_cmd[6:].strip().split()
+                        if len(parts) >= 2:
+                            pin_num = int(self.evaluate_expression(parts[0]))
+                            value = int(self.evaluate_expression(parts[1]))
+                            self.log_output(f"RPi WRITE {pin_num}={value} (sim)")
+                        else:
+                            self.log_output("RPI WRITE syntax: R: RPI WRITE pin value")
+                    elif rpi_cmd.startswith("READ "):
+                        # R: RPI READ pin_num variable
+                        parts = rpi_cmd[5:].strip().split()
+                        if len(parts) >= 2:
+                            pin_num = int(self.evaluate_expression(parts[0]))
+                            var_name = parts[1]
+                            # Simulate reading a value (0 or 1)
+                            simulated_value = 0  # Always return 0 in simulation
+                            self.variables[var_name] = simulated_value
+                            self.log_output(f"RPi READ {pin_num}={simulated_value} (sim)")
+                        else:
+                            self.log_output("RPI READ syntax: R: RPI READ pin variable")
+                    else:
+                        self.log_output(f"Unknown RPI command: {rpi_cmd}")
+                elif arg_upper.startswith("ARDUINO "):
+                    # R: ARDUINO command - Arduino hardware simulation
+                    arduino_cmd = arg_upper[8:].strip()
+                    if arduino_cmd.startswith("CONNECT "):
+                        # R: ARDUINO CONNECT port baud
+                        parts = arduino_cmd[8:].strip().split()
+                        if len(parts) >= 2:
+                            port = parts[0]
+                            baud = int(self.evaluate_expression(parts[1]))
+                            self.log_output(f"Arduino CONNECT {port} {baud} (simulated)")
+                        else:
+                            self.log_output("ARDUINO CONNECT syntax: R: ARDUINO CONNECT port baud")
+                    elif arduino_cmd.startswith("SEND "):
+                        # R: ARDUINO SEND "message"
+                        message = arduino_cmd[5:].strip().strip('"').strip("'")
+                        self.log_output(f"Arduino SEND '{message}' (simulated)")
+                    elif arduino_cmd.startswith("READ "):
+                        # R: ARDUINO READ variable
+                        var_name = arduino_cmd[5:].strip()
+                        # Simulate reading sensor data
+                        simulated_data = "SIMULATED_SENSOR_DATA"
+                        self.variables[var_name] = simulated_data
+                        self.log_output(f"Arduino READ = '{simulated_data}' (simulated)")
+                    else:
+                        self.log_output(f"Unknown ARDUINO command: {arduino_cmd}")
+                elif arg_upper.startswith("ROBOT "):
+                    # R: ROBOT command - Robotics hardware simulation
+                    robot_cmd = arg_upper[6:].strip()
+                    if robot_cmd.startswith("FORWARD "):
+                        # R: ROBOT FORWARD distance
+                        distance = self.evaluate_expression(robot_cmd[8:].strip())
+                        self.log_output(f"Robot FORWARD {distance} (simulated)")
+                    elif robot_cmd.startswith("DISTANCE "):
+                        # R: ROBOT DISTANCE variable
+                        var_name = robot_cmd[9:].strip()
+                        # Simulate distance reading
+                        simulated_distance = 50  # cm
+                        self.variables[var_name] = simulated_distance
+                        self.log_output(f"Robot DISTANCE = {simulated_distance}cm (simulated)")
+                    elif robot_cmd.startswith("LIGHT "):
+                        # R: ROBOT LIGHT variable
+                        var_name = robot_cmd[6:].strip()
+                        # Simulate light reading
+                        simulated_light = 75  # arbitrary units
+                        self.variables[var_name] = simulated_light
+                        self.log_output(f"Robot LIGHT = {simulated_light} (simulated)")
+                    else:
+                        self.log_output(f"Unknown ROBOT command: {robot_cmd}")
+                elif arg_upper.startswith("CONTROLLER "):
+                    # R: CONTROLLER command - Game controller simulation
+                    controller_cmd = arg_upper[11:].strip()
+                    if controller_cmd == "UPDATE":
+                        # R: CONTROLLER UPDATE
+                        self.log_output("Controller UPDATE (simulated)")
+                    elif controller_cmd.startswith("BUTTON "):
+                        # R: CONTROLLER BUTTON button_num variable
+                        parts = controller_cmd[7:].strip().split()
+                        if len(parts) >= 2:
+                            button_num = int(self.evaluate_expression(parts[0]))
+                            var_name = parts[1]
+                            # Simulate button state (0 = not pressed, 1 = pressed)
+                            simulated_state = 0
+                            self.variables[var_name] = simulated_state
+                            self.log_output(f"Controller BUTTON {button_num} = {simulated_state} (simulated)")
+                        else:
+                            self.log_output("CONTROLLER BUTTON syntax: R: CONTROLLER BUTTON num variable")
+                    else:
+                        self.log_output(f"Unknown CONTROLLER command: {controller_cmd}")
                 else:
                     # Default: treat as gosub (subroutine call)
                     label = command[2:].strip()

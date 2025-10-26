@@ -585,10 +585,7 @@ impl TimeWarpApp {
             ui.set_width(ui.available_width());
 
             let lines: Vec<String> = self.code.lines().map(|s| s.to_string()).collect();
-            let breakpoints = self
-                .breakpoints
-                .entry(filename.to_string())
-                .or_insert_with(Vec::new);
+            let breakpoints = self.breakpoints.entry(filename.to_string()).or_default();
 
             for (line_idx, line) in lines.iter().enumerate() {
                 ui.horizontal(|ui| {

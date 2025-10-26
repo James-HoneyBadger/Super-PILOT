@@ -82,12 +82,10 @@ impl Interpreter {
 
             match result {
                 Some(special_result) => {
-                    if special_result == "END" {
+                    if special_result == "END" || special_result == "STOP" {
                         break;
-                    } else if special_result == "STOP" {
-                        break;
-                    } else if special_result.starts_with("GOTO ") {
-                        if let Ok(line_num) = special_result[5..].parse::<usize>() {
+                    } else if let Some(line_str) = special_result.strip_prefix("GOTO ") {
+                        if let Ok(line_num) = line_str.parse::<usize>() {
                             if line_num < statements.len() {
                                 self.current_line = line_num;
                                 continue;
@@ -757,11 +755,7 @@ impl Interpreter {
             }
             _ => {
                 // Check for user-defined functions
-                let lookup_name = if name.starts_with("FN") {
-                    &name[2..] // Remove "FN" prefix
-                } else {
-                    name
-                };
+                let lookup_name = name.strip_prefix("FN").unwrap_or(name);
                 if let Some(func_def) = self.context.functions.get(lookup_name).cloned() {
                     self.call_user_function(&func_def, arguments)
                 } else {
@@ -934,7 +928,7 @@ impl Interpreter {
         };
 
         // Set the input variable if one is expected
-        if let Some(ref var_name) = self.context.input_variable.clone() {
+        if let Some(var_name) = &self.context.input_variable {
             let var_type = self.context.get_variable_type(&var_name);
             let converted_value = self.convert_value_to_variable_type(&parsed_value, &var_name)?;
             let var_info = self.context.get_variable(&var_name);
