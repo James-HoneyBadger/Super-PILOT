@@ -7,12 +7,14 @@ could connect to web services, databases, or other systems.
 """
 
 from typing import Dict, Any
-from core.plugin_system import IntegrationPlugin
+from core.plugin_system import IntegrationPlugin, PluginAPI, PluginMetadata
 
 
 class SampleIntegrationPlugin(IntegrationPlugin):
-    """Sample integration plugin that demonstrates external
-    service integration."""
+    """Sample integration plugin that demonstrates external service integration."""
+
+    def __init__(self, api: PluginAPI, metadata: PluginMetadata):
+        super().__init__(api, metadata)
 
     def get_integrations(self) -> Dict[str, Any]:
         """Return integration configurations."""
