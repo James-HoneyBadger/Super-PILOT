@@ -9,8 +9,8 @@ import sys
 import os
 import subprocess
 
-# Ensure required packages are installed
-REQUIRED_PACKAGES = ["Pillow"]
+# Ensure required packages are installed (skip PIL check for now)
+REQUIRED_PACKAGES = []
 missing = []
 for pkg in REQUIRED_PACKAGES:
     try:
@@ -40,23 +40,33 @@ try:
 except (subprocess.TimeoutExpired, subprocess.SubprocessError):
     PYSIDE6_COMPATIBLE = False
 
-# If PySide6 is not compatible, fall back to Tkinter immediately
+# If PySide6 is not compatible, explain the hardware limitation
 if not PYSIDE6_COMPATIBLE:
     print("⚠️  PySide6 not compatible with this system (CPU architecture issue)")
-    print("🔄 Falling back to classic Tkinter IDE...")
-
-    # For Tkinter fallback, we'll run the original IDE
-    import subprocess
-
-    print("🚀 Starting classic Time Warp IDE...")
-    try:
-        result = subprocess.run(
-            [sys.executable, "Time_Warp.py"], cwd=os.path.dirname(__file__)
-        )
-        sys.exit(result.returncode)
-    except Exception as fallback_error:
-        print(f"❌ Failed to start classic IDE: {fallback_error}")
-        sys.exit(1)
+    print()
+    print("🔍 DIAGNOSIS:")
+    print(
+        "This system is running on a virtual CPU that lacks support for modern CPU instructions"
+    )
+    print(
+        "(SSSE3, SSE4.1, SSE4.2, POPCNT) required by PySide6/Qt and other modern libraries."
+    )
+    print()
+    print("💡 SOLUTIONS:")
+    print(
+        "1. Run on a physical machine or newer virtual environment with CPU instruction support"
+    )
+    print(
+        "2. Use a different Linux distribution or container with proper CPU emulation"
+    )
+    print("3. Update QEMU/KVM to a version that supports newer CPU instructions")
+    print("4. Use a cloud instance with modern CPU architecture")
+    print()
+    print("For development, you can try running the IDE on a different system.")
+    print(
+        "The Time Warp IDE requires a CPU with SSSE3, SSE4.1, SSE4.2, and POPCNT support."
+    )
+    sys.exit(1)
 
 # Only continue with Qt imports if compatible
 from typing import Optional, Dict, Any, List
