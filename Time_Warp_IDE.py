@@ -117,6 +117,10 @@ class ModernTimeWarpIDE:
             f"Time Warp IDE - {UI_BACKEND} Edition", 1400, 900
         )
 
+        # Set up attributes required by PluginAPI
+        self.ui = self.window  # Main window for plugin UI access
+        self.config = {}  # Simple config dictionary for plugins
+
         # Initialize interpreter
         self.interpreter = TimeWarpInterpreter()
 
