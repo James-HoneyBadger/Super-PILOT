@@ -214,6 +214,8 @@ class TimeWarpInterpreter:
         # Internal flag: set when a Y: or N: was the last command to allow
         # the immediately following T: to be treated as conditional.
         self._last_match_set: bool = False
+        # Stored condition from C: command for Y: and N: to use
+        self.stored_condition: Optional[bool] = None
         self.running: bool = False
         self.debug_mode: bool = False
         self.breakpoints: set = set()
@@ -899,15 +901,35 @@ class TimeWarpInterpreter:
                         self.variables[var_name] = value
                     return "continue"
 
-                case "Y:":
-                    # Match if condition is true
+                case "C:":
+                    # Compute condition for later use by Y: or N:
                     condition = command[2:].strip()
                     try:
                         result = self.evaluate_expression(condition)
-                        self.match_flag = bool(result)
+                        self.stored_condition = bool(result)
                     except Exception as e:
-                        self.match_flag = False
-                        self.log_output(f"Error in Y: condition '{condition}': {e}")
+                        self.stored_condition = False
+                        self.log_output(f"Error in C: condition '{condition}': {e}")
+                    return "continue"
+
+                case "Y:":
+                    # Match if condition is true
+                    condition = command[2:].strip()
+                    if condition:
+                        # Y: has its own condition - evaluate it directly
+                        try:
+                            result = self.evaluate_expression(condition)
+                            self.match_flag = bool(result)
+                        except Exception as e:
+                            self.match_flag = False
+                            self.log_output(f"Error in Y: condition '{condition}': {e}")
+                    else:
+                        # Y: without condition - use stored condition from C:
+                        if self.stored_condition is not None:
+                            self.match_flag = self.stored_condition
+                            self.stored_condition = None  # Consume the stored condition
+                        else:
+                            self.match_flag = False
                     # mark that the last command set the match flag so a following T: can be conditional
                     self._last_match_set = True
                     return "continue"
@@ -915,17 +937,26 @@ class TimeWarpInterpreter:
                 case "N:":
                     # Match if condition is false
                     condition = command[2:].strip()
-                    try:
-                        result = self.evaluate_expression(condition)
-                        # N: treat like a plain conditional (match when the condition is TRUE).
-                        # Many existing examples and tests use N: as an alternate test
-                        # rather than the logical negation of Y:, so keep it as a standard
-                        # conditional that sets the match flag to the evaluated result.
-                        self.match_flag = bool(result)
-                    except Exception as e:
-                        # On error, default to no match
-                        self.match_flag = False
-                        self.log_output(f"Error in N: condition '{condition}': {e}")
+                    if condition:
+                        # N: has its own condition - evaluate it directly
+                        try:
+                            result = self.evaluate_expression(condition)
+                            # N: treat like a plain conditional (match when the condition is TRUE).
+                            # Many existing examples and tests use N: as an alternate test
+                            # rather than the logical negation of Y:, so keep it as a standard
+                            # conditional that sets the match flag to the evaluated result.
+                            self.match_flag = bool(result)
+                        except Exception as e:
+                            # On error, default to no match
+                            self.match_flag = False
+                            self.log_output(f"Error in N: condition '{condition}': {e}")
+                    else:
+                        # N: without condition - use stored condition from C:
+                        if self.stored_condition is not None:
+                            self.match_flag = self.stored_condition
+                            self.stored_condition = None  # Consume the stored condition
+                        else:
+                            self.match_flag = False
                     # mark that the last command set the match flag so a following T: can be conditional
                     self._last_match_set = True
                     return "continue"
