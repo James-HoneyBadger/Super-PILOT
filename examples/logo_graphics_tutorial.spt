@@ -1,0 +1,220 @@
+REM Logo Graphics Tutorial - Step by Step
+PRINT "🎨 Logo Graphics Tutorial 🎨"
+PRINT "Step-by-step guide to learning Logo turtle graphics"
+PRINT
+
+LET STEP = 1
+
+L:TUTORIAL_LOOP
+IF STEP = 1 THEN GOSUB 1000  ' Introduction
+IF STEP = 2 THEN GOSUB 1100  ' First Drawing
+IF STEP = 3 THEN GOSUB 1200  ' Movement Commands
+IF STEP = 4 THEN GOSUB 1300  ' Pen Control
+IF STEP = 5 THEN GOSUB 1400  ' Shapes
+IF STEP = 6 THEN GOSUB 1500  ' Complex Patterns
+IF STEP = 7 THEN GOSUB 1600  ' Quiz
+IF STEP = 8 THEN GOTO 2000   ' Complete
+
+PRINT "Press Enter to continue to next step..."
+INPUT CONTINUE$
+LET STEP = STEP + 1
+GOTO 100
+
+REM Step 1: Introduction
+1000 PRINT "=== Step 1: Introduction to Logo Graphics ==="
+PRINT
+PRINT "Logo is famous for its turtle graphics system."
+PRINT "Imagine a turtle with a pen that draws as it moves!"
+PRINT
+PRINT "The turtle understands commands like:"
+PRINT "FORWARD - move forward"
+PRINT "RIGHT - turn right"
+PRINT "PENUP - lift the pen"
+PRINT "PENDOWN - lower the pen"
+PRINT
+PRINT "Logo makes programming visual and fun!"
+PRINT
+RETURN
+
+REM Step 2: First Drawing
+1100 PRINT "=== Step 2: Your First Logo Drawing ==="
+PRINT
+PRINT "Let's draw a simple line. Type this program:"
+PRINT
+PRINT "FORWARD 100"
+PRINT
+PRINT "Commands explained:"
+PRINT "FORWARD 100 - move the turtle forward 100 units"
+PRINT "The turtle draws a line as it moves!"
+PRINT
+PRINT "Try running this and see what happens."
+PRINT "The turtle starts at the center of the screen."
+PRINT
+RETURN
+
+REM Step 3: Movement Commands
+1200 PRINT "=== Step 3: Movement and Turning ==="
+PRINT
+PRINT "The turtle can move in different directions."
+PRINT
+PRINT "Complete movement example:"
+PRINT
+PRINT "FORWARD 50"
+PRINT "RIGHT 90"
+PRINT "FORWARD 50"
+PRINT "RIGHT 90"
+PRINT "FORWARD 50"
+PRINT "RIGHT 90"
+PRINT "FORWARD 50"
+PRINT
+PRINT "Movement commands:"
+PRINT "FORWARD n (or FD n) - move forward n units"
+PRINT "BACK n (or BK n) - move backward n units"
+PRINT "RIGHT n (or RT n) - turn right n degrees"
+PRINT "LEFT n (or LT n) - turn left n degrees"
+PRINT
+PRINT "This draws a square! Try changing the numbers."
+PRINT
+RETURN
+
+REM Step 4: Pen Control
+1300 PRINT "=== Step 4: Controlling the Pen ==="
+PRINT
+PRINT "You can lift and lower the pen to control drawing."
+PRINT
+PRINT "Pen control example:"
+PRINT
+PRINT "FORWARD 50"
+PRINT "PENUP"
+PRINT "FORWARD 50"
+PRINT "PENDOWN"
+PRINT "FORWARD 50"
+PRINT
+PRINT "Pen commands:"
+PRINT "PENUP (or PU) - lift pen, stop drawing"
+PRINT "PENDOWN (or PD) - lower pen, start drawing"
+PRINT "CLEARSCREEN (or CS) - clear screen"
+PRINT "HOME - return turtle to center, facing up"
+PRINT
+PRINT "This creates a dashed line effect!"
+PRINT
+RETURN
+
+REM Step 5: Shapes
+1400 PRINT "=== Step 5: Drawing Shapes ==="
+PRINT
+PRINT "Using loops to draw regular shapes."
+PRINT
+PRINT "Triangle:"
+PRINT "REPEAT 3 [FORWARD 100 RIGHT 120]"
+PRINT
+PRINT "Square:"
+PRINT "REPEAT 4 [FORWARD 100 RIGHT 90]"
+PRINT
+PRINT "Pentagon:"
+PRINT "REPEAT 5 [FORWARD 80 RIGHT 72]"
+PRINT
+PRINT "Hexagon:"
+PRINT "REPEAT 6 [FORWARD 70 RIGHT 60]"
+PRINT
+PRINT "REPEAT command:"
+PRINT "REPEAT n [commands] - repeat commands n times"
+PRINT "Commands in brackets [] are repeated together"
+PRINT
+PRINT "Try drawing different shapes by changing the numbers!"
+PRINT
+RETURN
+
+REM Step 6: Complex Patterns
+1500 PRINT "=== Step 6: Complex Patterns and Procedures ==="
+PRINT
+PRINT "Logo can create beautiful complex patterns."
+PRINT
+PRINT "Spiral pattern:"
+PRINT "REPEAT 50 [FORWARD REPCOUNT * 2 RIGHT 15]"
+PRINT
+PRINT "Star pattern:"
+PRINT "REPEAT 5 [FORWARD 100 RIGHT 144]"
+PRINT
+PRINT "Nested pattern:"
+PRINT "REPEAT 8 ["
+PRINT "  REPEAT 4 [FORWARD 50 RIGHT 90]"
+PRINT "  RIGHT 45"
+PRINT "]"
+PRINT
+PRINT "REPCOUNT - current repetition number (1, 2, 3...)"
+PRINT "Nested REPEAT - loops inside loops"
+PRINT
+PRINT "Procedures for reusable code:"
+PRINT "TO SQUARE"
+PRINT "  REPEAT 4 [FORWARD 100 RIGHT 90]"
+PRINT "END"
+PRINT
+PRINT "SQUARE (calls the procedure)"
+PRINT
+RETURN
+
+REM Step 7: Quiz
+1600 PRINT "=== Step 7: Graphics Knowledge Check ==="
+PRINT
+PRINT "Let's test your Logo graphics knowledge!"
+PRINT
+LET QUIZ_SCORE = 0
+
+PRINT "Question 1: What does FORWARD do?"
+PRINT "A) Turn the turtle"
+PRINT "B) Move the turtle forward"
+PRINT "C) Lift the pen"
+INPUT "Your answer (A/B/C): "; Q1$
+IF Q1$ = "B" THEN LET QUIZ_SCORE = QUIZ_SCORE + 1
+
+PRINT "Question 2: How do you stop drawing temporarily?"
+PRINT "A) STOP"
+PRINT "B) PENUP"
+PRINT "C) CLEAR"
+INPUT "Your answer (A/B/C): "; Q2$
+IF Q2$ = "B" THEN LET QUIZ_SCORE = QUIZ_SCORE + 1
+
+PRINT "Question 3: What does RIGHT 90 do?"
+PRINT "A) Move right 90 units"
+PRINT "B) Turn right 90 degrees"
+PRINT "C) Draw a right angle"
+INPUT "Your answer (A/B/C): "; Q3$
+IF Q3$ = "B" THEN LET QUIZ_SCORE = QUIZ_SCORE + 1
+
+PRINT "Question 4: How do you repeat commands?"
+PRINT "A) LOOP [commands]"
+PRINT "B) REPEAT n [commands]"
+PRINT "C) AGAIN [commands]"
+INPUT "Your answer (A/B/C): "; Q4$
+IF Q4$ = "B" THEN LET QUIZ_SCORE = QUIZ_SCORE + 1
+
+PRINT
+PRINT "Quiz complete! Score:"; QUIZ_SCORE; "/4"
+
+IF QUIZ_SCORE = 4 THEN PRINT "Perfect! You're a Logo graphics master! 🏆"
+IF QUIZ_SCORE = 3 THEN PRINT "Excellent! Great graphics skills! 🎨"
+IF QUIZ_SCORE >= 2 THEN PRINT "Good job! Keep creating art! 👍"
+IF QUIZ_SCORE = 1 THEN PRINT "Not bad! Practice more shapes! 📐"
+IF QUIZ_SCORE = 0 THEN PRINT "Keep drawing! You can do it! ✏️"
+
+PRINT
+RETURN
+
+REM Tutorial Complete
+2000 PRINT "🎉 Logo Graphics Tutorial Complete! 🎉"
+PRINT
+PRINT "You have learned:"
+PRINT "✓ Turtle graphics concepts"
+PRINT "✓ Movement and turning commands"
+PRINT "✓ Pen control (up/down)"
+PRINT "✓ Drawing basic shapes"
+PRINT "✓ Creating complex patterns"
+PRINT "✓ Using REPEAT loops"
+PRINT "✓ Writing procedures"
+PRINT
+PRINT "Ready for advanced Logo? Try the Logo Art tutorial!"
+PRINT
+PRINT "Press Enter to exit..."
+INPUT EXIT$
+END

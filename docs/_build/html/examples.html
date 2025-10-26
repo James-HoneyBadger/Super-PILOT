@@ -1,0 +1,757 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; Time Warp IDE 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer Guide" href="developer_guide.html" />
+    <link rel="prev" title="Tutorials" href="tutorials.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Time Warp IDE
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html">Language Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#pilot-language">PILOT Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#basic-language">BASIC Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#logo-language">Logo Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#built-in-functions">Built-in Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#operators">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#pilot-tutorials">PILOT Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#basic-tutorials">BASIC Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#logo-tutorials">Logo Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#advanced-tutorials">Advanced Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#exercises">Exercises</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#pilot-examples">PILOT Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hello-world-program">Hello World Program</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactive-quiz">Interactive Quiz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#math-calculator">Math Calculator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#basic-examples">BASIC Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#number-guessing-game">Number Guessing Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#temperature-converter">Temperature Converter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simple-database">Simple Database</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#logo-examples">Logo Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#geometric-shapes">Geometric Shapes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#square">Square</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#triangle">Triangle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#circle">Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#star">Star</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#complex-patterns">Complex Patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spiral">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flower">Flower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#artistic-patterns">Artistic Patterns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#mixed-language-examples">Mixed Language Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#graphics-calculator">Graphics Calculator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactive-drawing-program">Interactive Drawing Program</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#educational-examples">Educational Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#multiplication-quiz">Multiplication Quiz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#math-visualization">Math Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#running-the-examples">Running the Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#modifying-examples">Modifying Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#architecture-overview">Architecture Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#development-setup">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#development-workflow">Development Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#adding-new-languages">Adding New Languages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#plugin-development">Plugin Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#theme-development">Theme Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#game-development">Game Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#api-reference">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#contributing">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#building-and-distribution">Building and Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#troubleshooting-development-issues">Troubleshooting Development Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#performance-optimization">Performance Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#future-development">Future Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#community-and-support">Community and Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#license">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#installation-issues">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#runtime-issues">Runtime Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#program-execution-issues">Program Execution Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#plugin-issues">Plugin Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#performance-issues">Performance Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#debugging-issues">Debugging Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#getting-help">Getting Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#system-information">System Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#configuration">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#advanced-troubleshooting">Advanced Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#hardware-specific-issues">Hardware-Specific Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#preventive-maintenance">Preventive Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#emergency-recovery">Emergency Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#contact-support">Contact Support</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Time Warp IDE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
+<p>This section showcases comprehensive example programs that demonstrate Time Warp IDE’s capabilities. Each example includes the complete source code and explanations.</p>
+</section>
+<section id="pilot-examples">
+<h1>PILOT Examples<a class="headerlink" href="#pilot-examples" title="Link to this heading"></a></h1>
+<section id="hello-world-program">
+<h2>Hello World Program<a class="headerlink" href="#hello-world-program" title="Link to this heading"></a></h2>
+<p>A simple introduction to PILOT programming.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L:START
+T:********************************
+T:*   Welcome to Time Warp IDE   *
+T:*     PILOT Programming        *
+T:********************************
+T:
+T:This is your first PILOT program!
+T:Programs are made of commands that start with letters.
+T:
+T:T: means &quot;Type&quot; - display text
+T:L: means &quot;Label&quot; - mark a location
+T:END means &quot;End&quot; - stop the program
+END
+</pre></div>
+</div>
+<p><strong>Features demonstrated:</strong></p>
+<ul class="simple">
+<li><p>Text output with <code class="docutils literal notranslate"><span class="pre">T:</span></code> command</p></li>
+<li><p>Program structure with labels</p></li>
+<li><p>Simple sequential execution</p></li>
+</ul>
+</section>
+<section id="interactive-quiz">
+<h2>Interactive Quiz<a class="headerlink" href="#interactive-quiz" title="Link to this heading"></a></h2>
+<p>An interactive quiz program that demonstrates input and conditional logic.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L:QUIZ_START
+T:Welcome to the PILOT Quiz!
+T:Let&#39;s test your knowledge.
+T:
+T:Question 1: What does PILOT stand for?
+T:A) Programmed Instruction, Learning, Or Teaching
+T:B) Personal Interactive Learning Online Tool
+T:C) Programming In Logical Order Theory
+T:
+A:ANSWER1
+Y:*ANSWER1*=A
+M:CORRECT1
+T:Sorry, that&#39;s not correct. The answer is A.
+J:QUESTION2
+L:CORRECT1
+T:Correct! PILOT stands for Programmed Instruction, Learning, Or Teaching.
+T:
+L:QUESTION2
+T:Question 2: Which command displays text in PILOT?
+T:A) D:text
+T:B) T:text
+T:C) S:text
+T:
+A:ANSWER2
+Y:*ANSWER2*=B
+M:CORRECT2
+T:Incorrect. The correct answer is B.
+J:END_QUIZ
+L:CORRECT2
+T:Excellent! T: is the command for displaying text.
+T:
+L:END_QUIZ
+T:Quiz complete! Thank you for playing.
+END
+</pre></div>
+</div>
+<p><strong>Features demonstrated:</strong></p>
+<ul class="simple">
+<li><p>User input with <code class="docutils literal notranslate"><span class="pre">A:</span></code> command</p></li>
+<li><p>Conditional testing with <code class="docutils literal notranslate"><span class="pre">Y:</span></code> and <code class="docutils literal notranslate"><span class="pre">N:</span></code></p></li>
+<li><p>Program flow control with <code class="docutils literal notranslate"><span class="pre">J:</span></code> and <code class="docutils literal notranslate"><span class="pre">M:</span></code></p></li>
+<li><p>Labels for organizing program sections</p></li>
+</ul>
+</section>
+<section id="math-calculator">
+<h2>Math Calculator<a class="headerlink" href="#math-calculator" title="Link to this heading"></a></h2>
+<p>A calculator program showing mathematical operations and variable usage.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>L:CALCULATOR
+T:*******************************
+T:*    PILOT Math Calculator    *
+T:*******************************
+T:
+T:Enter first number:
+A:NUM1
+T:Enter second number:
+A:NUM2
+T:
+U:SUM=*NUM1*+*NUM2*
+U:DIFFERENCE=*NUM1*-*NUM2*
+U:PRODUCT=*NUM1***NUM2*
+U:QUOTIENT=*NUM1*/*NUM2*
+T:
+T:Results:
+T:*NUM1* + *NUM2* = *SUM*
+T:*NUM1* - *NUM2* = *DIFFERENCE*
+T:*NUM1* × *NUM2* = *PRODUCT*
+T:*NUM1* ÷ *NUM2* = *QUOTIENT*
+T:
+T:Thank you for using the calculator!
+END
+</pre></div>
+</div>
+<p><strong>Features demonstrated:</strong></p>
+<ul class="simple">
+<li><p>Mathematical operations in expressions</p></li>
+<li><p>Variable assignment with <code class="docutils literal notranslate"><span class="pre">U:</span></code></p></li>
+<li><p>Complex text output with variable interpolation</p></li>
+<li><p>Calculator-style program structure</p></li>
+</ul>
+</section>
+</section>
+<section id="basic-examples">
+<h1>BASIC Examples<a class="headerlink" href="#basic-examples" title="Link to this heading"></a></h1>
+<section id="number-guessing-game">
+<h2>Number Guessing Game<a class="headerlink" href="#number-guessing-game" title="Link to this heading"></a></h2>
+<p>An interactive game demonstrating loops, conditionals, and random numbers.</p>
+<div class="highlight-basic notranslate"><div class="highlight"><pre><span></span><span class="nl">10</span><span class="w"> </span><span class="c1">REM Number Guessing Game</span>
+<span class="nl">20</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Welcome to the Number Guessing Game!&quot;</span>
+<span class="nl">30</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;I&#39;m thinking of a number between 1 and 100.&quot;</span>
+<span class="nl">40</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">SECRET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kr">INT</span><span class="p">(</span><span class="kr">RND</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="il">100</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="il">1</span>
+<span class="nl">50</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">GUESSES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">0</span>
+<span class="nl">60</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Take a guess:&quot;</span>
+<span class="nl">70</span><span class="w"> </span><span class="kr">INPUT</span><span class="w"> </span><span class="vg">GUESS</span>
+<span class="nl">80</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">GUESSES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vg">GUESSES</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="il">1</span>
+<span class="nl">90</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">GUESS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vg">SECRET</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">130</span>
+<span class="nl">100</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">GUESS</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="vg">SECRET</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Too low! Try again:&quot;</span>
+<span class="nl">110</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">GUESS</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="vg">SECRET</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Too high! Try again:&quot;</span>
+<span class="nl">120</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">70</span>
+<span class="nl">130</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Congratulations! You got it in&quot;</span><span class="p">;</span><span class="w"> </span><span class="vg">GUESSES</span><span class="p">;</span><span class="w"> </span><span class="s2">&quot;guesses.&quot;</span>
+<span class="nl">140</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Play again? (Y/N):&quot;</span>
+<span class="nl">150</span><span class="w"> </span><span class="kr">INPUT</span><span class="w"> </span><span class="vg">CHOICE$</span>
+<span class="nl">160</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">CHOICE$</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Y&quot;</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">20</span>
+<span class="nl">170</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Thanks for playing!&quot;</span>
+<span class="nl">180</span><span class="w"> </span><span class="kr">END</span>
+</pre></div>
+</div>
+<p><strong>Features demonstrated:</strong></p>
+<ul class="simple">
+<li><p>Random number generation with <code class="docutils literal notranslate"><span class="pre">RND()</span></code></p></li>
+<li><p>Loop structures with <code class="docutils literal notranslate"><span class="pre">GOTO</span></code></p></li>
+<li><p>Conditional logic with <code class="docutils literal notranslate"><span class="pre">IF...THEN</span></code></p></li>
+<li><p>User input and output</p></li>
+<li><p>Game-like program flow</p></li>
+</ul>
+</section>
+<section id="temperature-converter">
+<h2>Temperature Converter<a class="headerlink" href="#temperature-converter" title="Link to this heading"></a></h2>
+<p>A utility program for temperature conversions with a table display.</p>
+<div class="highlight-basic notranslate"><div class="highlight"><pre><span></span><span class="nl">10</span><span class="w"> </span><span class="c1">REM Temperature Conversion Program</span>
+<span class="nl">20</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Temperature Conversion Table&quot;</span>
+<span class="nl">30</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Celsius    Fahrenheit&quot;</span>
+<span class="nl">40</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;--------   ----------&quot;</span>
+<span class="nl">50</span><span class="w"> </span><span class="kr">FOR</span><span class="w"> </span><span class="vg">C</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">0</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="il">100</span><span class="w"> </span><span class="k">STEP</span><span class="w"> </span><span class="il">10</span>
+<span class="nl">60</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">F</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vg">C</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="il">9</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="il">5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="il">32</span>
+<span class="nl">70</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="vg">C</span><span class="p">;</span><span class="w"> </span><span class="s2">&quot;         &quot;</span><span class="p">;</span><span class="w"> </span><span class="vg">F</span>
+<span class="nl">80</span><span class="w"> </span><span class="kr">NEXT</span><span class="w"> </span><span class="vg">C</span>
+<span class="nl">90</span><span class="w"> </span><span class="kr">PRINT</span>
+<span class="nl">100</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Interactive Conversion&quot;</span>
+<span class="nl">110</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Enter temperature in Celsius:&quot;</span>
+<span class="nl">120</span><span class="w"> </span><span class="kr">INPUT</span><span class="w"> </span><span class="vg">CELSIUS</span>
+<span class="nl">130</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">FAHRENHEIT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vg">CELSIUS</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="il">9</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="il">5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="il">32</span>
+<span class="nl">140</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="vg">CELSIUS</span><span class="p">;</span><span class="w"> </span><span class="s2">&quot;°C = &quot;</span><span class="p">;</span><span class="w"> </span><span class="vg">FAHRENHEIT</span><span class="p">;</span><span class="w"> </span><span class="s2">&quot;°F&quot;</span>
+<span class="nl">150</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Convert another? (Y/N):&quot;</span>
+<span class="nl">160</span><span class="w"> </span><span class="kr">INPUT</span><span class="w"> </span><span class="vg">AGAIN$</span>
+<span class="nl">170</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">AGAIN$</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Y&quot;</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">110</span>
+<span class="nl">180</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Goodbye!&quot;</span>
+<span class="nl">190</span><span class="w"> </span><span class="kr">END</span>
+</pre></div>
+</div>
+<p><strong>Features demonstrated:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FOR...NEXT</span></code> loops for iteration</p></li>
+<li><p>Mathematical calculations</p></li>
+<li><p>Formatted output with spacing</p></li>
+<li><p>Interactive user interface</p></li>
+<li><p>Program flow control</p></li>
+</ul>
+</section>
+<section id="simple-database">
+<h2>Simple Database<a class="headerlink" href="#simple-database" title="Link to this heading"></a></h2>
+<p>A basic data storage and retrieval system.</p>
+<div class="highlight-basic notranslate"><div class="highlight"><pre><span></span><span class="nl">10</span><span class="w"> </span><span class="c1">REM Simple Student Database</span>
+<span class="nl">20</span><span class="w"> </span><span class="kd">DIM</span><span class="w"> </span><span class="vg">NAMES$</span><span class="p">(</span><span class="il">100</span><span class="p">)</span>
+<span class="nl">30</span><span class="w"> </span><span class="kd">DIM</span><span class="w"> </span><span class="vg">SCORES</span><span class="p">(</span><span class="il">100</span><span class="p">)</span>
+<span class="nl">40</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">COUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">0</span>
+<span class="nl">50</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Student Database System&quot;</span>
+<span class="nl">60</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;1. Add Student&quot;</span>
+<span class="nl">70</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;2. List Students&quot;</span>
+<span class="nl">80</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;3. Search Student&quot;</span>
+<span class="nl">90</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;4. Exit&quot;</span>
+<span class="nl">100</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Choose option:&quot;</span>
+<span class="nl">110</span><span class="w"> </span><span class="kr">INPUT</span><span class="w"> </span><span class="vg">CHOICE</span>
+<span class="nl">120</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">CHOICE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">1</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">200</span>
+<span class="nl">130</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">CHOICE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">2</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">300</span>
+<span class="nl">140</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">CHOICE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">3</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">400</span>
+<span class="nl">150</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">CHOICE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">4</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">500</span>
+<span class="nl">160</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Invalid choice. Try again.&quot;</span>
+<span class="nl">170</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">50</span>
+<span class="nl">200</span><span class="w"> </span><span class="c1">REM Add Student</span>
+<span class="nl">210</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Enter student name:&quot;</span>
+<span class="nl">220</span><span class="w"> </span><span class="kr">INPUT</span><span class="w"> </span><span class="kr">NAME</span><span class="err">$</span>
+<span class="nl">230</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Enter score:&quot;</span>
+<span class="nl">240</span><span class="w"> </span><span class="kr">INPUT</span><span class="w"> </span><span class="vg">SCORE</span>
+<span class="nl">250</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">COUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vg">COUNT</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="il">1</span>
+<span class="nl">260</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">NAMES$</span><span class="p">(</span><span class="vg">COUNT</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kr">NAME</span><span class="err">$</span>
+<span class="nl">270</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">SCORES</span><span class="p">(</span><span class="vg">COUNT</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vg">SCORE</span>
+<span class="nl">280</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Student added!&quot;</span>
+<span class="nl">290</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">50</span>
+<span class="nl">300</span><span class="w"> </span><span class="c1">REM List Students</span>
+<span class="nl">310</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">COUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">0</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;No students in database.&quot;</span>
+<span class="nl">320</span><span class="w"> </span><span class="kr">FOR</span><span class="w"> </span><span class="vg">I</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">1</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="vg">COUNT</span>
+<span class="nl">330</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="vg">NAMES$</span><span class="p">(</span><span class="vg">I</span><span class="p">);</span><span class="w"> </span><span class="s2">&quot;: &quot;</span><span class="p">;</span><span class="w"> </span><span class="vg">SCORES</span><span class="p">(</span><span class="vg">I</span><span class="p">)</span>
+<span class="nl">340</span><span class="w"> </span><span class="kr">NEXT</span><span class="w"> </span><span class="vg">I</span>
+<span class="nl">350</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">50</span>
+<span class="nl">400</span><span class="w"> </span><span class="c1">REM Search Student</span>
+<span class="nl">410</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Enter name to search:&quot;</span>
+<span class="nl">420</span><span class="w"> </span><span class="kr">INPUT</span><span class="w"> </span><span class="vg">SEARCH$</span>
+<span class="nl">430</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">FOUND</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">0</span>
+<span class="nl">440</span><span class="w"> </span><span class="kr">FOR</span><span class="w"> </span><span class="vg">I</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">1</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="vg">COUNT</span>
+<span class="nl">450</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">NAMES$</span><span class="p">(</span><span class="vg">I</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vg">SEARCH$</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kd">LET</span><span class="w"> </span><span class="vg">FOUND</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vg">I</span>
+<span class="nl">460</span><span class="w"> </span><span class="kr">NEXT</span><span class="w"> </span><span class="vg">I</span>
+<span class="nl">470</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">FOUND</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="il">0</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Student not found.&quot;</span>
+<span class="nl">480</span><span class="w"> </span><span class="kr">IF</span><span class="w"> </span><span class="vg">FOUND</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="il">0</span><span class="w"> </span><span class="kr">THEN</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="vg">NAMES$</span><span class="p">(</span><span class="vg">FOUND</span><span class="p">);</span><span class="w"> </span><span class="s2">&quot;: &quot;</span><span class="p">;</span><span class="w"> </span><span class="vg">SCORES</span><span class="p">(</span><span class="vg">FOUND</span><span class="p">)</span>
+<span class="nl">490</span><span class="w"> </span><span class="kr">GOTO</span><span class="w"> </span><span class="nl">50</span>
+<span class="nl">500</span><span class="w"> </span><span class="kr">PRINT</span><span class="w"> </span><span class="s2">&quot;Goodbye!&quot;</span>
+<span class="nl">510</span><span class="w"> </span><span class="kr">END</span>
+</pre></div>
+</div>
+<p><strong>Features demonstrated:</strong></p>
+<ul class="simple">
+<li><p>Arrays for data storage (<code class="docutils literal notranslate"><span class="pre">DIM</span></code>)</p></li>
+<li><p>Menu-driven interface</p></li>
+<li><p>Data search and retrieval</p></li>
+<li><p>Multiple program sections</p></li>
+<li><p>Complex conditional logic</p></li>
+</ul>
+</section>
+</section>
+<section id="logo-examples">
+<h1>Logo Examples<a class="headerlink" href="#logo-examples" title="Link to this heading"></a></h1>
+<section id="geometric-shapes">
+<h2>Geometric Shapes<a class="headerlink" href="#geometric-shapes" title="Link to this heading"></a></h2>
+<p>Programs that draw various geometric shapes using turtle graphics.</p>
+<section id="square">
+<h3>Square<a class="headerlink" href="#square" title="Link to this heading"></a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CLEARSCREEN
+PENDOWN
+FORWARD 100
+RIGHT 90
+FORWARD 100
+RIGHT 90
+FORWARD 100
+RIGHT 90
+FORWARD 100
+RIGHT 90
+PENUP
+HOME
+</pre></div>
+</div>
+</section>
+<section id="triangle">
+<h3>Triangle<a class="headerlink" href="#triangle" title="Link to this heading"></a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CLEARSCREEN
+PENDOWN
+FORWARD 100
+RIGHT 120
+FORWARD 100
+RIGHT 120
+FORWARD 100
+RIGHT 120
+PENUP
+HOME
+</pre></div>
+</div>
+</section>
+<section id="circle">
+<h3>Circle<a class="headerlink" href="#circle" title="Link to this heading"></a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CLEARSCREEN
+PENDOWN
+FOR I = 1 TO 36
+FORWARD 8.7
+RIGHT 10
+NEXT I
+PENUP
+HOME
+</pre></div>
+</div>
+</section>
+<section id="star">
+<h3>Star<a class="headerlink" href="#star" title="Link to this heading"></a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CLEARSCREEN
+PENDOWN
+FOR I = 1 TO 5
+FORWARD 100
+RIGHT 144
+NEXT I
+PENUP
+HOME
+</pre></div>
+</div>
+</section>
+</section>
+<section id="complex-patterns">
+<h2>Complex Patterns<a class="headerlink" href="#complex-patterns" title="Link to this heading"></a></h2>
+<section id="spiral">
+<h3>Spiral<a class="headerlink" href="#spiral" title="Link to this heading"></a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CLEARSCREEN
+PENDOWN
+FOR I = 1 TO 100
+FORWARD I * 2
+RIGHT 15
+NEXT I
+PENUP
+HOME
+</pre></div>
+</div>
+</section>
+<section id="flower">
+<h3>Flower<a class="headerlink" href="#flower" title="Link to this heading"></a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CLEARSCREEN
+FOR PETAL = 1 TO 6
+PENDOWN
+FOR I = 1 TO 30
+FORWARD I * 0.5
+RIGHT 6
+NEXT I
+PENUP
+RIGHT 60
+NEXT PETAL
+HOME
+</pre></div>
+</div>
+</section>
+<section id="artistic-patterns">
+<h3>Artistic Patterns<a class="headerlink" href="#artistic-patterns" title="Link to this heading"></a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>CLEARSCREEN
+FOR PATTERN = 1 TO 3
+PENDOWN
+FOR I = 1 TO 50
+FORWARD I
+RIGHT 91
+NEXT I
+PENUP
+RIGHT 120
+NEXT PATTERN
+HOME
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="mixed-language-examples">
+<h1>Mixed Language Examples<a class="headerlink" href="#mixed-language-examples" title="Link to this heading"></a></h1>
+<section id="graphics-calculator">
+<h2>Graphics Calculator<a class="headerlink" href="#graphics-calculator" title="Link to this heading"></a></h2>
+<p>Combines BASIC calculations with Logo graphics to visualize functions.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REM Graphics Calculator - Plot y = x^2
+LET SCALE = 10
+PRINT &quot;Plotting y = x^2&quot;
+PRINT &quot;Scale factor:&quot;; SCALE
+
+CLEARSCREEN
+PENUP
+SETXY -200 0
+PENDOWN
+FORWARD 400  &#39; Draw x-axis
+PENUP
+SETXY 0 -200
+PENDOWN
+RIGHT 90
+FORWARD 400  &#39; Draw y-axis
+RIGHT 90
+
+REM Plot the function
+PENUP
+FOR X = -20 TO 20
+LET Y = X * X
+SETXY X * SCALE Y * SCALE / 10
+IF X = -20 THEN PENDOWN
+NEXT X
+
+PENUP
+HOME
+END
+</pre></div>
+</div>
+</section>
+<section id="interactive-drawing-program">
+<h2>Interactive Drawing Program<a class="headerlink" href="#interactive-drawing-program" title="Link to this heading"></a></h2>
+<p>A program that lets users create drawings interactively.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REM Interactive Drawing Program
+PRINT &quot;Interactive Drawing Program&quot;
+PRINT &quot;Commands: F=forward, B=back, L=left, R=right, C=clear, Q=quit&quot;
+
+CLEARSCREEN
+PENDOWN
+
+L:MAIN_LOOP
+PRINT &quot;Enter command (F/B/L/R number or C or Q):&quot;
+INPUT CMD$
+
+Y:*CMD*=Q
+J:QUIT
+
+Y:*CMD*=C
+M:CLEAR_CMD
+
+REM Parse movement commands
+LET DIR = MID(CMD$, 1, 1)
+LET DIST = VAL(MID(CMD$, 2, LEN(CMD$) - 1))
+
+Y:*DIR*=F
+M:FORWARD_CMD
+
+Y:*DIR*=B
+M:BACK_CMD
+
+Y:*DIR*=L
+M:LEFT_CMD
+
+Y:*DIR*=R
+M:RIGHT_CMD
+
+T:Invalid command. Try again.
+J:MAIN_LOOP
+
+L:FORWARD_CMD
+FORWARD DIST
+J:MAIN_LOOP
+
+L:BACK_CMD
+BACK DIST
+J:MAIN_LOOP
+
+L:LEFT_CMD
+LEFT DIST
+J:MAIN_LOOP
+
+L:RIGHT_CMD
+RIGHT DIST
+J:MAIN_LOOP
+
+L:CLEAR_CMD
+CLEARSCREEN
+PENDOWN
+J:MAIN_LOOP
+
+L:QUIT
+PRINT &quot;Thanks for drawing!&quot;
+END
+</pre></div>
+</div>
+</section>
+</section>
+<section id="educational-examples">
+<h1>Educational Examples<a class="headerlink" href="#educational-examples" title="Link to this heading"></a></h1>
+<section id="multiplication-quiz">
+<h2>Multiplication Quiz<a class="headerlink" href="#multiplication-quiz" title="Link to this heading"></a></h2>
+<p>An educational program that teaches multiplication tables.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REM Multiplication Quiz
+LET SCORE = 0
+LET QUESTIONS = 0
+
+PRINT &quot;Multiplication Quiz!&quot;
+PRINT &quot;Answer as many as you can. Enter 0 to quit.&quot;
+PRINT
+
+L:QUIZ_LOOP
+LET A = INT(RND() * 12) + 1
+LET B = INT(RND() * 12) + 1
+LET ANSWER = A * B
+
+PRINT A; &quot;×&quot;; B; &quot;= ?&quot;;
+INPUT GUESS
+
+IF GUESS = 0 THEN GOTO 200
+
+LET QUESTIONS = QUESTIONS + 1
+
+IF GUESS = ANSWER THEN GOTO 150
+PRINT &quot;Incorrect. The answer is&quot;; ANSWER
+GOTO 160
+
+150 PRINT &quot;Correct!&quot;
+155 LET SCORE = SCORE + 1
+
+160 PRINT &quot;Score:&quot;; SCORE; &quot;/&quot;; QUESTIONS
+170 PRINT
+180 GOTO 100
+
+200 PRINT &quot;Quiz complete!&quot;
+210 PRINT &quot;Final score:&quot;; SCORE; &quot;/&quot;; QUESTIONS
+220 LET PERCENT = INT(SCORE / QUESTIONS * 100)
+230 PRINT &quot;Percentage:&quot;; PERCENT; &quot;%&quot;
+240 END
+</pre></div>
+</div>
+</section>
+<section id="math-visualization">
+<h2>Math Visualization<a class="headerlink" href="#math-visualization" title="Link to this heading"></a></h2>
+<p>Uses Logo graphics to visualize mathematical concepts.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>REM Math Visualization - Number Patterns
+PRINT &quot;Mathematical Pattern Visualization&quot;
+
+CLEARSCREEN
+FOR ROW = 1 TO 10
+FOR COL = 1 TO 10
+LET PRODUCT = ROW * COL
+PENUP
+SETXY (COL - 5) * 20 (ROW - 5) * 20
+PENDOWN
+IF PRODUCT &lt; 25 THEN FORWARD 5
+IF PRODUCT &gt;= 25 AND PRODUCT &lt; 50 THEN FORWARD 10
+IF PRODUCT &gt;= 50 AND PRODUCT &lt; 75 THEN FORWARD 15
+IF PRODUCT &gt;= 75 THEN FORWARD 20
+PENUP
+NEXT COL
+NEXT ROW
+
+HOME
+END
+</pre></div>
+</div>
+</section>
+</section>
+<section id="running-the-examples">
+<h1>Running the Examples<a class="headerlink" href="#running-the-examples" title="Link to this heading"></a></h1>
+<p>To run any of these examples:</p>
+<ol class="arabic simple">
+<li><p>Start Time Warp IDE</p></li>
+<li><p>Create a new file (Ctrl+N)</p></li>
+<li><p>Copy and paste the example code</p></li>
+<li><p>Select the appropriate language if prompted</p></li>
+<li><p>Click Run (F5) or use the debugger (F6)</p></li>
+</ol>
+<p>The examples are also available in the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> directory of your Time Warp IDE installation.</p>
+</section>
+<section id="modifying-examples">
+<h1>Modifying Examples<a class="headerlink" href="#modifying-examples" title="Link to this heading"></a></h1>
+<p>Feel free to modify these examples to:</p>
+<ul class="simple">
+<li><p>Change colors and sizes</p></li>
+<li><p>Add more features</p></li>
+<li><p>Combine multiple examples</p></li>
+<li><p>Create your own variations</p></li>
+</ul>
+<p>Use the debugger to understand how the programs work and experiment with different values.</p>
+</section>
+<section id="next-steps">
+<h1>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h1>
+<p>After exploring these examples, you can:</p>
+<ul class="simple">
+<li><p>Create your own programs using similar techniques</p></li>
+<li><p>Combine elements from different examples</p></li>
+<li><p>Check the <a class="reference internal" href="tutorials.html"><span class="doc">Tutorials</span></a> for step-by-step learning</p></li>
+<li><p>Refer to the <a class="reference internal" href="language_reference.html"><span class="doc">Language Reference</span></a> for detailed command information</p></li>
+<li><p>Explore the <a class="reference internal" href="api_reference.html"><span class="doc">API Reference</span></a> for advanced programming</p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="developer_guide.html" class="btn btn-neutral float-right" title="Developer Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Honey Badger Universe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

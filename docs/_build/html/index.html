@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Warp IDE Documentation &mdash; Time Warp IDE 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Time Warp IDE
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html">Language Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#pilot-language">PILOT Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#basic-language">BASIC Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#logo-language">Logo Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#built-in-functions">Built-in Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#operators">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#pilot-tutorials">PILOT Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#basic-tutorials">BASIC Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#logo-tutorials">Logo Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#advanced-tutorials">Advanced Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#exercises">Exercises</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#pilot-examples">PILOT Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#basic-examples">BASIC Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#logo-examples">Logo Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#mixed-language-examples">Mixed Language Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#educational-examples">Educational Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#running-the-examples">Running the Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#modifying-examples">Modifying Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#architecture-overview">Architecture Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#development-setup">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#development-workflow">Development Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#adding-new-languages">Adding New Languages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#plugin-development">Plugin Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#theme-development">Theme Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#game-development">Game Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#api-reference">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#contributing">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#building-and-distribution">Building and Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#troubleshooting-development-issues">Troubleshooting Development Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#performance-optimization">Performance Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#future-development">Future Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#community-and-support">Community and Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#license">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#installation-issues">Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#runtime-issues">Runtime Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#program-execution-issues">Program Execution Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#plugin-issues">Plugin Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#performance-issues">Performance Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#debugging-issues">Debugging Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#getting-help">Getting Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#system-information">System Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#configuration">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#advanced-troubleshooting">Advanced Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#hardware-specific-issues">Hardware-Specific Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#preventive-maintenance">Preventive Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#emergency-recovery">Emergency Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#contact-support">Contact Support</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Time Warp IDE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Time Warp IDE Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="time-warp-ide-documentation">
+<h1>Time Warp IDE Documentation<a class="headerlink" href="#time-warp-ide-documentation" title="Link to this heading"></a></h1>
+<p>Welcome to the comprehensive documentation for Time Warp IDE, an educational programming environment supporting PILOT, BASIC, and Logo languages with integrated turtle graphics.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#first-run">First Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#your-first-program">Your First Program</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#language-selection">Language Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#language-reference">Language Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#advanced-features">Advanced Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#example-programs">Example Programs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#keyboard-shortcuts">Keyboard Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#file-formats">File Formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#system-requirements">System Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html">Language Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#pilot-language">PILOT Language</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#command-reference">Command Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#basic-language">BASIC Language</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#id1">Command Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#logo-language">Logo Language</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#id2">Command Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#built-in-functions">Built-in Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#mathematical-functions">Mathematical Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#string-functions">String Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="language_reference.html#operators">Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#arithmetic-operators">Arithmetic Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#comparison-operators">Comparison Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#logical-operators">Logical Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_reference.html#string-operators">String Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#module-Time_Warp">Core Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#plugin-system">Plugin System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#module-tools.theme">Tools and Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#game-engine">Game Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#pilot-tutorials">PILOT Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-1-hello-world">Tutorial 1: Hello World</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-2-variables-and-input">Tutorial 2: Variables and Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-3-simple-math">Tutorial 3: Simple Math</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#basic-tutorials">BASIC Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-1-number-crunching">Tutorial 1: Number Crunching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-2-user-input">Tutorial 2: User Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-3-looping">Tutorial 3: Looping</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#logo-tutorials">Logo Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-1-first-steps">Tutorial 1: First Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-2-pen-control">Tutorial 2: Pen Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#tutorial-3-shapes-and-patterns">Tutorial 3: Shapes and Patterns</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#advanced-tutorials">Advanced Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#mixed-language-programming">Mixed Language Programming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#debugging-tutorial">Debugging Tutorial</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#exercises">Exercises</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#beginner-exercises">Beginner Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#intermediate-exercises">Intermediate Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials.html#advanced-exercises">Advanced Exercises</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#pilot-examples">PILOT Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#hello-world-program">Hello World Program</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#interactive-quiz">Interactive Quiz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#math-calculator">Math Calculator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#basic-examples">BASIC Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#number-guessing-game">Number Guessing Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#temperature-converter">Temperature Converter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#simple-database">Simple Database</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#logo-examples">Logo Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#geometric-shapes">Geometric Shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#complex-patterns">Complex Patterns</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#mixed-language-examples">Mixed Language Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#graphics-calculator">Graphics Calculator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#interactive-drawing-program">Interactive Drawing Program</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#educational-examples">Educational Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#multiplication-quiz">Multiplication Quiz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#math-visualization">Math Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#running-the-examples">Running the Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#modifying-examples">Modifying Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#architecture-overview">Architecture Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#core-components">Core Components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#development-setup">Development Setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#setting-up-development-environment">Setting Up Development Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#development-workflow">Development Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#code-style">Code Style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#version-control">Version Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#testing">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#adding-new-languages">Adding New Languages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#plugin-development">Plugin Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#creating-plugins">Creating Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#plugin-structure">Plugin Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#installing-plugins">Installing Plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#theme-development">Theme Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#creating-themes">Creating Themes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#game-development">Game Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#using-the-game-engine">Using the Game Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#api-reference">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#contributing">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#contribution-guidelines">Contribution Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#code-review-process">Code Review Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#reporting-issues">Reporting Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#building-and-distribution">Building and Distribution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#building-for-distribution">Building for Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#packaging-requirements">Packaging Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#cross-platform-considerations">Cross-Platform Considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#troubleshooting-development-issues">Troubleshooting Development Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#common-issues">Common Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#debugging-tips">Debugging Tips</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#performance-optimization">Performance Optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#identifying-bottlenecks">Identifying Bottlenecks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#optimization-techniques">Optimization Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#memory-management">Memory Management</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#future-development">Future Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#planned-features">Planned Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#architecture-improvements">Architecture Improvements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#community-and-support">Community and Support</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#getting-help">Getting Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#contributing-to-documentation">Contributing to Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide.html#code-of-conduct">Code of Conduct</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html#license">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#installation-issues">Installation Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#python-not-found">Python Not Found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#tkinter-not-available">tkinter Not Available</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#missing-dependencies">Missing Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#permission-errors">Permission Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#runtime-issues">Runtime Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#program-won-t-start">Program Won’t Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#display-issues">Display Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#program-execution-issues">Program Execution Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#syntax-errors">Syntax Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#runtime-errors">Runtime Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#turtle-graphics-issues">Turtle Graphics Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#file-i-o-issues">File I/O Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#plugin-issues">Plugin Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#plugin-not-loading">Plugin Not Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#plugin-conflicts">Plugin Conflicts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#performance-issues">Performance Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#slow-program-execution">Slow Program Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#memory-issues">Memory Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#high-cpu-usage">High CPU Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#debugging-issues">Debugging Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#debugger-not-working">Debugger Not Working</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#watch-variables-empty">Watch Variables Empty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#error-messages">Error Messages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#getting-help">Getting Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#system-information">System Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#configuration">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#reset-configuration">Reset Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#backup-configuration">Backup Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#advanced-troubleshooting">Advanced Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#debug-mode">Debug Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#verbose-logging">Verbose Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#memory-profiling">Memory Profiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#performance-profiling">Performance Profiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#network-issues">Network Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#hardware-specific-issues">Hardware-Specific Issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#raspberry-pi">Raspberry Pi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#macos">macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#windows">Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#linux">Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#virtual-machines">Virtual Machines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#cloud-instances">Cloud Instances</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#preventive-maintenance">Preventive Maintenance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#regular-tasks">Regular Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#best-practices">Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#emergency-recovery">Emergency Recovery</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#complete-reset">Complete Reset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#data-recovery">Data Recovery</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html#contact-support">Contact Support</a></li>
+</ul>
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>Time Warp IDE is a comprehensive educational programming environment that supports three integrated programming languages:</p>
+<ul class="simple">
+<li><p><strong>PILOT</strong> - A teaching language designed for computer-assisted instruction</p></li>
+<li><p><strong>BASIC</strong> - Classic structured programming constructs</p></li>
+<li><p><strong>Logo</strong> - Turtle graphics and procedural programming</p></li>
+</ul>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Multi-Language Support</strong>: Write programs using PILOT, BASIC, and Logo commands in a single file</p></li>
+<li><p><strong>Interactive Graphics</strong>: Built-in turtle graphics with advanced drawing capabilities</p></li>
+<li><p><strong>Educational Focus</strong>: Designed for teaching programming concepts</p></li>
+<li><p><strong>Extensible Architecture</strong>: Plugin system for adding new languages and features</p></li>
+<li><p><strong>Debugging Tools</strong>: Step-through debugging and variable watching</p></li>
+<li><p><strong>Rich Examples</strong>: Comprehensive example programs for learning</p></li>
+</ul>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Install dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
+</pre></div>
+</div>
+</li>
+<li><p>Run the IDE:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>Time_Warp.py
+</pre></div>
+</div>
+</li>
+<li><p>Load an example program from the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> directory</p></li>
+<li><p>Click “Run” to execute your program</p></li>
+</ol>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Honey Badger Universe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

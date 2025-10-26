@@ -1,0 +1,76 @@
+REM Educational Math Quiz
+PRINT "Welcome to the Math Quiz!"
+PRINT "Test your knowledge of multiplication tables."
+PRINT
+
+LET SCORE = 0
+LET QUESTIONS = 0
+LET TOTAL_QUESTIONS = 10
+
+PRINT "You'll be asked"; TOTAL_QUESTIONS; "questions."
+PRINT "Enter 0 to quit at any time."
+PRINT
+
+L:QUIZ_LOOP
+IF QUESTIONS >= TOTAL_QUESTIONS THEN GOTO 500
+
+LET A = INT(RND() * 12) + 1
+LET B = INT(RND() * 12) + 1
+LET ANSWER = A * B
+LET QUESTIONS = QUESTIONS + 1
+
+PRINT "Question"; QUESTIONS; ":"
+PRINT A; "×"; B; "= ?";
+INPUT GUESS
+
+IF GUESS = 0 THEN GOTO 400
+IF GUESS = ANSWER THEN GOTO 200
+
+REM Wrong answer
+PRINT "Incorrect. The answer is"; ANSWER
+GOTO 300
+
+REM Correct answer
+200 PRINT "Correct! Well done."
+205 LET SCORE = SCORE + 1
+
+300 PRINT "Score:"; SCORE; "/"; QUESTIONS
+PRINT
+
+REM Show progress with simple bar chart
+PRINT "Progress: ";
+FOR I = 1 TO QUESTIONS
+  PRINT "█";
+NEXT I
+FOR I = QUESTIONS + 1 TO TOTAL_QUESTIONS
+  PRINT "░";
+NEXT I
+PRINT
+PRINT
+
+GOTO 100
+
+400 REM Quit early
+PRINT "Quiz ended early."
+GOTO 500
+
+500 REM Quiz complete
+PRINT
+PRINT "Quiz Complete!"
+PRINT "Final Score:"; SCORE; "/"; TOTAL_QUESTIONS
+LET PERCENTAGE = INT((SCORE / TOTAL_QUESTIONS) * 100)
+PRINT "Percentage:"; PERCENTAGE; "%"
+
+IF PERCENTAGE >= 90 THEN PRINT "Excellent! 🏆"
+IF PERCENTAGE >= 80 AND PERCENTAGE < 90 THEN PRINT "Great job! 👏"
+IF PERCENTAGE >= 70 AND PERCENTAGE < 80 THEN PRINT "Good work! 👍"
+IF PERCENTAGE >= 60 AND PERCENTAGE < 70 THEN PRINT "Keep practicing! 📚"
+IF PERCENTAGE < 60 THEN PRINT "Don't give up! 💪"
+
+PRINT
+PRINT "Would you like to try again? (Y/N):"
+INPUT AGAIN$
+IF AGAIN$ = "Y" OR AGAIN$ = "y" THEN GOTO 10
+
+PRINT "Thanks for playing!"
+END

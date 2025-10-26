@@ -1,0 +1,70 @@
+REM Simple Number Guessing Game
+PRINT "🎯 Welcome to the Number Guessing Game! 🎯"
+PRINT
+PRINT "I'm thinking of a number between 1 and 100."
+PRINT "Can you guess it?"
+PRINT
+
+LET SECRET = INT(RND() * 100) + 1
+LET GUESSES = 0
+LET MAX_GUESSES = 7
+
+PRINT "You have"; MAX_GUESSES; "guesses."
+PRINT "Enter 0 to quit."
+PRINT
+
+L:GAME_LOOP
+PRINT "Enter your guess:"
+INPUT GUESS
+
+IF GUESS = 0 THEN GOTO 300
+LET GUESSES = GUESSES + 1
+
+IF GUESS = SECRET THEN GOTO 200
+
+REM Check if too high or too low
+IF GUESS < SECRET THEN PRINT "Too low! 📉"
+IF GUESS > SECRET THEN PRINT "Too high! 📈"
+
+REM Show remaining guesses
+LET REMAINING = MAX_GUESSES - GUESSES
+IF REMAINING > 0 THEN PRINT "Guesses remaining:"; REMAINING
+
+REM Check if out of guesses
+IF GUESSES >= MAX_GUESSES THEN GOTO 400
+
+GOTO 100
+
+200 REM Player wins
+PRINT
+PRINT "🎉 Congratulations! You got it! 🎉"
+PRINT "The number was"; SECRET
+PRINT "You guessed it in"; GUESSES; "tries."
+
+REM Performance rating
+IF GUESSES = 1 THEN PRINT "Amazing! First try! 🏆"
+IF GUESSES <= 3 THEN PRINT "Excellent! 🥇"
+IF GUESSES <= 5 THEN PRINT "Good job! 🥈"
+IF GUESSES <= 7 THEN PRINT "Not bad! 🥉"
+
+GOTO 500
+
+300 REM Player quits
+PRINT "Thanks for playing! The number was"; SECRET
+END
+
+400 REM Player loses
+PRINT
+PRINT "😞 Sorry, you're out of guesses! 😞"
+PRINT "The number was"; SECRET
+PRINT "Better luck next time!"
+GOTO 500
+
+500 REM Play again?
+PRINT
+PRINT "Would you like to play again? (Y/N):"
+INPUT PLAY_AGAIN$
+IF PLAY_AGAIN$ = "Y" OR PLAY_AGAIN$ = "y" THEN GOTO 10
+
+PRINT "Thanks for playing!"
+END

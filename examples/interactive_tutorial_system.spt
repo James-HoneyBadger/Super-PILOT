@@ -1,0 +1,430 @@
+REM Time Warp Interactive Tutorial System
+PRINT "🎓 Time Warp Interactive Tutorial System 🎓"
+PRINT "Learn programming step by step with guided exercises"
+PRINT
+
+L:TUTORIAL_MENU
+T:=== Tutorial Menu ===
+T:Choose a tutorial to begin:
+T:1. PILOT Basics - Hello World
+T:2. PILOT Advanced - Variables & Logic
+T:3. BASIC Fundamentals - Numbers & Math
+T:4. BASIC Programming - Loops & Decisions
+T:5. Logo Graphics - Turtle Commands
+T:6. Logo Art - Procedures & Patterns
+T:7. Mixed Language - Combining Languages
+T:8. Game Development - Create Fun Games
+T:9. Exit Tutorials
+T:
+A:TUTORIAL_CHOICE
+Y:*TUTORIAL_CHOICE*=1
+J:PILOT_BASICS
+Y:*TUTORIAL_CHOICE*=2
+J:PILOT_ADVANCED
+Y:*TUTORIAL_CHOICE*=3
+J:BASIC_FUNDAMENTALS
+Y:*TUTORIAL_CHOICE*=4
+J:BASIC_PROGRAMMING
+Y:*TUTORIAL_CHOICE*=5
+J:LOGO_GRAPHICS
+Y:*TUTORIAL_CHOICE*=6
+J:LOGO_ART
+Y:*TUTORIAL_CHOICE*=7
+J:MIXED_LANGUAGE
+Y:*TUTORIAL_CHOICE*=8
+J:GAME_DEVELOPMENT
+Y:*TUTORIAL_CHOICE*=9
+J:EXIT_TUTORIALS
+T:Please choose 1-9.
+J:TUTORIAL_MENU
+
+L:PILOT_BASICS
+T:=== PILOT Basics Tutorial ===
+T:Lesson 1: Hello World Program
+T:
+T:In this tutorial, you'll learn the basic structure of PILOT programs.
+T:PILOT uses simple commands that start with letters.
+T:
+T:Key commands:
+T:T: - Type (display) text
+T:L: - Label (mark a location)
+T:A: - Accept (get user input)
+T:END - End the program
+T:
+T:Let's create your first program. Type this:
+T:
+T:T:Hello, World!
+T:T:This is my first PILOT program!
+T:END
+T:
+T:Now run the program and see what happens.
+T:
+T:Press Enter when you're ready to continue...
+INPUT READY1
+T:
+T:Great! You just created a simple PILOT program.
+T:The T: command displays text to the user.
+T:The END command tells the computer the program is finished.
+T:
+T:Now let's add user interaction. Try this program:
+T:
+T:T:What's your name?
+T:A:NAME
+T:T:Hello, *NAME*! Nice to meet you!
+T:END
+T:
+T:Run this program and enter your name when prompted.
+T:
+INPUT READY2
+T:
+T:Excellent! The A: command accepts input from the user.
+T:Variables store the input for later use.
+T:Use *VARIABLE* to display variable values in text.
+T:
+T:You've completed the PILOT Basics tutorial!
+T:Try the next tutorial for more advanced PILOT features.
+T:
+INPUT DUMMY1
+J:TUTORIAL_MENU
+
+L:PILOT_ADVANCED
+T:=== PILOT Advanced Tutorial ===
+T:Lesson 2: Variables, Math, and Logic
+T:
+T:This tutorial covers advanced PILOT features.
+T:
+T:Variables can store numbers and text:
+T:U:AGE=25
+T:U:NAME=John
+T:T:*NAME* is *AGE* years old.
+T:
+T:Mathematical operations:
+T:U:SUM=10+15
+T:U:PRODUCT=10*15
+T:U:QUOTIENT=100/5
+T:T:Sum: *SUM*, Product: *PRODUCT*, Quotient: *QUOTIENT*
+T:
+T:Conditional logic with Y: (Yes) and N: (No):
+T:Y:*AGE*>18
+T:T:You are an adult.
+T:N:*AGE*>18
+T:T:You are not an adult yet.
+T:
+T:Try creating a program that:
+T:1. Asks for your age
+T:2. Calculates your birth year (current year - age)
+T:3. Tells you if you're a teenager (13-19)
+T:
+T:Example structure:
+T:T:How old are you?
+T:A:AGE
+T:U:BIRTH_YEAR=2024-*AGE*
+T:T:You were born in *BIRTH_YEAR*.
+T:Y:*AGE*>=13
+T:Y:*AGE*<=19
+T:T:You are a teenager!
+T:END
+T:
+INPUT DUMMY2
+J:TUTORIAL_MENU
+
+L:BASIC_FUNDAMENTALS
+T:=== BASIC Fundamentals Tutorial ===
+T:Lesson 3: Numbers, Variables, and Math
+T:
+T:BASIC uses line numbers and familiar programming concepts.
+T:
+T:Basic structure:
+T:10 PRINT "Hello"
+T:20 END
+T:
+T:Variables in BASIC:
+T:LET X = 10
+T:LET NAME$ = "Alice"
+T:PRINT X
+T:PRINT NAME$
+T:
+T:Getting user input:
+T:INPUT "Enter your age: "; AGE
+T:PRINT "You are"; AGE; "years old."
+T:
+T:Mathematical operations:
+T:LET A = 15
+T:LET B = 25
+T:LET SUM = A + B
+T:LET PRODUCT = A * B
+T:PRINT "Sum:"; SUM
+T:PRINT "Product:"; PRODUCT
+T:
+T:Try this calculator program:
+T:10 PRINT "Simple Calculator"
+T:20 INPUT "First number: "; A
+T:30 INPUT "Second number: "; B
+T:40 PRINT "Sum:"; A + B
+T:50 PRINT "Difference:"; A - B
+T:60 PRINT "Product:"; A * B
+T:70 PRINT "Quotient:"; A / B
+T:80 END
+T:
+INPUT DUMMY3
+J:TUTORIAL_MENU
+
+L:BASIC_PROGRAMMING
+T:=== BASIC Programming Tutorial ===
+T:Lesson 4: Loops and Decision Making
+T:
+T:BASIC supports loops and conditional execution.
+T:
+T:FOR loops repeat code a specific number of times:
+T:FOR I = 1 TO 5
+T:PRINT "Count:"; I
+T:NEXT I
+T:
+T:Conditional execution with IF-THEN:
+T:IF SCORE >= 90 THEN PRINT "Grade: A"
+T:IF SCORE >= 80 AND SCORE < 90 THEN PRINT "Grade: B"
+T:
+T:GOTO jumps to line numbers:
+T:10 PRINT "Looping..."
+T:20 GOTO 10
+T:(This creates an infinite loop - be careful!)
+T:
+T:Try this number guessing game:
+T:10 PRINT "Guess a number between 1-10"
+T:20 LET SECRET = INT(RND() * 10) + 1
+T:30 INPUT "Your guess: "; GUESS
+T:40 IF GUESS = SECRET THEN GOTO 70
+T:50 IF GUESS < SECRET THEN PRINT "Too low"
+T:60 IF GUESS > SECRET THEN PRINT "Too high"
+T:65 GOTO 30
+T:70 PRINT "Correct!"
+T:80 END
+T:
+INPUT DUMMY4
+J:TUTORIAL_MENU
+
+L:LOGO_GRAPHICS
+T:=== Logo Graphics Tutorial ===
+T:Lesson 5: Turtle Graphics Basics
+T:
+T:Logo uses a turtle that draws as it moves.
+T:
+T:Basic movement:
+T:FORWARD 100    (or FD 100)
+T:BACK 50        (or BK 50)
+T:RIGHT 90       (or RT 90)
+T:LEFT 45        (or LT 45)
+T:
+T:Pen control:
+T:PENUP          (or PU - stop drawing)
+T:PENDOWN        (or PD - start drawing)
+T:CLEARSCREEN    (or CS - clear screen)
+T:HOME           (return to center)
+T:
+T:Try drawing a square:
+T:CLEARSCREEN
+T:PENDOWN
+T:FORWARD 100
+T:RIGHT 90
+T:FORWARD 100
+T:RIGHT 90
+T:FORWARD 100
+T:RIGHT 90
+T:FORWARD 100
+T:RIGHT 90
+T:
+T:Now try a triangle:
+T:CLEARSCREEN
+T:PENDOWN
+T:FORWARD 100
+T:RIGHT 120
+T:FORWARD 100
+T:RIGHT 120
+T:FORWARD 100
+T:RIGHT 120
+T:
+INPUT DUMMY5
+J:TUTORIAL_MENU
+
+L:LOGO_ART
+T:=== Logo Art Tutorial ===
+T:Lesson 6: Procedures and Complex Patterns
+T:
+T:Logo procedures create reusable code:
+T:TO SQUARE
+T:  REPEAT 4 [FORWARD 50 RIGHT 90]
+T:END
+T:
+T:SQUARE  (calls the procedure)
+T:
+T:Nested loops create complex patterns:
+T:REPEAT 8 [
+T:  REPEAT 4 [FORWARD 50 RIGHT 90]
+T:  RIGHT 45
+T:]
+T:
+T:Try this flower procedure:
+T:TO FLOWER
+T:  REPEAT 6 [
+T:    FORWARD 50
+T:    RIGHT 60
+T:    FORWARD 25
+T:    RIGHT 120
+T:    FORWARD 25
+T:    RIGHT 60
+T:    BACK 50
+T:    RIGHT 60
+T:  ]
+T:END
+T:
+T:CLEARSCREEN
+T:FLOWER
+T:
+T:Experiment with different values to create your own patterns!
+T:
+INPUT DUMMY6
+J:TUTORIAL_MENU
+
+L:MIXED_LANGUAGE
+T:=== Mixed Language Tutorial ===
+T:Lesson 7: Combining PILOT, BASIC, and Logo
+T:
+T:Time Warp allows mixing all three languages in one program!
+T:
+T:Example structure:
+T:REM BASIC comment and variables
+T:LET SCORE = 0
+T:PRINT "Welcome to the mixed demo!"
+T:
+T:L:PILOT_SECTION
+T:T:This is PILOT text
+T:A:USER_INPUT
+T:T:You entered: *USER_INPUT*
+T:
+T:REM Back to BASIC
+T:FOR I = 1 TO 3
+T:PRINT "BASIC loop iteration:"; I
+T:NEXT I
+T:
+T:REM Logo graphics
+T:CLEARSCREEN
+T:FORWARD 100
+T:RIGHT 90
+T:FORWARD 100
+T:
+T:END
+T:
+T:Try creating a program that:
+T:1. Uses PILOT to get user input
+T:2. Uses BASIC for calculations
+T:3. Uses Logo for graphics output
+T:
+T:This combination is very powerful for educational programs!
+T:
+INPUT DUMMY7
+J:TUTORIAL_MENU
+
+L:GAME_DEVELOPMENT
+T:=== Game Development Tutorial ===
+T:Lesson 8: Creating Games with Time Warp
+T:
+T:Games combine logic, graphics, and user interaction.
+T:Use all three languages for different game aspects.
+T:
+T:Text-based games with PILOT:
+T:T:Welcome to Adventure Game!
+T:T:You are in a dark room.
+T:T:1. Look around, 2. Open door, 3. Take key
+T:A:CHOICE
+T:J:(CHOICE=1)LOOK
+T:J:(CHOICE=2)DOOR
+T:J:(CHOICE=3)KEY
+T:
+T:LOOK:
+T:T:You see a door and a key on the table.
+T:J:GAME_LOOP
+T:
+T:DOOR:
+T:T:The door is locked. You need a key.
+T:J:GAME_LOOP
+T:
+T:KEY:
+T:T:You take the key.
+T:J:GAME_LOOP
+T:
+T:Game logic with BASIC:
+T:LET SCORE = 0
+T:LET LIVES = 3
+T:LET SECRET = INT(RND * 100) + 1
+T:
+T:INPUT "Guess the number: "; GUESS
+T:IF GUESS = SECRET THEN SCORE = SCORE + 10
+T:IF GUESS <> SECRET THEN LIVES = LIVES - 1
+T:IF LIVES = 0 THEN PRINT "Game Over!"
+T:
+T:Graphics games with Logo:
+T:CLEARSCREEN
+T:PENUP SETX -100 SETY 0 PENDOWN
+T:FORWARD 200  ' Draw game area
+T:PENUP SETX PLAYER_X SETY PLAYER_Y PENDOWN
+T:CIRCLE 10    ' Draw player
+T:
+T:Complete game example:
+T:PILOT
+T:T:Space Adventure Game!
+T:T:Navigate your ship through asteroids.
+T:
+T:BASIC
+T:LET SHIP_X = 0
+T:LET SHIP_Y = 0
+T:LET SCORE = 0
+T:
+T:GAME_LOOP:
+T:PILOT
+T:T:Ship position: (*SHIP_X*, *SHIP_Y*) Score: *SCORE*
+T:T:Move: 1=Left, 2=Right, 3=Up, 4=Down, 5=Quit
+T:A:MOVE
+T:
+T:BASIC
+T:IF MOVE = 1 THEN SHIP_X = SHIP_X - 10
+T:IF MOVE = 2 THEN SHIP_X = SHIP_X + 10
+T:IF MOVE = 3 THEN SHIP_Y = SHIP_Y + 10
+T:IF MOVE = 4 THEN SHIP_Y = SHIP_Y - 10
+T:IF MOVE = 5 THEN GOTO END_GAME
+T:
+T:LET ASTEROID_CHANCE = INT(RND * 10)
+T:IF ASTEROID_CHANCE = 1 THEN SCORE = SCORE + 1
+T:
+T:LOGO
+T:CLEARSCREEN
+T:PENUP SETX SHIP_X SETY SHIP_Y PENDOWN
+T:SETPC 3  ' Cyan ship
+T:FORWARD 20 RIGHT 120 FORWARD 20 RIGHT 120 FORWARD 20
+T:
+T:PILOT
+T:J:GAME_LOOP
+T:
+T:END_GAME:
+T:T:Game Over! Final Score: *SCORE*
+T:
+T:Try creating your own simple game!
+T:Start with text-based, then add graphics.
+T:
+INPUT DUMMY8
+J:TUTORIAL_MENU
+
+L:EXIT_TUTORIALS
+T:🎓 Tutorial System Complete! 🎓
+T:
+T:You've explored:
+T:• PILOT basics and advanced features
+T:• BASIC programming fundamentals
+T:• Logo graphics and procedures
+T:• Mixed language programming
+T:• Game development techniques
+T:
+T:Remember to practice what you've learned!
+T:Try modifying the example programs to create your own.
+T:
+T:Happy programming! 🚀
+END

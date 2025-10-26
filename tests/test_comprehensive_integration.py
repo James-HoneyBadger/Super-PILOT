@@ -132,10 +132,10 @@ END"""
         self.assertGreater(self.interp.variables.get("SUCCESS_COUNT", 0), 0)
 
         # Check hardware systems were initialized
-        self.assertIsNotNone(self.interp.arduino)
-        self.assertIsNotNone(self.interp.rpi)
-        self.assertIsNotNone(self.interp.robot)
-        self.assertIsNotNone(self.interp.controller)
+        self.assertIsNotNone(self.interp.arduino_controller)
+        self.assertIsNotNone(self.interp.rpi_controller)
+        self.assertTrue(self.interp.arduino_controller.simulation_mode)
+        self.assertTrue(self.interp.rpi_controller.simulation_mode)
 
         # Check templecode systems were used
         self.assertGreater(len(self.interp.sprites), 0)

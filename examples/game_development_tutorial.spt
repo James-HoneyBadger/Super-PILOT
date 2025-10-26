@@ -1,0 +1,408 @@
+REM Game Development Tutorial
+PRINT "🎮 Game Development Tutorial 🎮"
+PRINT "Create fun games with PILOT, BASIC, and Logo"
+PRINT
+
+LET STEP = 1
+
+L:TUTORIAL_LOOP
+IF STEP = 1 THEN GOSUB 1000  ' Introduction
+IF STEP = 2 THEN GOSUB 1100  ' Simple Games
+IF STEP = 3 THEN GOSUB 1200  ' Text-Based Adventures
+IF STEP = 4 THEN GOSUB 1300  ' Graphics Games
+IF STEP = 5 THEN GOSUB 1400  ' Interactive Games
+IF STEP = 6 THEN GOSUB 1500  ' Advanced Game Features
+IF STEP = 7 THEN GOSUB 1600  ' Quiz
+IF STEP = 8 THEN GOTO 2000   ' Complete
+
+PRINT "Press Enter to continue to next step..."
+INPUT CONTINUE$
+LET STEP = STEP + 1
+GOTO 100
+
+REM Step 1: Introduction
+1000 PRINT "=== Step 1: Game Development in Time Warp ==="
+PRINT
+PRINT "Create engaging games using all three languages!"
+PRINT "Games combine logic, graphics, and user interaction."
+PRINT
+PRINT "Game development skills:"
+PRINT "• PILOT for story and educational games"
+PRINT "• BASIC for game logic and scoring"
+PRINT "• Logo for graphics and animations"
+PRINT
+PRINT "Types of games you can create:"
+PRINT "• Text adventures and quizzes"
+PRINT "• Number guessing games"
+PRINT "• Graphics-based puzzles"
+PRINT "• Interactive stories"
+PRINT "• Educational games"
+PRINT
+PRINT "Let's start with simple games and build up!"
+PRINT
+RETURN
+
+REM Step 2: Simple Games
+1100 PRINT "=== Step 2: Simple Text-Based Games ==="
+PRINT
+PRINT "Start with number guessing game:"
+PRINT "PILOT"
+PRINT "T:I'm thinking of a number between 1 and 100"
+PRINT "T:Can you guess it?"
+PRINT
+PRINT "BASIC"
+PRINT "LET SECRET = INT(RND * 100) + 1"
+PRINT "LET GUESSES = 0"
+PRINT
+PRINT "GUESS_LOOP:"
+PRINT "PILOT"
+PRINT "T:Enter your guess:"
+PRINT "A:GUESS"
+PRINT
+PRINT "BASIC"
+PRINT "LET GUESSES = GUESSES + 1"
+PRINT "IF GUESS = SECRET THEN GOTO WIN"
+PRINT "IF GUESS < SECRET THEN LET HINT = \"Too low!\""
+PRINT "IF GUESS > SECRET THEN LET HINT = \"Too high!\""
+PRINT
+PRINT "PILOT"
+PRINT "T:"; HINT"
+PRINT "J:GUESS_LOOP"
+PRINT
+PRINT "WIN:"
+PRINT "PILOT"
+PRINT "T:Congratulations! You got it in"; GUESSES; "guesses!"
+PRINT
+PRINT "This game combines:"
+PRINT "• PILOT for user interaction"
+PRINT "• BASIC for random numbers and logic"
+PRINT "• Simple win/lose conditions"
+PRINT
+RETURN
+
+REM Step 3: Text-Based Adventures
+1200 PRINT "=== Step 3: Text Adventure Games ==="
+PRINT
+PRINT "Create choose-your-own-adventure stories."
+PRINT
+PRINT "Simple adventure:"
+PRINT "PILOT"
+PRINT "T:You are in a dark forest."
+PRINT "T:You see two paths."
+PRINT "T:1 = Take the left path"
+PRINT "T:2 = Take the right path"
+PRINT "A:CHOICE"
+PRINT
+PRINT "J:(CHOICE=1)LEFT_PATH"
+PRINT "J:(CHOICE=2)RIGHT_PATH"
+PRINT "J:BAD_CHOICE"
+PRINT
+PRINT "LEFT_PATH:"
+PRINT "T:You find a treasure chest!"
+PRINT "T:You win 100 gold coins!"
+PRINT "J:END"
+PRINT
+PRINT "RIGHT_PATH:"
+PRINT "T:You encounter a dragon!"
+PRINT "T:Do you fight or run?"
+PRINT "T:1 = Fight, 2 = Run"
+PRINT "A:DRAGON_CHOICE"
+PRINT
+PRINT "J:(DRAGON_CHOICE=1)FIGHT"
+PRINT "J:(DRAGON_CHOICE=2)RUN"
+PRINT
+PRINT "FIGHT:"
+PRINT "BASIC"
+PRINT "LET CHANCE = INT(RND * 2)"
+PRINT "IF CHANCE = 1 THEN LET RESULT = \"You defeat the dragon!\""
+PRINT "IF CHANCE = 0 THEN LET RESULT = \"The dragon burns you!\""
+PRINT
+PRINT "PILOT"
+PRINT "T:"; RESULT"
+PRINT "J:END"
+PRINT
+PRINT "RUN:"
+PRINT "T:You escape safely!"
+PRINT "J:END"
+PRINT
+PRINT "BAD_CHOICE:"
+PRINT "T:Invalid choice. Try again."
+PRINT "J:START"
+PRINT
+PRINT "END:"
+PRINT "T:Game Over!"
+PRINT
+RETURN
+
+REM Step 4: Graphics Games
+1300 PRINT "=== Step 4: Graphics-Based Games ==="
+PRINT
+PRINT "Add visual elements with Logo graphics."
+PRINT
+PRINT "Simple maze game:"
+PRINT "PILOT"
+PRINT "T:Maze Game!"
+PRINT "T:Navigate to the exit (X)"
+PRINT
+PRINT "LOGO"
+PRINT "CLEARSCREEN"
+PRINT "PENUP SETX -200 SETY 200 PENDOWN"
+PRINT "FORWARD 400"
+PRINT "RIGHT 90 FORWARD 400 RIGHT 90 FORWARD 400 RIGHT 90 FORWARD 400"
+PRINT "PENUP SETX 180 SETY 0 PENDOWN"
+PRINT "FORWARD 20 RIGHT 90 FORWARD 20 RIGHT 90 FORWARD 20 RIGHT 90 FORWARD 20"
+PRINT "PENUP SETX 0 SETY -180 PENDOWN"
+PRINT "SETPC 4  ' Red X for exit"
+PRINT "FORWARD 20 RIGHT 90 FORWARD 20 BACK 20 LEFT 90 BACK 20 RIGHT 90 FORWARD 20"
+PRINT
+PRINT "PILOT"
+PRINT "T:Use arrow keys to move (not implemented in this demo)"
+PRINT "T:Reach the red X to win!"
+PRINT
+PRINT "Target practice game:"
+PRINT "BASIC"
+PRINT "LET SCORE = 0"
+PRINT "LET TARGETS = 5"
+PRINT
+PRINT "GAME_LOOP:"
+PRINT "LET X = INT(RND * 400) - 200"
+PRINT "LET Y = INT(RND * 400) - 200"
+PRINT
+PRINT "LOGO"
+PRINT "PENUP SETX X SETY Y PENDOWN"
+PRINT "SETPC 4  ' Red target"
+PRINT "CIRCLE 20"
+PRINT
+PRINT "PILOT"
+PRINT "T:Target appeared! Click to hit it!"
+PRINT "T:(In real game, mouse input would be used)"
+PRINT
+PRINT "BASIC"
+PRINT "LET SCORE = SCORE + 1"
+PRINT "LET TARGETS = TARGETS - 1"
+PRINT "IF TARGETS > 0 THEN GOTO GAME_LOOP"
+PRINT
+PRINT "PILOT"
+PRINT "T:Game complete! Final score:"; SCORE
+PRINT
+RETURN
+
+REM Step 5: Interactive Games
+1400 PRINT "=== Step 5: Interactive Game Features ==="
+PRINT
+PRINT "Add timing, scoring, and user interaction."
+PRINT
+PRINT "Reaction time game:"
+PRINT "PILOT"
+PRINT "T:Reaction Time Game!"
+PRINT "T:Press Enter when you see GO!"
+PRINT
+PRINT "BASIC"
+PRINT "LET START_TIME = TIMER"
+PRINT "LET DELAY = INT(RND * 3000) + 1000  ' 1-4 seconds"
+PRINT
+PRINT "PILOT"
+PRINT "T:Get ready..."
+PRINT
+PRINT "BASIC"
+PRINT "FOR I = 1 TO DELAY / 100"
+PRINT "  ' Small delay loop"
+PRINT "NEXT I"
+PRINT
+PRINT "PILOT"
+PRINT "T:GO!!!"
+PRINT
+PRINT "BASIC"
+PRINT "LET REACTION_TIME = TIMER - START_TIME - DELAY / 1000"
+PRINT
+PRINT "PILOT"
+PRINT "T:Your reaction time:"; REACTION_TIME; "seconds"
+PRINT
+PRINT "IF REACTION_TIME < 0.5 THEN T:Lightning fast! ⚡"
+PRINT "IF REACTION_TIME >= 0.5 AND REACTION_TIME < 1 THEN T:Pretty quick! 👍"
+PRINT "IF REACTION_TIME >= 1 THEN T:Keep practicing! 💪"
+PRINT
+PRINT "Memory game:"
+PRINT "PILOT"
+PRINT "T:Memory Game!"
+PRINT "T:Remember the sequence..."
+PRINT
+PRINT "BASIC"
+PRINT "LET SEQUENCE$ = \"\""
+PRINT "FOR I = 1 TO 5"
+PRINT "  LET DIGIT = INT(RND * 10)"
+PRINT "  LET SEQUENCE$ = SEQUENCE$ + STR$(DIGIT)"
+PRINT "NEXT I"
+PRINT
+PRINT "PILOT"
+PRINT "T:Sequence:"; SEQUENCE$
+PRINT "T:(Now it disappears...)"
+PRINT
+PRINT "BASIC"
+PRINT "FOR I = 1 TO 2000  ' Delay"
+PRINT "NEXT I"
+PRINT
+PRINT "PILOT"
+PRINT "T:What was the sequence?"
+PRINT "A:USER_SEQUENCE"
+PRINT
+PRINT "BASIC"
+PRINT "IF USER_SEQUENCE = SEQUENCE$ THEN LET RESULT = \"Correct! Great memory! 🧠\""
+PRINT "IF USER_SEQUENCE <> SEQUENCE$ THEN LET RESULT = \"Not quite. Try again!\""
+PRINT
+PRINT "PILOT"
+PRINT "T:"; RESULT"
+PRINT
+RETURN
+
+REM Step 6: Advanced Game Features
+1500 PRINT "=== Step 6: Advanced Game Development ==="
+PRINT
+PRINT "Add levels, save/load, and complex mechanics."
+PRINT
+PRINT "Level-based game:"
+PRINT "PILOT"
+PRINT "T:Level-based Adventure!"
+PRINT
+PRINT "BASIC"
+PRINT "LET LEVEL = 1"
+PRINT "LET HEALTH = 100"
+PRINT "LET SCORE = 0"
+PRINT
+PRINT "LEVEL_LOOP:"
+PRINT "PILOT"
+PRINT "T:=== Level"; LEVEL; "==="
+PRINT "T:Health:"; HEALTH; "Score:"; SCORE
+PRINT
+PRINT "BASIC"
+PRINT "LET ENEMY_HEALTH = LEVEL * 20"
+PRINT "LET DIFFICULTY = LEVEL * 10"
+PRINT
+PRINT "PILOT"
+PRINT "T:An enemy appears! Health:"; ENEMY_HEALTH
+PRINT "T:Choose action:"
+PRINT "T:1 = Attack, 2 = Defend, 3 = Run"
+PRINT "A:ACTION"
+PRINT
+PRINT "BASIC"
+PRINT "IF ACTION = 1 THEN LET DAMAGE = INT(RND * DIFFICULTY) + 1"
+PRINT "IF ACTION = 1 THEN LET ENEMY_HEALTH = ENEMY_HEALTH - DAMAGE"
+PRINT "IF ACTION = 2 THEN LET DAMAGE = INT(RND * DIFFICULTY / 2)"
+PRINT "IF ACTION = 3 THEN LET ESCAPE_CHANCE = INT(RND * 100)"
+PRINT
+PRINT "PILOT"
+PRINT "J:(ACTION=1)ATTACK_RESULT"
+PRINT "J:(ACTION=2)DEFEND_RESULT"
+PRINT "J:(ACTION=3)RUN_RESULT"
+PRINT
+PRINT "ATTACK_RESULT:"
+PRINT "T:You deal"; DAMAGE; "damage!"
+PRINT "J:ENEMY_TURN"
+PRINT
+PRINT "DEFEND_RESULT:"
+PRINT "T:You defend and take"; DAMAGE; "damage"
+PRINT "BASIC"
+PRINT "LET HEALTH = HEALTH - DAMAGE"
+PRINT "PILOT"
+PRINT "J:ENEMY_TURN"
+PRINT
+PRINT "RUN_RESULT:"
+PRINT "BASIC"
+PRINT "IF ESCAPE_CHANCE > 30 THEN LET RESULT = \"You escape!\""
+PRINT "IF ESCAPE_CHANCE <= 30 THEN LET RESULT = \"Can't escape!\""
+PRINT "PILOT"
+PRINT "T:"; RESULT"
+PRINT "J:(ESCAPE_CHANCE>30)NEXT_LEVEL"
+PRINT "J:ENEMY_TURN"
+PRINT
+PRINT "ENEMY_TURN:"
+PRINT "BASIC"
+PRINT "LET ENEMY_DAMAGE = INT(RND * LEVEL * 5) + 1"
+PRINT "LET HEALTH = HEALTH - ENEMY_DAMAGE"
+PRINT "PILOT"
+PRINT "T:Enemy attacks for"; ENEMY_DAMAGE; "damage!"
+PRINT "J:(ENEMY_HEALTH<=0)VICTORY"
+PRINT "J:(HEALTH<=0)DEFEAT"
+PRINT "J:LEVEL_LOOP"
+PRINT
+PRINT "VICTORY:"
+PRINT "BASIC"
+PRINT "LET SCORE = SCORE + LEVEL * 100"
+PRINT "LET LEVEL = LEVEL + 1"
+PRINT "PILOT"
+PRINT "T:Victory! Level up!"
+PRINT "J:LEVEL_LOOP"
+PRINT
+PRINT "DEFEAT:"
+PRINT "T:Game Over! Final score:"; SCORE
+PRINT
+PRINT "NEXT_LEVEL:"
+PRINT "T:Moving to next level..."
+PRINT "J:LEVEL_LOOP"
+PRINT
+RETURN
+
+REM Step 7: Quiz
+1600 PRINT "=== Step 7: Game Development Knowledge Check ==="
+PRINT
+PRINT "Test your game development skills!"
+PRINT
+LET QUIZ_SCORE = 0
+
+PRINT "Question 1: Which language is best for game stories?"
+PRINT "A) BASIC"
+PRINT "B) Logo"
+PRINT "C) PILOT"
+INPUT "Your answer (A/B/C): "; Q1$
+IF Q1$ = "C" THEN LET QUIZ_SCORE = QUIZ_SCORE + 1
+
+PRINT "Question 2: How do you add randomness to games?"
+PRINT "A) RANDOM()"
+PRINT "B) RND"
+PRINT "C) CHANCE()"
+INPUT "Your answer (A/B/C): "; Q2$
+IF Q2$ = "B" THEN LET QUIZ_SCORE = QUIZ_SCORE + 1
+
+PRINT "Question 3: What does TIMER do?"
+PRINT "A) Creates delays"
+PRINT "B) Gets current time"
+PRINT "C) Sets game speed"
+INPUT "Your answer (A/B/C): "; Q3$
+IF Q3$ = "B" THEN LET QUIZ_SCORE = QUIZ_SCORE + 1
+
+PRINT "Question 4: How do you create game levels?"
+PRINT "A) Use LEVEL variable"
+PRINT "B) Create separate programs"
+PRINT "C) Use different languages"
+INPUT "Your answer (A/B/C): "; Q4$
+IF Q4$ = "A" THEN LET QUIZ_SCORE = QUIZ_SCORE + 1
+
+PRINT
+PRINT "Quiz complete! Score:"; QUIZ_SCORE; "/4"
+
+IF QUIZ_SCORE = 4 THEN PRINT "Game development master! Create epic games! 🏆"
+IF QUIZ_SCORE = 3 THEN PRINT "Excellent! Your games will be amazing! 🎮"
+IF QUIZ_SCORE >= 2 THEN PRINT "Great work! Keep developing games! 👍"
+IF QUIZ_SCORE = 1 THEN PRINT "Good start! Practice more game mechanics! 📐"
+IF QUIZ_SCORE = 0 THEN PRINT "Keep creating! Game development is fun! ✏️"
+
+PRINT
+RETURN
+
+REM Tutorial Complete
+2000 PRINT "🎉 Game Development Tutorial Complete! 🎉"
+PRINT
+PRINT "You have learned:"
+PRINT "✓ Creating simple text games"
+PRINT "✓ Text-based adventure games"
+PRINT "✓ Graphics-based games with Logo"
+PRINT "✓ Interactive game features"
+PRINT "✓ Advanced game mechanics"
+PRINT "✓ Level-based game design"
+PRINT
+PRINT "Now create your own games!"
+PRINT "Combine all three languages for the best results."
+PRINT
+PRINT "Press Enter to exit..."
+INPUT EXIT$
+END
