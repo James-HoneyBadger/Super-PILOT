@@ -1,0 +1,48 @@
+*GAME COMMANDS TEST*
+*Test all GAME functionality*
+
+T:=== GAME COMMANDS TEST ===
+
+*Test 1: Clear and create objects*
+GAME:CLEAR
+T:Objects cleared
+
+GAME:CREATE test1 player 100 100 32 32
+GAME:CREATE test2 enemy 200 200 24 24
+GAME:CREATE test3 bullet 150 150 8 16
+
+T:Created 3 test objects
+
+*Test 2: List objects*
+GAME:LIST
+T:Active objects: *GAME_OBJECT_LIST*
+T:Total count: *GAME_OBJECT_COUNT*
+
+*Test 3: Move objects*
+GAME:MOVE test1 10 5 1
+GAME:MOVE test2 -5 10 2
+
+T:Moved objects
+
+*Test 4: Get object info*
+GAME:INFO test1
+T:Test1 info: *GAME_OBJECT_INFO*
+
+*Test 5: Collision detection*
+GAME:COLLISION CHECK test1 test2 HIT_RESULT
+T:Collision result: *HIT_RESULT*
+
+*Test 6: Delete object*
+GAME:DELETE test3
+T:Deleted test3
+
+GAME:LIST
+T:Remaining objects: *GAME_OBJECT_LIST*
+
+*Test 7: Clear all*
+GAME:CLEAR
+GAME:LIST
+T:Final count: *GAME_OBJECT_COUNT*
+
+T:=== ALL TESTS COMPLETED ===
+END
