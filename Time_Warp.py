@@ -2740,32 +2740,53 @@ class TimeWarpInterpreter:
 
             cmd = parts[0]
 
-            print(f"DEBUG: Executing Logo command: {cmd}")  # Debug print
-
             if cmd in ["FORWARD", "FD"]:
                 if len(parts) > 1:
                     distance = self.evaluate_expression(parts[1])
                     self.move_turtle(distance)
+                    self.log_output(
+                        f"Turtle moved to position ({int(self.turtle_x)}, {int(self.turtle_y)})"
+                    )
+                    # Set variables for turtle state
+                    self.variables["TURTLE_X"] = int(self.turtle_x)
+                    self.variables["TURTLE_Y"] = int(self.turtle_y)
+                    self.variables["TURTLE_HEADING"] = int(self.turtle_heading)
             elif cmd in ["BACK", "BK", "BACKWARD"]:
                 if len(parts) > 1:
                     distance = self.evaluate_expression(parts[1])
                     self.move_turtle(-distance)  # Move backward
+                    self.log_output(
+                        f"Turtle moved to position ({int(self.turtle_x)}, {int(self.turtle_y)})"
+                    )
+                    # Set variables for turtle state
+                    self.variables["TURTLE_X"] = int(self.turtle_x)
+                    self.variables["TURTLE_Y"] = int(self.turtle_y)
+                    self.variables["TURTLE_HEADING"] = int(self.turtle_heading)
             elif cmd in ["LEFT", "LT"]:
                 if len(parts) > 1:
                     degrees = self.evaluate_expression(parts[1])
                     self.turtle_heading += degrees
+                    self.log_output(f"Turtle turned left {degrees} degrees")
+                    # Set variables for turtle state
+                    self.variables["TURTLE_HEADING"] = int(self.turtle_heading)
             elif cmd in ["RIGHT", "RT"]:
                 if len(parts) > 1:
                     degrees = self.evaluate_expression(parts[1])
                     self.turtle_heading -= degrees
+                    self.log_output(f"Turtle turned right {degrees} degrees")
+                    # Set variables for turtle state
+                    self.variables["TURTLE_HEADING"] = int(self.turtle_heading)
             elif cmd in ["PENUP", "PU"]:
                 self.pen_down = False
+                self.log_output("Pen up")
             elif cmd in ["PENDOWN", "PD"]:
                 self.pen_down = True
+                self.log_output("Pen down")
             elif cmd in ["CLEARSCREEN", "CS"]:
                 if self.graphics_widget:
                     self.graphics_widget.delete("all")
                 self.reset_turtle()
+                self.log_output("Screen cleared")
             elif cmd == "HOME":
                 self.turtle_x = 200
                 self.turtle_y = 200
@@ -2773,25 +2794,50 @@ class TimeWarpInterpreter:
                 self.pen_down = True
                 self.pen_color = "black"
                 self.pen_width = 1
+                self.log_output("Turtle moved to position (200, 200)")
+                # Set variables for turtle state
+                self.variables["TURTLE_X"] = int(self.turtle_x)
+                self.variables["TURTLE_Y"] = int(self.turtle_y)
+                self.variables["TURTLE_HEADING"] = int(self.turtle_heading)
             elif cmd in ["SETHEADING", "SETH"]:
                 if len(parts) > 1:
                     degrees = self.evaluate_expression(parts[1])
                     self.turtle_heading = degrees
-
+                    self.log_output(f"Turtle heading set to {degrees} degrees")
+                    # Set variables for turtle state
+                    self.variables["TURTLE_HEADING"] = int(self.turtle_heading)
             elif cmd == "SETX":
                 if len(parts) > 1:
                     x = self.evaluate_expression(parts[1])
                     self.turtle_x = x
+                    self.log_output(
+                        f"Turtle moved to position ({int(self.turtle_x)}, {int(self.turtle_y)})"
+                    )
+                    # Set variables for turtle state
+                    self.variables["TURTLE_X"] = int(self.turtle_x)
+                    self.variables["TURTLE_Y"] = int(self.turtle_y)
             elif cmd == "SETY":
                 if len(parts) > 1:
                     y = self.evaluate_expression(parts[1])
                     self.turtle_y = y
+                    self.log_output(
+                        f"Turtle moved to position ({int(self.turtle_x)}, {int(self.turtle_y)})"
+                    )
+                    # Set variables for turtle state
+                    self.variables["TURTLE_X"] = int(self.turtle_x)
+                    self.variables["TURTLE_Y"] = int(self.turtle_y)
             elif cmd == "SETXY":
                 if len(parts) > 2:
                     x = self.evaluate_expression(parts[1])
                     y = self.evaluate_expression(parts[2])
                     self.turtle_x = x
                     self.turtle_y = y
+                    self.log_output(
+                        f"Turtle moved to position ({int(self.turtle_x)}, {int(self.turtle_y)})"
+                    )
+                    # Set variables for turtle state
+                    self.variables["TURTLE_X"] = int(self.turtle_x)
+                    self.variables["TURTLE_Y"] = int(self.turtle_y)
             elif cmd in ["PENCOLOR", "PC"]:
                 if len(parts) > 1:
                     color_arg = parts[1]
@@ -2800,10 +2846,12 @@ class TimeWarpInterpreter:
                         self.pen_color = self.colors[index]
                     else:
                         self.pen_color = color_arg
+                    self.log_output(f"Pen color set to {self.pen_color}")
             elif cmd == "PENSIZE":
                 if len(parts) > 1:
                     size = self.evaluate_expression(parts[1])
                     self.pen_width = max(1, int(size))
+                    self.log_output(f"Pen size set to {self.pen_width}")
             elif cmd in ["HIDETURTLE", "HT"]:
                 # Turtle visibility - for now just log since we don't draw turtle cursor
                 self.log_output("Turtle hidden")
@@ -2811,27 +2859,19 @@ class TimeWarpInterpreter:
                 # Turtle visibility - for now just log since we don't draw turtle cursor
                 self.log_output("Turtle shown")
             elif cmd in ["SETCOLOR", "SC"]:
-                print(
-                    f"DEBUG: SETCOLOR command detected with parts: {parts}"
-                )  # Debug print
                 if len(parts) > 1:
                     color_arg = parts[1]
-                    print(f"DEBUG: color_arg = {color_arg}")  # Debug print
                     if color_arg.isdigit():
                         index = int(color_arg) % len(self.colors)
-                        print(
-                            f"DEBUG: index = {index}, color = {self.colors[index]}"
-                        )  # Debug print
                         self.pen_color = self.colors[index]
-                        print(
-                            f"DEBUG: pen_color set to {self.pen_color}"
-                        )  # Debug print
                     else:
                         self.pen_color = color_arg
+                    self.log_output(f"Color set to {self.pen_color}")
             elif cmd in ["CLEARTEXT", "CT"]:
                 # Clear text output
                 if self.output_widget:
                     self.output_widget.delete(1.0, tk.END)
+                self.log_output("Text cleared")
             elif cmd == "CIRCLE":
                 if len(parts) > 1:
                     radius = self.evaluate_expression(parts[1])
@@ -2839,15 +2879,18 @@ class TimeWarpInterpreter:
                         self.evaluate_expression(parts[2]) if len(parts) > 2 else 360
                     )
                     self.draw_circle(radius, extent)
+                    self.log_output(f"Circle drawn with radius {radius}")
             elif cmd == "RECT":
                 if len(parts) > 2:
                     width = self.evaluate_expression(parts[1])
                     height = self.evaluate_expression(parts[2])
                     self.draw_rectangle(width, height)
+                    self.log_output(f"Rectangle drawn with size {width}x{height}")
             elif cmd == "DOT":
                 if len(parts) > 1:
                     size = self.evaluate_expression(parts[1])
                     self.draw_dot(size)
+                    self.log_output(f"Dot drawn with size {size}")
             elif cmd == "IMAGE":
                 if len(parts) > 1:
                     path = parts[1].strip('"').strip("'")
@@ -2858,23 +2901,28 @@ class TimeWarpInterpreter:
                         self.evaluate_expression(parts[3]) if len(parts) > 3 else None
                     )
                     self.draw_image(path, width, height)
+                    self.log_output(f"Image loaded from {path}")
             elif cmd == "HUD":
                 self.toggle_hud()
+                self.log_output("HUD toggled")
             elif cmd == "SNAPSHOT":
                 if len(parts) > 1:
                     filename = parts[1].strip('"').strip("'")
                     self.take_snapshot(filename)
+                    self.log_output(f"Snapshot saved to {filename}")
             elif cmd == "SPRITENEW":
                 if len(parts) > 2:
                     name = parts[1]
                     path = parts[2].strip('"').strip("'")
                     self.create_sprite(name, path)
+                    self.log_output(f"Sprite '{name}' created")
             elif cmd == "SPRITEPOS":
                 if len(parts) > 3:
                     name = parts[1]
                     x = self.evaluate_expression(parts[2])
                     y = self.evaluate_expression(parts[3])
                     self.set_sprite_position(name, x, y)
+                    self.log_output(f"Sprite '{name}' moved to ({x}, {y})")
             elif cmd == "REPEAT":
                 if len(parts) > 2:
                     count = self.evaluate_expression(parts[1])
@@ -2889,6 +2937,7 @@ class TimeWarpInterpreter:
                             for sub_cmd in sub_commands:
                                 if sub_cmd.strip():
                                     self.execute_logo_command(sub_cmd.strip())
+                        self.log_output(f"Repeat block executed {count} times")
             elif cmd == "TO":
                 # Define a procedure: TO procname :param1 :param2 ... commands END
                 if len(parts) > 1:
@@ -2959,6 +3008,7 @@ class TimeWarpInterpreter:
                             self.execute_line(substituted_line)
                 finally:
                     self.variables = old_vars
+                self.log_output(f"Procedure {cmd} executed")
 
         except Exception as e:
             error_msg = f"❌ Error in Logo command '{command}': {str(e)}"
