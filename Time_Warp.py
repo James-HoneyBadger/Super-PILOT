@@ -291,9 +291,9 @@ class TimeWarpInterpreter:
         self.reset_turtle()
 
     def reset_turtle(self):
-        self.turtle_x = 200
-        self.turtle_y = 200
-        self.turtle_heading = 90
+        self.turtle_x = 0
+        self.turtle_y = 0
+        self.turtle_heading = 0
         self.pen_down = True
         self.pen_color = "black"
         self.pen_width = 1
