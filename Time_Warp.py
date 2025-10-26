@@ -4866,6 +4866,17 @@ END"""
         # Placeholder for dark mode toggle
         messagebox.showinfo("Dark Mode", "Dark mode toggle not yet implemented")
 
+    def load_plugins(self):
+        """Load all plugins on startup"""
+        try:
+            loaded_count = self.plugin_manager.load_all_plugins()
+            self.log_output(f"Plugin system initialized: {loaded_count} plugins loaded")
+            if loaded_count > 0:
+                self.status_bar.config(text=f"Loaded {loaded_count} plugins")
+        except Exception as e:
+            self.log_output(f"Error loading plugins: {e}")
+            messagebox.showerror("Plugin Error", f"Failed to load plugins: {e}")
+
     def reload_plugins(self):
         """Reload all plugins"""
         try:

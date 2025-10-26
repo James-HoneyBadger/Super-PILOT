@@ -386,6 +386,100 @@ class PluginManager:
             Path(__file__).parent.parent / "plugins",
         ]
 
+        # Global configuration
+        self.global_config: Dict[str, Any] = {}
+        self._load_global_config()
+
+    def _get_global_config_path(self) -> Path:
+        """Get the path to the global plugin configuration file"""
+        config_dir = Path.home() / ".time_warp"
+        config_dir.mkdir(parents=True, exist_ok=True)
+        return config_dir / "plugin_config.json"
+
+    def _load_global_config(self):
+        """Load global plugin configuration"""
+        config_path = self._get_global_config_path()
+        if config_path.exists():
+            try:
+                with open(config_path, "r") as f:
+                    self.global_config = json.load(f)
+            except Exception as e:
+                self.api.log_error(f"Failed to load global plugin config: {e}")
+                self.global_config = self._get_default_global_config()
+        else:
+            self.global_config = self._get_default_global_config()
+
+    def _save_global_config(self):
+        """Save global plugin configuration"""
+        config_path = self._get_global_config_path()
+        try:
+            with open(config_path, "w") as f:
+                json.dump(self.global_config, f, indent=2)
+        except Exception as e:
+            self.api.log_error(f"Failed to save global plugin config: {e}")
+
+    def _get_default_global_config(self) -> Dict[str, Any]:
+        """Get default global configuration"""
+        return {
+            "auto_load_plugins": True,
+            "plugin_dirs": [
+                str(Path.home() / ".time_warp" / "plugins"),
+                str(Path(__file__).parent.parent / "plugins"),
+            ],
+            "disabled_plugins": [],
+            "plugin_load_order": [],
+            "config_backup_enabled": True,
+            "max_config_backups": 5,
+        }
+
+    def get_global_config_value(self, key: str, default: Any = None) -> Any:
+        """Get a global configuration value"""
+        return self.global_config.get(key, default)
+
+    def set_global_config_value(self, key: str, value: Any):
+        """Set a global configuration value"""
+        self.global_config[key] = value
+        self._save_global_config()
+
+    def add_plugin_directory(self, directory: str):
+        """Add a custom plugin directory"""
+        if directory not in self.global_config["plugin_dirs"]:
+            self.global_config["plugin_dirs"].append(directory)
+            self.plugin_dirs.append(Path(directory))
+            self._save_global_config()
+
+    def remove_plugin_directory(self, directory: str):
+        """Remove a custom plugin directory"""
+        if directory in self.global_config["plugin_dirs"]:
+            self.global_config["plugin_dirs"].remove(directory)
+            self.plugin_dirs = [Path(d) for d in self.global_config["plugin_dirs"]]
+            self._save_global_config()
+
+    def disable_plugin(self, plugin_name: str):
+        """Disable a plugin from auto-loading"""
+        if plugin_name not in self.global_config["disabled_plugins"]:
+            self.global_config["disabled_plugins"].append(plugin_name)
+            self._save_global_config()
+
+    def enable_plugin(self, plugin_name: str):
+        """Enable a plugin for auto-loading"""
+        if plugin_name in self.global_config["disabled_plugins"]:
+            self.global_config["disabled_plugins"].remove(plugin_name)
+            self._save_global_config()
+
+    def is_plugin_disabled(self, plugin_name: str) -> bool:
+        """Check if a plugin is disabled"""
+        return plugin_name in self.global_config["disabled_plugins"]
+
+    def set_plugin_load_order(self, plugin_names: List[str]):
+        """Set the order in which plugins should be loaded"""
+        self.global_config["plugin_load_order"] = plugin_names
+        self._save_global_config()
+
+    def get_plugin_load_order(self) -> List[str]:
+        """Get the configured plugin load order"""
+        return self.global_config.get("plugin_load_order", [])
+
     def discover_plugins(self) -> List[Path]:
         """Discover plugin directories"""
         plugin_paths = []
