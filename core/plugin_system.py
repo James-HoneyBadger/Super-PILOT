@@ -12,10 +12,13 @@ import inspect
 import json
 import threading
 import datetime
+import time
+import re
 from typing import Dict, List, Any, Optional, Type, Callable
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 @dataclass
@@ -195,6 +198,52 @@ class PluginAPI:
         else:
             print(f"[Plugin ERROR] {message}")
 
+    # Internationalization (i18n)
+    def translate(self, key: str, locale: str = None, **kwargs) -> str:
+        """Translate a string key to the current or specified locale"""
+        return self.ide.plugin_manager.translate(key, locale, **kwargs)
+
+    def get_current_locale(self) -> str:
+        """Get the current locale"""
+        return self.ide.plugin_manager.get_current_locale()
+
+    def set_locale(self, locale: str):
+        """Set the current locale"""
+        self.ide.plugin_manager.set_locale(locale)
+
+    def get_available_locales(self) -> List[str]:
+        """Get list of available locales"""
+        return self.ide.plugin_manager.get_available_locales()
+
+    def register_translation(self, locale: str, translations: Dict[str, str]):
+        """Register translations for a locale"""
+        self.ide.plugin_manager.register_translation(locale, translations)
+
+    # Accessibility
+    def announce_to_screen_reader(self, message: str, priority: str = "normal"):
+        """Announce a message to screen readers"""
+        self.ide.plugin_manager.announce_to_screen_reader(message, priority)
+
+    def register_keyboard_shortcut(
+        self, shortcut: str, callback: Callable, description: str = ""
+    ):
+        """Register a keyboard shortcut"""
+        self.ide.plugin_manager.register_keyboard_shortcut(
+            shortcut, callback, description
+        )
+
+    def unregister_keyboard_shortcut(self, shortcut: str):
+        """Unregister a keyboard shortcut"""
+        self.ide.plugin_manager.unregister_keyboard_shortcut(shortcut)
+
+    def get_accessibility_settings(self) -> Dict[str, Any]:
+        """Get current accessibility settings"""
+        return self.ide.plugin_manager.get_accessibility_settings()
+
+    def set_accessibility_setting(self, key: str, value: Any):
+        """Set an accessibility setting"""
+        self.ide.plugin_manager.set_accessibility_setting(key, value)
+
 
 class Plugin(ABC):
     """Base class for all plugins"""
@@ -290,7 +339,7 @@ class LanguagePlugin(Plugin):
             return True
         except Exception as e:
             self.api.log_error(
-                f"Failed to initialize language plugin '{self.metadata.name}': {e}"
+                f"Failed to initialize language plugin " f"'{self.metadata.name}': {e}"
             )
             return False
 
@@ -299,7 +348,7 @@ class LanguagePlugin(Plugin):
         try:
             # Unregister the language
             if hasattr(self.api.interpreter, "plugin_executors"):
-                if self.get_language_name() in self.api.interpreter.plugin_executors:
+                if self.get_language_name() in (self.api.interpreter.plugin_executors):
                     del self.api.interpreter.plugin_executors[self.get_language_name()]
 
             # Unregister file extensions
@@ -310,7 +359,7 @@ class LanguagePlugin(Plugin):
             return True
         except Exception as e:
             self.api.log_error(
-                f"Failed to shutdown language plugin '{self.metadata.name}': {e}"
+                f"Failed to shutdown language plugin " f"'{self.metadata.name}': {e}"
             )
             return False
 
@@ -477,6 +526,32 @@ class PluginManager:
         # Recovery mechanisms
         self.operation_backups: Dict[str, Dict[str, Any]] = {}
         self.enable_recovery = self.global_config.get("enable_operation_recovery", True)
+
+        # Performance optimizations
+        self._plugin_discovery_cache: Optional[Dict[str, Any]] = None
+        self._plugin_discovery_cache_time: float = 0
+        self._plugin_discovery_cache_ttl: float = self.global_config.get(
+            "plugin_discovery_cache_ttl", 30.0
+        )  # seconds
+
+        self._metadata_cache: Dict[str, PluginMetadata] = {}
+        self._dependency_cache: Dict[str, List[str]] = {}
+        self._resource_cache: Dict[str, Any] = {}
+
+        # Compiled regex patterns for performance
+        self._version_pattern = re.compile(r"^\d+\.\d+\.\d+")
+
+        # Lazy loading settings
+        self.lazy_loading_enabled = self.global_config.get(
+            "lazy_loading_enabled", False
+        )
+        self.lazy_loaded_plugins: Dict[str, PluginMetadata] = {}
+
+        # Parallel loading settings
+        self.max_parallel_loads = self.global_config.get("max_parallel_loads", 3)
+        self.enable_parallel_loading = self.global_config.get(
+            "enable_parallel_loading", True
+        )
 
     def _run_with_timeout(self, func: Callable, timeout: float, *args, **kwargs) -> Any:
         """Run a function with a timeout"""
