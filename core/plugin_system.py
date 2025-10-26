@@ -10,6 +10,8 @@ import sys
 import importlib
 import inspect
 import json
+import threading
+import datetime
 from typing import Dict, List, Any, Optional, Type, Callable
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -53,6 +55,54 @@ class PluginValidationError(PluginError):
     pass
 
 
+class PluginInitializationError(PluginError):
+    """Exception raised when plugin initialization fails"""
+
+    pass
+
+
+class PluginShutdownError(PluginError):
+    """Exception raised when plugin shutdown fails"""
+
+    pass
+
+
+class PluginDependencyError(PluginError):
+    """Exception raised when plugin dependencies are not satisfied"""
+
+    pass
+
+
+class PluginConfigurationError(PluginError):
+    """Exception raised when plugin configuration operations fail"""
+
+    pass
+
+
+class PluginResourceError(PluginError):
+    """Exception raised when plugin resource operations fail"""
+
+    pass
+
+
+class PluginEventError(PluginError):
+    """Exception raised when plugin event operations fail"""
+
+    pass
+
+
+class PluginTimeoutError(PluginError):
+    """Exception raised when plugin operations timeout"""
+
+    pass
+
+
+class PluginSecurityError(PluginError):
+    """Exception raised when plugin security violations occur"""
+
+    pass
+
+
 class PluginAPI:
     """API interface provided to plugins"""
 
@@ -78,27 +128,49 @@ class PluginAPI:
     # Plugin communication
     def emit_event(self, event_name: str, **kwargs):
         """Emit an event to other plugins"""
+        if not isinstance(event_name, str) or not event_name.strip():
+            raise PluginEventError("Event name must be a non-empty string")
         self.ide.plugin_manager.emit_event(event_name, **kwargs)
 
     def subscribe_event(self, event_name: str, callback: Callable):
         """Subscribe to an event"""
+        if not isinstance(event_name, str) or not event_name.strip():
+            raise PluginEventError("Event name must be a non-empty string")
+        if not callable(callback):
+            raise PluginEventError("Callback must be callable")
         self.ide.plugin_manager.subscribe_event(event_name, callback)
 
     def unsubscribe_event(self, event_name: str, callback: Callable):
         """Unsubscribe from an event"""
+        if not isinstance(event_name, str) or not event_name.strip():
+            raise PluginEventError("Event name must be a non-empty string")
+        if not callable(callback):
+            raise PluginEventError("Callback must be callable")
         self.ide.plugin_manager.unsubscribe_event(event_name, callback)
 
     # Resource management
     def register_resource(self, resource_type: str, name: str, resource: Any):
         """Register a resource"""
+        if not isinstance(resource_type, str) or not resource_type.strip():
+            raise PluginResourceError("Resource type must be a non-empty string")
+        if not isinstance(name, str) or not name.strip():
+            raise PluginResourceError("Resource name must be a non-empty string")
         self.ide.plugin_manager.register_resource(resource_type, name, resource)
 
     def unregister_resource(self, resource_type: str, name: str):
         """Unregister a resource"""
+        if not isinstance(resource_type, str) or not resource_type.strip():
+            raise PluginResourceError("Resource type must be a non-empty string")
+        if not isinstance(name, str) or not name.strip():
+            raise PluginResourceError("Resource name must be a non-empty string")
         self.ide.plugin_manager.unregister_resource(resource_type, name)
 
     def get_resource(self, resource_type: str, name: str) -> Any:
         """Get a registered resource"""
+        if not isinstance(resource_type, str) or not resource_type.strip():
+            raise PluginResourceError("Resource type must be a non-empty string")
+        if not isinstance(name, str) or not name.strip():
+            raise PluginResourceError("Resource name must be a non-empty string")
         return self.ide.plugin_manager.get_resource(resource_type, name)
 
     # Logging
@@ -390,6 +462,44 @@ class PluginManager:
         self.global_config: Dict[str, Any] = {}
         self._load_global_config()
 
+        # Timeout settings
+        self.init_timeout = self.global_config.get(
+            "plugin_init_timeout", 30.0
+        )  # seconds
+        self.shutdown_timeout = self.global_config.get(
+            "plugin_shutdown_timeout", 10.0
+        )  # seconds
+
+        # Error reporting
+        self.error_reports: List[Dict[str, Any]] = []
+        self.max_error_reports = self.global_config.get("max_error_reports", 100)
+
+        # Recovery mechanisms
+        self.operation_backups: Dict[str, Dict[str, Any]] = {}
+        self.enable_recovery = self.global_config.get("enable_operation_recovery", True)
+
+    def _run_with_timeout(self, func: Callable, timeout: float, *args, **kwargs) -> Any:
+        """Run a function with a timeout"""
+        result = [None]
+        exception = [None]
+
+        def target():
+            try:
+                result[0] = func(*args, **kwargs)
+            except Exception as e:
+                exception[0] = e
+
+        thread = threading.Thread(target=target)
+        thread.daemon = True
+        thread.start()
+        thread.join(timeout)
+
+        if thread.is_alive():
+            raise PluginTimeoutError(f"Operation timed out after {timeout} seconds")
+        if exception[0]:
+            raise exception[0]
+        return result[0]
+
     def _get_global_config_path(self) -> Path:
         """Get the path to the global plugin configuration file"""
         config_dir = Path.home() / ".time_warp"
@@ -494,20 +604,34 @@ class PluginManager:
 
     def load_plugin(self, plugin_path: Path) -> Optional[Plugin]:
         """Load a plugin from a directory"""
+        plugin_name = "unknown"
+        operation_id = (
+            f"load_plugin_{plugin_path.name}_{datetime.datetime.now().timestamp()}"
+        )
+
+        # Backup current state
+        self._backup_operation_state(operation_id)
+
         try:
             # Load metadata
             metadata_path = plugin_path / "plugin.json"
+            if not metadata_path.exists():
+                raise PluginLoadError(f"No plugin.json found in {plugin_path}")
+
             with open(metadata_path, "r") as f:
                 metadata_dict = json.load(f)
 
             metadata = PluginMetadata(**metadata_dict)
+            plugin_name = metadata.name
 
             # Validate metadata
             self._validate_metadata(metadata)
 
             # Check dependencies
             if not self._check_dependencies(metadata):
-                raise PluginLoadError(f"Dependencies not satisfied for {metadata.name}")
+                raise PluginDependencyError(
+                    f"Dependencies not satisfied for {metadata.name}"
+                )
 
             # Load plugin module
             plugin_module = self._load_plugin_module(plugin_path, metadata)
@@ -517,46 +641,163 @@ class PluginManager:
             plugin = plugin_class(self.api, metadata)
 
             # Load configuration
-            plugin.load_config()
+            try:
+                plugin.load_config()
+            except Exception as e:
+                self.api.log_warning(
+                    f"Failed to load config for plugin '{plugin_name}': {e}"
+                )
+                # Continue with default config
 
             # Initialize plugin
-            if plugin.initialize():
-                self.plugins[metadata.name] = plugin
-                self.api.log_info(f"Plugin '{metadata.name}' loaded successfully")
-                return plugin
-            else:
-                raise PluginLoadError(f"Plugin '{metadata.name}' failed to initialize")
+            try:
+                init_success = self._run_with_timeout(
+                    plugin.initialize, self.init_timeout
+                )
+                if init_success:
+                    self.plugins[metadata.name] = plugin
+                    self.api.log_info(f"Plugin '{metadata.name}' loaded successfully")
+                    # Clean up backup on success
+                    self._cleanup_operation_backup(operation_id)
+                    return plugin
+                else:
+                    raise PluginInitializationError(
+                        f"Plugin '{metadata.name}' failed to initialize"
+                    )
+            except PluginTimeoutError:
+                raise PluginInitializationError(
+                    f"Plugin '{metadata.name}' initialization timed out after "
+                    f"{self.init_timeout} seconds"
+                )
 
+        except PluginError as e:
+            # Attempt recovery
+            if self._restore_operation_state(operation_id):
+                self.api.log_warning(
+                    f"Recovered from failed plugin load for '{plugin_name}'"
+                )
+            # Record the error and re-raise
+            self._record_error(
+                "plugin_load",
+                plugin_name,
+                e,
+                {
+                    "plugin_path": str(plugin_path),
+                    "metadata": metadata.__dict__ if "metadata" in locals() else None,
+                },
+            )
+            raise
+        except json.JSONDecodeError as e:
+            # Attempt recovery
+            self._restore_operation_state(operation_id)
+            error = PluginLoadError(
+                f"Invalid JSON in plugin.json for '{plugin_name}': {e}"
+            )
+            self._record_error(
+                "json_parse", plugin_name, error, {"plugin_path": str(plugin_path)}
+            )
+            raise error
+        except FileNotFoundError as e:
+            # Attempt recovery
+            self._restore_operation_state(operation_id)
+            error = PluginLoadError(f"Plugin file not found: {e}")
+            self._record_error(
+                "file_not_found", plugin_name, error, {"plugin_path": str(plugin_path)}
+            )
+            raise error
+        except ImportError as e:
+            # Attempt recovery
+            self._restore_operation_state(operation_id)
+            error = PluginLoadError(
+                f"Failed to import plugin module for '{plugin_name}': {e}"
+            )
+            self._record_error(
+                "import_error", plugin_name, error, {"plugin_path": str(plugin_path)}
+            )
+            raise error
         except Exception as e:
-            self.api.log_error(f"Failed to load plugin from {plugin_path}: {e}")
-            return None
+            # Attempt recovery
+            self._restore_operation_state(operation_id)
+            # Catch any other unexpected errors
+            import traceback
+
+            error_details = traceback.format_exc()
+            error = PluginLoadError(
+                f"Unexpected error loading plugin from {plugin_path}: {e}\n"
+                f"Stack trace:\n{error_details}"
+            )
+            self._record_error(
+                "unexpected_error",
+                plugin_name,
+                error,
+                {"plugin_path": str(plugin_path)},
+            )
+            raise error
 
     def unload_plugin(self, plugin_name: str) -> bool:
         """Unload a plugin"""
         if plugin_name not in self.plugins:
-            return False
+            raise PluginLoadError(f"Plugin '{plugin_name}' is not loaded")
 
         plugin = self.plugins[plugin_name]
 
         try:
             # Shutdown plugin
-            if plugin.shutdown():
-                # Save configuration
-                plugin.save_config()
-
-                # Remove from registry
-                del self.plugins[plugin_name]
-
-                self.api.log_info(f"Plugin '{plugin_name}' unloaded successfully")
-                return True
-            else:
-                self.api.log_error(
-                    f"Plugin '{plugin_name}' failed to shutdown properly"
+            try:
+                shutdown_success = self._run_with_timeout(
+                    plugin.shutdown, self.shutdown_timeout
                 )
-                return False
+                if not shutdown_success:
+                    raise PluginShutdownError(
+                        f"Plugin '{plugin_name}' failed to shutdown properly"
+                    )
+            except PluginTimeoutError:
+                raise PluginShutdownError(
+                    f"Plugin '{plugin_name}' shutdown timed out after "
+                    f"{self.shutdown_timeout} seconds"
+                )
+
+            # Save configuration
+            try:
+                plugin.save_config()
+            except Exception as e:
+                self.api.log_warning(
+                    f"Failed to save config for plugin '{plugin_name}': {e}"
+                )
+                # Continue with unload despite config save failure
+
+            # Remove from registry
+            del self.plugins[plugin_name]
+
+            self.api.log_info(f"Plugin '{plugin_name}' unloaded successfully")
+            return True
+
+        except PluginShutdownError as e:
+            # Plugin failed to shutdown cleanly, but we'll still remove it from registry
+            # to prevent it from being in an inconsistent state
+            self._record_error(
+                "plugin_shutdown", plugin_name, e, {"force_unload": True}
+            )
+            self.api.log_error(
+                f"Forcing unload of plugin '{plugin_name}' due to shutdown failure"
+            )
+            if plugin_name in self.plugins:
+                del self.plugins[plugin_name]
+            raise
         except Exception as e:
-            self.api.log_error(f"Error unloading plugin '{plugin_name}': {e}")
-            return False
+            # Unexpected error during unload
+            import traceback
+
+            error_details = traceback.format_exc()
+            self._record_error("plugin_unload", plugin_name, e, {"force_unload": True})
+            self.api.log_error(
+                f"Unexpected error unloading plugin '{plugin_name}': {e}\n"
+                f"Stack trace:\n{error_details}"
+            )
+            # Force removal from registry even on unexpected errors
+            if plugin_name in self.plugins:
+                del self.plugins[plugin_name]
+            raise PluginShutdownError(f"Failed to unload plugin '{plugin_name}': {e}")
 
     def load_all_plugins(self) -> int:
         """Load all discovered plugins.
@@ -645,23 +886,83 @@ class PluginManager:
         required_fields = ["name", "version", "description", "author", "plugin_type"]
         for required_field in required_fields:
             if not getattr(metadata, required_field):
-                raise PluginValidationError(f"Missing required field: {field}")
+                raise PluginValidationError(
+                    f"Plugin '{getattr(metadata, 'name', 'unknown')}': "
+                    f"Missing required field '{required_field}'"
+                )
 
         valid_types = ["language", "ui", "tool", "integration"]
         if metadata.plugin_type not in valid_types:
-            raise PluginValidationError(f"Invalid plugin type: {metadata.plugin_type}")
+            raise PluginValidationError(
+                f"Plugin '{metadata.name}': Invalid plugin type '{metadata.plugin_type}'. "
+                f"Valid types are: {', '.join(valid_types)}"
+            )
+
+        # Validate version format (basic semantic versioning check)
+        import re
+
+        if not re.match(r"^\d+\.\d+\.\d+", metadata.version):
+            raise PluginValidationError(
+                f"Plugin '{metadata.name}': Invalid version format '{metadata.version}'. "
+                "Expected semantic version (e.g., '1.0.0')"
+            )
 
     def _check_dependencies(self, metadata: PluginMetadata) -> bool:
         """Check if plugin dependencies are satisfied"""
+        # Check for circular dependencies
+        self._detect_circular_dependencies(metadata)
+
         for dep in metadata.dependencies:
             # For now, just check if the dependency plugin is loaded
             # In a more sophisticated system, this could check versions, etc.
             if dep not in self.plugins:
-                self.api.log_warning(
-                    f"Plugin '{metadata.name}' dependency '{dep}' not found"
+                raise PluginDependencyError(
+                    f"Plugin '{metadata.name}' dependency '{dep}' not found. "
+                    f"Required dependencies: {', '.join(metadata.dependencies)}"
                 )
-                return False
         return True
+
+    def _detect_circular_dependencies(
+        self, metadata: PluginMetadata, visited: Optional[set] = None
+    ) -> None:
+        """Detect circular dependencies in plugin requirements"""
+        if visited is None:
+            visited = set()
+
+        if metadata.name in visited:
+            cycle = list(visited) + [metadata.name]
+            cycle_start = cycle.index(metadata.name)
+            circular_deps = cycle[cycle_start:]
+            raise PluginDependencyError(
+                f"Circular dependency detected: {' -> '.join(circular_deps)}"
+            )
+
+        visited.add(metadata.name)
+
+        # Check each dependency recursively
+        for dep_name in metadata.dependencies:
+            # Find the dependency plugin metadata (could be from loaded plugins or plugin paths)
+            dep_metadata = self._get_plugin_metadata_by_name(dep_name)
+            if dep_metadata:
+                self._detect_circular_dependencies(dep_metadata, visited.copy())
+
+        visited.remove(metadata.name)
+
+    def _get_plugin_metadata_by_name(
+        self, plugin_name: str
+    ) -> Optional[PluginMetadata]:
+        """Get plugin metadata by name from discovered plugins"""
+        for plugin_path in self.discover_plugins():
+            try:
+                metadata_path = plugin_path / "plugin.json"
+                if metadata_path.exists():
+                    with open(metadata_path, "r") as f:
+                        metadata_dict = json.load(f)
+                    if metadata_dict.get("name") == plugin_name:
+                        return PluginMetadata(**metadata_dict)
+            except Exception:
+                continue
+        return None
 
     def _load_plugin_module(self, plugin_path: Path, metadata: PluginMetadata):
         """Load the plugin's Python module"""
@@ -707,3 +1008,164 @@ class PluginManager:
         raise PluginLoadError(
             f"No plugin class found in module that inherits from {base_class.__name__}"
         )
+
+    def _record_error(
+        self,
+        error_type: str,
+        plugin_name: str,
+        error: Exception,
+        context: Optional[Dict[str, Any]] = None,
+    ):
+        """Record an error for diagnostic purposes"""
+        import traceback
+        import datetime
+
+        error_report = {
+            "timestamp": datetime.datetime.now().isoformat(),
+            "error_type": error_type,
+            "plugin_name": plugin_name,
+            "error_message": str(error),
+            "error_class": error.__class__.__name__,
+            "stack_trace": traceback.format_exc(),
+            "context": context or {},
+        }
+
+        self.error_reports.append(error_report)
+
+        # Keep only the most recent errors
+        if len(self.error_reports) > self.max_error_reports:
+            self.error_reports.pop(0)
+
+    def get_error_reports(
+        self, plugin_name: Optional[str] = None, error_type: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Get error reports, optionally filtered by plugin name or error type"""
+        reports = self.error_reports
+
+        if plugin_name:
+            reports = [r for r in reports if r["plugin_name"] == plugin_name]
+
+        if error_type:
+            reports = [r for r in reports if r["error_type"] == error_type]
+
+        return reports
+
+    def generate_diagnostic_report(self) -> str:
+        """Generate a comprehensive diagnostic report"""
+        import datetime
+
+        report_lines = []
+        report_lines.append("=" * 60)
+        report_lines.append("TIME WARP IDE PLUGIN SYSTEM DIAGNOSTIC REPORT")
+        report_lines.append("=" * 60)
+        report_lines.append(f"Generated: {datetime.datetime.now().isoformat()}")
+        report_lines.append("")
+
+        # System information
+        report_lines.append("SYSTEM INFORMATION:")
+        report_lines.append(f"- Loaded plugins: {len(self.plugins)}")
+        report_lines.append(
+            f"- Registered resources: {sum(len(r) for r in self.resources.values())}"
+        )
+        report_lines.append(
+            f"- Event listeners: {sum(len(l) for l in self.event_listeners.values())}"
+        )
+        report_lines.append(f"- Error reports: {len(self.error_reports)}")
+        report_lines.append("")
+
+        # Loaded plugins
+        if self.plugins:
+            report_lines.append("LOADED PLUGINS:")
+            for name, plugin in self.plugins.items():
+                report_lines.append(f"- {name} (v{plugin.metadata.version})")
+            report_lines.append("")
+
+        # Recent errors
+        if self.error_reports:
+            report_lines.append("RECENT ERRORS:")
+            for error in self.error_reports[-10:]:  # Last 10 errors
+                report_lines.append(
+                    f"- {error['timestamp']}: {error['error_type']} "
+                    f"in {error['plugin_name']}: {error['error_message']}"
+                )
+            report_lines.append("")
+
+        # Plugin directories
+        report_lines.append("PLUGIN DIRECTORIES:")
+        for plugin_dir in self.plugin_dirs:
+            status = "exists" if plugin_dir.exists() else "missing"
+            report_lines.append(f"- {plugin_dir} ({status})")
+        report_lines.append("")
+
+        # Discovered plugins
+        discovered = self.discover_plugins()
+        report_lines.append(f"DISCOVERED PLUGINS: {len(discovered)}")
+        for plugin_path in discovered:
+            metadata_path = plugin_path / "plugin.json"
+            if metadata_path.exists():
+                try:
+                    with open(metadata_path, "r") as f:
+                        metadata = json.load(f)
+                    name = metadata.get("name", "unknown")
+                    version = metadata.get("version", "unknown")
+                    report_lines.append(f"- {name} (v{version}) at {plugin_path}")
+                except Exception as e:
+                    report_lines.append(f"- Error reading {plugin_path}: {e}")
+            else:
+                report_lines.append(f"- No plugin.json in {plugin_path}")
+        report_lines.append("")
+
+        return "\n".join(report_lines)
+
+    def clear_error_reports(self):
+        """Clear all error reports"""
+        self.error_reports.clear()
+
+    def _backup_operation_state(self, operation_id: str):
+        """Backup current system state before an operation"""
+        if not self.enable_recovery:
+            return
+
+        backup = {
+            "plugins": dict(self.plugins),  # Shallow copy of plugin registry
+            "resources": {
+                k: dict(v) for k, v in self.resources.items()
+            },  # Copy resource registry
+            "event_listeners": dict(self.event_listeners),  # Copy event listeners
+            "timestamp": datetime.datetime.now().isoformat(),
+        }
+        self.operation_backups[operation_id] = backup
+
+    def _restore_operation_state(self, operation_id: str) -> bool:
+        """Restore system state from backup after failed operation"""
+        if not self.enable_recovery or operation_id not in self.operation_backups:
+            return False
+
+        backup = self.operation_backups[operation_id]
+
+        try:
+            # Restore plugin registry
+            self.plugins = backup["plugins"]
+
+            # Restore resource registry
+            self.resources = backup["resources"]
+
+            # Restore event listeners
+            self.event_listeners = backup["event_listeners"]
+
+            self.api.log_warning(
+                f"Restored system state from backup for operation {operation_id}"
+            )
+            return True
+        except Exception as e:
+            self.api.log_error(f"Failed to restore system state: {e}")
+            return False
+        finally:
+            # Clean up backup
+            if operation_id in self.operation_backups:
+                del self.operation_backups[operation_id]
+
+    def _cleanup_operation_backup(self, operation_id: str):
+        """Clean up operation backup after successful completion"""
+        if operation_id in self.operation_backups:
+            del self.operation_backups[operation_id]
