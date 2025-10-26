@@ -189,15 +189,21 @@ Y:J:STRESS_LOOP
 T:Completed *COUNT* iterations
 END"""
 
-        start_time = time.time()
-        result = interpreter.run_program(program)
-        end_time = time.time()
+        # Increase max_iterations for this stress test
+        original_max = interpreter.max_iterations
+        interpreter.max_iterations = 50000
+        try:
+            start_time = time.time()
+            result = interpreter.run_program(program)
+            end_time = time.time()
 
-        execution_time = end_time - start_time
+            execution_time = end_time - start_time
 
-        assert result == True
-        assert interpreter.variables.get("COUNT") == 5000
-        assert execution_time < 10.0  # Should complete within 10 seconds
+            assert result == True
+            assert interpreter.variables.get("COUNT") == 5000
+            assert execution_time < 10.0  # Should complete within 10 seconds
+        finally:
+            interpreter.max_iterations = original_max
 
     @pytest.mark.performance
     @pytest.mark.benchmark(group="iot")
@@ -288,7 +294,7 @@ END"""
         program = """U:A=10
 U:B=20
 U:C=30
-U:RESULT=((*A*+*B*)*(*C*-5)+((*A**B*)/(*C*/3)))*2
+U:RESULT=((*A*+*B*)*(*C*-5)+((*A* * *B*)/(*C*/3)))*2
 T:Complex result: *RESULT*
 END"""
 

@@ -888,17 +888,26 @@ class TimeWarpInterpreter:
                 return "continue"
 
             elif cmd_type == "Y:":
-                # Match if condition is true
-                condition = command[2:].strip()
-                try:
-                    result = self.evaluate_expression(condition)
-                    self.match_flag = bool(result)
-                except Exception as e:
-                    self.match_flag = False
-                    self.log_output(f"Error in Y: condition '{condition}': {e}")
-                # mark that the last command set the match flag so a following T: can be conditional
-                self._last_match_set = True
-                return "continue"
+                arg = command[2:].strip()
+                if arg.startswith("J:"):
+                    # Conditional jump: Y:J:label
+                    label = arg[2:].strip()
+                    if self.match_flag:
+                        if label in self.labels:
+                            return f"jump:{self.labels[label]}"
+                    return "continue"
+                else:
+                    # Normal Y: condition
+                    condition = arg
+                    try:
+                        result = self.evaluate_expression(condition)
+                        self.match_flag = bool(result)
+                    except Exception as e:
+                        self.match_flag = False
+                        self.log_output(f"Error in Y: condition '{condition}': {e}")
+                    # mark that the last command set the match flag so a following T: can be conditional
+                    self._last_match_set = True
+                    return "continue"
 
             elif cmd_type == "N:":
                 # Match if condition is false
@@ -1157,9 +1166,16 @@ class TimeWarpInterpreter:
                     return "continue"
 
             elif cmd_type == "C:":
-                # Return from subroutine
-                if self.stack:
-                    return f"jump:{self.stack.pop()}"
+                # Conditional - evaluate condition and set match flag
+                condition = command[2:].strip()
+                try:
+                    result = self.evaluate_expression(condition)
+                    self.match_flag = bool(result)
+                except Exception as e:
+                    self.match_flag = False
+                    self.log_output(f"Error in C: condition '{condition}': {e}")
+                # mark that the last command set the match flag
+                self._last_match_set = True
                 return "continue"
 
             elif cmd_type == "L:":
