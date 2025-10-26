@@ -101,51 +101,10 @@ class VariableManager:
                 expr = expr.replace(var_name, val_repr)
 
         try:
-            # Allow basic math operations and functions
-            allowed_names = {
-                "abs": abs,
-                "round": round,
-                "int": int,
-                "float": float,
-                "max": max,
-                "min": min,
-                "len": len,
-                "str": str,
-                "RND": (lambda *a: __import__("random").random()),
-                "INT": int,
-                "VAL": lambda x: float(x) if "." in str(x) else int(x),
-                "UPPER": lambda x: str(x).upper(),
-                "LOWER": lambda x: str(x).lower(),
-                "MID": lambda s, start, length: (
-                    str(s)[int(start) - 1 : int(start) - 1 + int(length)]
-                    if isinstance(s, (str, int, float))
-                    else ""
-                ),
-                # Math functions
-                "SIN": __import__("math").sin,
-                "COS": __import__("math").cos,
-                "TAN": __import__("math").tan,
-                "LOG": __import__("math").log,
-                "SQR": __import__("math").sqrt,
-                "EXP": __import__("math").exp,
-                "ATN": __import__("math").atan,
-                "SGN": lambda x: 1 if x > 0 else (-1 if x < 0 else 0),
-                "ABS": abs,
-            }
+            # Use safe expression evaluator instead of eval
+            from .safe_expression_evaluator import safe_eval
 
-            safe_dict = {
-                "str": str,
-                "int": int,
-                "float": float,
-                "len": len,
-                "abs": abs,
-                "round": round,
-                "max": max,
-                "min": min,
-            }
-            safe_dict.update(allowed_names)
-
-            result = eval(expr, safe_dict)
+            result = safe_eval(expr)
             return result
         except SyntaxError as e:
             raise InterpreterError(f"Syntax error in expression '{expr}': {e}")

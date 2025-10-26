@@ -13,6 +13,9 @@ from datetime import datetime
 # Import plugin system
 from core.plugin_system import PluginManager
 
+# Import safe expression evaluator
+from core.safe_expression_evaluator import safe_eval
+
 
 class ArduinoController:
     """Arduino hardware controller with simulation support"""
@@ -776,7 +779,7 @@ class TimeWarpInterpreter:
             expr = expr.replace("RND(1)", str(random.random()))
             expr = expr.replace("RND()", str(random.random()))
 
-            result = eval(expr, safe_dict)
+            result = safe_eval(expr, safe_dict)
             return result
         except SyntaxError as e:
             self.log_output(f"Syntax error in expression '{expr}': {e}")
@@ -1029,7 +1032,9 @@ class TimeWarpInterpreter:
                             pin_mode = parts[1].upper()
                             self.log_output(f"RPi PIN {pin_num} {pin_mode} (sim)")
                         else:
-                            self.log_output("RPI PIN syntax: R: RPI PIN number OUTPUT/INPUT")
+                            self.log_output(
+                                "RPI PIN syntax: R: RPI PIN number OUTPUT/INPUT"
+                            )
                     elif rpi_cmd.startswith("WRITE "):
                         # R: RPI WRITE pin_num value
                         parts = rpi_cmd[6:].strip().split()
@@ -1048,7 +1053,9 @@ class TimeWarpInterpreter:
                             # Simulate reading a value (0 or 1)
                             simulated_value = 0  # Always return 0 in simulation
                             self.variables[var_name] = simulated_value
-                            self.log_output(f"RPi READ {pin_num}={simulated_value} (sim)")
+                            self.log_output(
+                                f"RPi READ {pin_num}={simulated_value} (sim)"
+                            )
                         else:
                             self.log_output("RPI READ syntax: R: RPI READ pin variable")
                     else:
@@ -1062,9 +1069,13 @@ class TimeWarpInterpreter:
                         if len(parts) >= 2:
                             port = parts[0]
                             baud = int(self.evaluate_expression(parts[1]))
-                            self.log_output(f"Arduino CONNECT {port} {baud} (simulated)")
+                            self.log_output(
+                                f"Arduino CONNECT {port} {baud} (simulated)"
+                            )
                         else:
-                            self.log_output("ARDUINO CONNECT syntax: R: ARDUINO CONNECT port baud")
+                            self.log_output(
+                                "ARDUINO CONNECT syntax: R: ARDUINO CONNECT port baud"
+                            )
                     elif arduino_cmd.startswith("SEND "):
                         # R: ARDUINO SEND "message"
                         message = arduino_cmd[5:].strip().strip('"').strip("'")
@@ -1075,7 +1086,9 @@ class TimeWarpInterpreter:
                         # Simulate reading sensor data
                         simulated_data = "SIMULATED_SENSOR_DATA"
                         self.variables[var_name] = simulated_data
-                        self.log_output(f"Arduino READ = '{simulated_data}' (simulated)")
+                        self.log_output(
+                            f"Arduino READ = '{simulated_data}' (simulated)"
+                        )
                     else:
                         self.log_output(f"Unknown ARDUINO command: {arduino_cmd}")
                 elif arg_upper.startswith("ROBOT "):
@@ -1091,7 +1104,9 @@ class TimeWarpInterpreter:
                         # Simulate distance reading
                         simulated_distance = 50  # cm
                         self.variables[var_name] = simulated_distance
-                        self.log_output(f"Robot DISTANCE = {simulated_distance}cm (simulated)")
+                        self.log_output(
+                            f"Robot DISTANCE = {simulated_distance}cm (simulated)"
+                        )
                     elif robot_cmd.startswith("LIGHT "):
                         # R: ROBOT LIGHT variable
                         var_name = robot_cmd[6:].strip()
@@ -1116,9 +1131,13 @@ class TimeWarpInterpreter:
                             # Simulate button state (0 = not pressed, 1 = pressed)
                             simulated_state = 0
                             self.variables[var_name] = simulated_state
-                            self.log_output(f"Controller BUTTON {button_num} = {simulated_state} (simulated)")
+                            self.log_output(
+                                f"Controller BUTTON {button_num} = {simulated_state} (simulated)"
+                            )
                         else:
-                            self.log_output("CONTROLLER BUTTON syntax: R: CONTROLLER BUTTON num variable")
+                            self.log_output(
+                                "CONTROLLER BUTTON syntax: R: CONTROLLER BUTTON num variable"
+                            )
                     else:
                         self.log_output(f"Unknown CONTROLLER command: {controller_cmd}")
                 else:
