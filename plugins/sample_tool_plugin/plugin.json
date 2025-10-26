@@ -1,0 +1,9 @@
+{
+    "name": "Sample Tool Plugin",
+    "version": "1.0.0",
+    "description": "A sample plugin demonstrating how to add tools and utilities to Time Warp IDE",
+    "author": "Time Warp IDE Team",
+    "plugin_type": "tool",
+    "dependencies": [],
+    "entry_point": "sample_tool_plugin.py"
+}

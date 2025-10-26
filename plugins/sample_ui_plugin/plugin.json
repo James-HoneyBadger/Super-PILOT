@@ -1,0 +1,9 @@
+{
+    "name": "Sample UI Plugin",
+    "version": "1.0.0",
+    "description": "A sample plugin demonstrating how to add UI components to Time Warp IDE",
+    "author": "Time Warp IDE Team",
+    "plugin_type": "ui",
+    "dependencies": [],
+    "entry_point": "sample_ui_plugin.py"
+}

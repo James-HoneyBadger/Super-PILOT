@@ -10,6 +10,9 @@ import re
 import time
 from datetime import datetime
 
+# Import plugin system
+from core.plugin_system import PluginManager
+
 
 class ArduinoController:
     """Arduino hardware controller with simulation support"""
@@ -4385,8 +4388,26 @@ class TimeWarpIDE:
         # Initialize interpreter
         self.interpreter = TimeWarpInterpreter()
 
+        # Initialize plugin system
+        self.plugin_manager = PluginManager(self)
+
         self.create_widgets()
         self.create_menu()
+
+        # Load plugins after UI is created
+        self.load_plugins()
+
+    def log_output(self, message):
+        """Log a message to the output widget"""
+        if hasattr(self, "output_text") and self.output_text:
+            try:
+                self.output_text.insert(tk.END, str(message) + "\n")
+                self.output_text.see(tk.END)
+            except tk.TclError:
+                # Widget has been destroyed
+                print(message)
+        else:
+            print(message)
 
     def create_widgets(self):
         # Lightweight tooltip helper
@@ -4721,6 +4742,15 @@ class TimeWarpIDE:
         menubar.add_cascade(label="View", menu=view_menu)
         view_menu.add_command(label="Dark Mode", command=self.toggle_dark_mode)
 
+        # Plugins menu
+        plugins_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Plugins", menu=plugins_menu)
+        plugins_menu.add_command(label="Reload Plugins", command=self.reload_plugins)
+        plugins_menu.add_separator()
+        plugins_menu.add_command(
+            label="Plugin Manager", command=self.show_plugin_manager
+        )
+
     # end create_menu
 
     def update_status(self):
@@ -4835,6 +4865,104 @@ END"""
         """Toggle dark mode"""
         # Placeholder for dark mode toggle
         messagebox.showinfo("Dark Mode", "Dark mode toggle not yet implemented")
+
+    def reload_plugins(self):
+        """Reload all plugins"""
+        try:
+            # Unload existing plugins
+            unloaded_count = self.plugin_manager.unload_all_plugins()
+            self.log_output(f"Unloaded {unloaded_count} plugins")
+
+            # Reload plugins
+            loaded_count = self.plugin_manager.load_all_plugins()
+            self.status_bar.config(text=f"Reloaded {loaded_count} plugins")
+            self.log_output(f"Plugin system reloaded: {loaded_count} plugins loaded")
+
+            messagebox.showinfo(
+                "Plugins Reloaded", f"Successfully reloaded {loaded_count} plugins"
+            )
+        except Exception as e:
+            self.log_output(f"Error reloading plugins: {e}")
+            messagebox.showerror("Plugin Error", f"Failed to reload plugins: {e}")
+
+    def show_plugin_manager(self):
+        """Show the plugin manager dialog"""
+        try:
+            # Create plugin manager dialog
+            dialog = tk.Toplevel(self.root)
+            dialog.title("Plugin Manager")
+            dialog.geometry("600x400")
+            dialog.transient(self.root)
+            dialog.grab_set()
+
+            # Create main frame
+            main_frame = ttk.Frame(dialog, padding="10")
+            main_frame.pack(fill=tk.BOTH, expand=True)
+
+            # Title
+            title_label = ttk.Label(
+                main_frame, text="Installed Plugins", font=("Segoe UI", 14, "bold")
+            )
+            title_label.pack(pady=(0, 10))
+
+            # Plugin list frame
+            list_frame = ttk.Frame(main_frame)
+            list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+
+            # Create treeview for plugins
+            columns = ("Type", "Version", "Status")
+            tree = ttk.Treeview(list_frame, columns=columns, show="headings", height=10)
+
+            # Configure columns
+            tree.heading("#0", text="Plugin Name")
+            tree.heading("Type", text="Type")
+            tree.heading("Version", text="Version")
+            tree.heading("Status", text="Status")
+
+            tree.column("#0", width=200)
+            tree.column("Type", width=100)
+            tree.column("Version", width=80)
+            tree.column("Status", width=80)
+
+            # Add scrollbar
+            scrollbar = ttk.Scrollbar(
+                list_frame, orient=tk.VERTICAL, command=tree.yview
+            )
+            tree.configure(yscrollcommand=scrollbar.set)
+
+            tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+            # Populate plugin list
+            for plugin_name in self.plugin_manager.list_plugins():
+                plugin = self.plugin_manager.get_plugin(plugin_name)
+                if plugin:
+                    tree.insert(
+                        "",
+                        tk.END,
+                        text=plugin.metadata.name,
+                        values=(
+                            plugin.metadata.plugin_type.title(),
+                            plugin.metadata.version,
+                            "Loaded",
+                        ),
+                    )
+
+            # Button frame
+            button_frame = ttk.Frame(main_frame)
+            button_frame.pack(fill=tk.X, pady=(10, 0))
+
+            ttk.Button(
+                button_frame, text="Reload All", command=self.reload_plugins
+            ).pack(side=tk.LEFT, padx=(0, 5))
+            ttk.Button(button_frame, text="Close", command=dialog.destroy).pack(
+                side=tk.RIGHT
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Plugin Manager Error", f"Failed to open plugin manager: {e}"
+            )
 
     def update_variables_display(self):
         """Update the variables tree display"""

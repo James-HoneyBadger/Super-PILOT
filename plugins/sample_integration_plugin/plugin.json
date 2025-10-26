@@ -1,0 +1,9 @@
+{
+    "name": "Sample Integration Plugin",
+    "version": "1.0.0",
+    "description": "A sample plugin demonstrating how to integrate with external services",
+    "author": "Time Warp IDE Team",
+    "plugin_type": "integration",
+    "dependencies": [],
+    "entry_point": "sample_integration_plugin.py"
+}
