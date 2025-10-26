@@ -10,7 +10,7 @@ import os
 import subprocess
 
 # Ensure required packages are installed
-REQUIRED_PACKAGES = ["PySide6", "Pillow"]
+REQUIRED_PACKAGES = ["Pillow"]
 missing = []
 for pkg in REQUIRED_PACKAGES:
     try:
@@ -24,6 +24,41 @@ if missing:
     print("✅ Packages installed. Please re-run the IDE.")
     sys.exit(1)
 
+# Check PySide6 compatibility by running a subprocess test
+try:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import PySide6; from PySide6.QtWidgets import QApplication; print('compatible')",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    PYSIDE6_COMPATIBLE = result.returncode == 0 and "compatible" in result.stdout
+except (subprocess.TimeoutExpired, subprocess.SubprocessError):
+    PYSIDE6_COMPATIBLE = False
+
+# If PySide6 is not compatible, fall back to Tkinter immediately
+if not PYSIDE6_COMPATIBLE:
+    print("⚠️  PySide6 not compatible with this system (CPU architecture issue)")
+    print("🔄 Falling back to classic Tkinter IDE...")
+
+    # For Tkinter fallback, we'll run the original IDE
+    import subprocess
+
+    print("🚀 Starting classic Time Warp IDE...")
+    try:
+        result = subprocess.run(
+            [sys.executable, "Time_Warp.py"], cwd=os.path.dirname(__file__)
+        )
+        sys.exit(result.returncode)
+    except Exception as fallback_error:
+        print(f"❌ Failed to start classic IDE: {fallback_error}")
+        sys.exit(1)
+
+# Only continue with Qt imports if compatible
 from typing import Optional, Dict, Any, List
 from pathlib import Path
 
@@ -40,46 +75,20 @@ from core.async_support import (
 )
 
 # Import modern UI
-try:
-    from ui.qt_ui import QtUIFactory, PYSIDE6_AVAILABLE
+from ui.qt_ui import QtUIFactory, PYSIDE6_AVAILABLE
 
-    if not PYSIDE6_AVAILABLE:
-        raise ImportError("PySide6 not available")
+if not PYSIDE6_AVAILABLE:
+    print("❌ PySide6 is not available. Please install PySide6 to use the modern UI.")
+    print("Run: pip install PySide6")
+    sys.exit(1)
 
-    # Test Qt compatibility by attempting to import QApplication
-    from PySide6.QtWidgets import QApplication, QMessageBox, QFileDialog, QInputDialog
-    from PySide6.QtCore import QTimer, Qt
+from PySide6.QtWidgets import QApplication, QMessageBox, QFileDialog, QInputDialog
+from PySide6.QtCore import QTimer, Qt
 
-    QT_AVAILABLE = True
-    UI_BACKEND = "PySide6"
-    UI_FACTORY_CLASS = QtUIFactory
-except (ImportError, SystemError) as e:
-    print(f"⚠️  PySide6 not compatible with this system: {e}")
-    print("🔄 Falling back to classic Tkinter IDE...")
-    QT_AVAILABLE = False
+QT_AVAILABLE = True
+UI_BACKEND = "PySide6"
+UI_FACTORY_CLASS = QtUIFactory
 
-    # For Tkinter fallback, we'll run the original IDE
-    import subprocess
-    print("🚀 Starting classic Time Warp IDE...")
-    try:
-        result = subprocess.run([sys.executable, "Time_Warp.py"], cwd=os.path.dirname(__file__))
-        sys.exit(result.returncode)
-    except Exception as fallback_error:
-        print(f"❌ Failed to start classic IDE: {fallback_error}")
-        sys.exit(1)
-
-# Only executed if Qt is available
-from typing import Optional, Dict, Any, List
-from pathlib import Path
-
-from core.interpreter import TimeWarpInterpreter
-from core.plugin_system import PluginManager
-from core.safe_expression_evaluator import safe_eval
-from core.async_support import (
-    init_async_support,
-    get_async_runner,
-    AsyncInterpreterRunner,
-)
 
 class ModernTimeWarpIDE:
     """Modern Time Warp IDE with PySide6 UI"""
