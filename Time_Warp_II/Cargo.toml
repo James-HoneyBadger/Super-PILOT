@@ -8,3 +8,8 @@ eframe = "0.24"
 egui = "0.24"
 rfd = "0.14"
 chrono = { version = "0.4", features = ["serde"] }
+
+# Allow future incompatibility warnings from transitive dependencies
+# ashpd v0.8.1 has a future incompatibility that will be fixed in newer versions
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tokio_unstable)'] }

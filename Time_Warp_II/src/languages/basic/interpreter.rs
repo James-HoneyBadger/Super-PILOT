@@ -181,7 +181,7 @@ impl Interpreter {
                 start,
                 end,
                 step,
-                body,
+                ..
             } => {
                 let start_value = self.evaluate_expression(start)?;
                 let end_value = self.evaluate_expression(end)?;

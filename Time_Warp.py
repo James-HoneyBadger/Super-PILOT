@@ -257,6 +257,9 @@ class TimeWarpInterpreter:
         self.hud_enabled = False  # HUD display toggle
         self.last_update_time = time.time() * 1000  # For delta time calculations
 
+        # Logo procedures
+        self.logo_procedures = {}  # Logo procedure definitions
+
         self.reset_turtle()
 
     def reset(self):
@@ -286,30 +289,35 @@ class TimeWarpInterpreter:
 
     def move_turtle(self, distance):
         """Move turtle forward/backward by distance, drawing if pen is down"""
-        if not self.graphics_widget:
-            return
         # Calculate new position
         angle_rad = math.radians(self.turtle_heading)
         new_x = self.turtle_x + distance * math.cos(angle_rad)
-        new_y = self.turtle_y + distance * math.sin(angle_rad)
+        new_y = self.turtle_y - distance * math.sin(angle_rad)  # Negative for up
 
-        if self.pen_down:
-            # Draw line from current to new position
-            x1 = self.origin_x + self.turtle_x
-            y1 = self.origin_y - self.turtle_y
-            x2 = self.origin_x + new_x
-            y2 = self.origin_y - new_y
-            self.graphics_widget.create_line(
-                x1, y1, x2, y2, fill=self.pen_color, width=self.pen_width, tags="turtle"
-            )
-            self.graphics_widget.update()
+        if self.graphics_widget:
+            if self.pen_down:
+                # Draw line from current to new position
+                x1 = self.origin_x + self.turtle_x
+                y1 = self.origin_y - self.turtle_y
+                x2 = self.origin_x + new_x
+                y2 = self.origin_y - new_y
+                self.graphics_widget.create_line(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    fill=self.pen_color,
+                    width=self.pen_width,
+                    tags="turtle",
+                )
+                self.graphics_widget.update()
 
-        # Update turtle position
+        # Update turtle position (always, regardless of graphics)
         self.turtle_x = new_x
         self.turtle_y = new_y
 
         # Update HUD if enabled
-        if self.hud_enabled:
+        if self.hud_enabled and self.graphics_widget:
             self.update_hud()
 
     def draw_circle_at(
@@ -2571,18 +2579,18 @@ class TimeWarpInterpreter:
                 if len(parts) > 1:
                     distance = self.evaluate_expression(parts[1])
                     self.move_turtle(distance)
-            elif cmd in ["BACK", "BK"]:
+            elif cmd in ["BACK", "BK", "BACKWARD"]:
                 if len(parts) > 1:
                     distance = self.evaluate_expression(parts[1])
-                    self.move_turtle(-distance)
+                    self.move_turtle(-distance)  # Move backward
             elif cmd in ["LEFT", "LT"]:
                 if len(parts) > 1:
                     degrees = self.evaluate_expression(parts[1])
-                    self.turtle_heading -= degrees
+                    self.turtle_heading += degrees
             elif cmd in ["RIGHT", "RT"]:
                 if len(parts) > 1:
                     degrees = self.evaluate_expression(parts[1])
-                    self.turtle_heading += degrees
+                    self.turtle_heading -= degrees
             elif cmd in ["PENUP", "PU"]:
                 self.pen_down = False
             elif cmd in ["PENDOWN", "PD"]:
@@ -2592,7 +2600,12 @@ class TimeWarpInterpreter:
                     self.graphics_widget.delete("all")
                 self.reset_turtle()
             elif cmd == "HOME":
-                self.reset_turtle()
+                self.turtle_x = 0
+                self.turtle_y = 0
+                self.turtle_heading = 0
+                self.pen_down = True
+                self.pen_color = "black"
+                self.pen_width = 1
             elif cmd == "SETXY":
                 if len(parts) > 2:
                     x = self.evaluate_expression(parts[1])
@@ -2626,10 +2639,18 @@ class TimeWarpInterpreter:
             elif cmd in ["SHOWTURTLE", "ST"]:
                 # Turtle visibility - for now just log since we don't draw turtle cursor
                 self.log_output("Turtle shown")
-            elif cmd in ["SETHEADING", "SETH"]:
+            elif cmd in ["SETCOLOR", "SC"]:
                 if len(parts) > 1:
-                    heading = self.evaluate_expression(parts[1])
-                    self.turtle_heading = heading
+                    color_arg = parts[1]
+                    if color_arg.isdigit():
+                        index = int(color_arg) % len(self.colors)
+                        self.pen_color = self.colors[index]
+                    else:
+                        self.pen_color = color_arg
+            elif cmd in ["CLEARTEXT", "CT"]:
+                # Clear text output
+                if self.output_widget:
+                    self.output_widget.delete(1.0, tk.END)
             elif cmd == "CIRCLE":
                 if len(parts) > 1:
                     radius = self.evaluate_expression(parts[1])
@@ -2673,13 +2694,85 @@ class TimeWarpInterpreter:
                     x = self.evaluate_expression(parts[2])
                     y = self.evaluate_expression(parts[3])
                     self.set_sprite_position(name, x, y)
-            elif cmd == "SPRITEDRAW":
+            elif cmd == "REPEAT":
+                if len(parts) > 2:
+                    count = self.evaluate_expression(parts[1])
+                    # Parse the bracketed commands
+                    command_str = " ".join(parts[2:])
+                    if command_str.startswith("[") and command_str.endswith("]"):
+                        # Remove brackets and parse commands
+                        inner_commands = command_str[1:-1].strip()
+                        for _ in range(int(count)):
+                            # Split by spaces but preserve quoted strings and brackets
+                            sub_commands = self.parse_bracketed_commands(inner_commands)
+                            for sub_cmd in sub_commands:
+                                if sub_cmd.strip():
+                                    self.execute_logo_command(sub_cmd.strip())
+            elif cmd == "TO":
+                # Define a procedure: TO procname :param commands END
                 if len(parts) > 1:
-                    name = parts[1]
-                    self.draw_sprite(name)
+                    proc_name = parts[1].upper()
+                    # Find the END
+                    end_idx = -1
+                    for i, line in enumerate(self.program_lines):
+                        if (
+                            i > self.current_line
+                            and line[1]
+                            and line[1].upper().strip() == "END"
+                        ):
+                            end_idx = i
+                            break
+                    if end_idx > self.current_line:
+                        # Extract procedure body
+                        body_lines = []
+                        for i in range(self.current_line + 1, end_idx):
+                            if self.program_lines[i][1]:
+                                body_lines.append(self.program_lines[i][1])
+                        # Store procedure
+                        if not hasattr(self, "logo_procedures"):
+                            self.logo_procedures = {}
+                        self.logo_procedures[proc_name] = body_lines
+                        # Skip to END
+                        return f"jump:{end_idx}"
+            elif cmd in self.logo_procedures:
+                # Call a defined procedure
+                proc_body = self.logo_procedures[cmd]
+                # Handle parameters if any
+                params = parts[1:] if len(parts) > 1 else []
+                param_vars = {}
+                if params:
+                    # Parse parameters from TO definition (simplified)
+                    # Assume parameters are :param format
+                    param_names = []
+                    for line in proc_body:
+                        if line.strip().startswith("TO "):
+                            # Extract parameters from TO line
+                            to_parts = line.split()
+                            for part in to_parts[2:]:
+                                if part.startswith(":"):
+                                    param_names.append(part[1:])
+                            break
+                    # Assign parameters
+                    for i, param_name in enumerate(param_names):
+                        if i < len(params):
+                            param_vars[param_name] = self.evaluate_expression(params[i])
+
+                # Execute procedure body with parameter substitution
+                old_vars = self.variables.copy()
+                self.variables.update(param_vars)
+                for body_line in proc_body:
+                    if not body_line.strip().startswith("TO "):
+                        # Substitute parameters in the line
+                        for param_name, param_value in param_vars.items():
+                            body_line = body_line.replace(
+                                f":{param_name}", str(param_value)
+                            )
+                        self.execute_line(body_line)
+                self.variables = old_vars
 
         except Exception as e:
-            self.log_output(f"Logo command error: {e}")
+            error_msg = f"❌ Error in Logo command '{command}': {str(e)}"
+            self.display_error(error_msg)
             return "continue"
 
     def determine_command_type(self, command):
@@ -2699,6 +2792,7 @@ class TimeWarpInterpreter:
             "FD",
             "BACK",
             "BK",
+            "BACKWARD",
             "LEFT",
             "LT",
             "RIGHT",
@@ -2725,6 +2819,8 @@ class TimeWarpInterpreter:
             "ST",
             "CLEARTEXT",
             "CT",
+            "REPEAT",
+            "TO",
         ]
         if command.split()[0].upper() in logo_commands:
             return "logo"
@@ -3010,6 +3106,54 @@ class TimeWarpInterpreter:
                 while i < len(commands_str) and commands_str[i].isspace():
                     i += 1
                 # Find the parameter (until next space or end)
+                param_start = i
+                while i < len(commands_str) and not commands_str[i].isspace():
+                    i += 1
+                param = commands_str[param_start:i]
+                cmd_list.append(f"{cmd} {param}")
+            elif commands_str[i : i + 6].upper() == "FORWARD":
+                cmd = "FORWARD"
+                i += 6
+                # Skip whitespace
+                while i < len(commands_str) and commands_str[i].isspace():
+                    i += 1
+                # Find the parameter
+                param_start = i
+                while i < len(commands_str) and not commands_str[i].isspace():
+                    i += 1
+                param = commands_str[param_start:i]
+                cmd_list.append(f"{cmd} {param}")
+            elif commands_str[i : i + 4].upper() == "BACK":
+                cmd = "BACK"
+                i += 4
+                # Skip whitespace
+                while i < len(commands_str) and commands_str[i].isspace():
+                    i += 1
+                # Find the parameter
+                param_start = i
+                while i < len(commands_str) and not commands_str[i].isspace():
+                    i += 1
+                param = commands_str[param_start:i]
+                cmd_list.append(f"{cmd} {param}")
+            elif commands_str[i : i + 4].upper() == "LEFT":
+                cmd = "LEFT"
+                i += 4
+                # Skip whitespace
+                while i < len(commands_str) and commands_str[i].isspace():
+                    i += 1
+                # Find the parameter
+                param_start = i
+                while i < len(commands_str) and not commands_str[i].isspace():
+                    i += 1
+                param = commands_str[param_start:i]
+                cmd_list.append(f"{cmd} {param}")
+            elif commands_str[i : i + 5].upper() == "RIGHT":
+                cmd = "RIGHT"
+                i += 5
+                # Skip whitespace
+                while i < len(commands_str) and commands_str[i].isspace():
+                    i += 1
+                # Find the parameter
                 param_start = i
                 while i < len(commands_str) and not commands_str[i].isspace():
                     i += 1
@@ -4023,10 +4167,11 @@ class CodeFoldingSystem:
         """Update fold markers in line numbers"""
         # Clear existing markers
         for marker in self.fold_markers.values():
-            try:
-                marker.destroy()
-            except tk.TclError:
-                pass
+            if marker:
+                try:
+                    marker.destroy()
+                except Exception as e:
+                    print(f"Error destroying fold marker: {e}")
         self.fold_markers = {}
 
         # Add new markers for foldable blocks (only if line numbers exist)
@@ -4059,7 +4204,8 @@ class CodeFoldingSystem:
             )
 
             # Position marker at the line
-            marker.place(x=0, y=(line_num - 1) * 15)  # Adjust Y based on line height
+            marker.place(x=0, y=(line_num - 1) * 15)
+            # Adjust Y based on line height
             self.fold_markers[line_num] = marker
 
         except Exception as e:
@@ -4214,7 +4360,8 @@ class TimeWarpIDE:
         toolbar.pack(side=tk.TOP, anchor="nw", fill=tk.X, padx=5, pady=6)
         btn_style = {"padding": (6, 3)}
 
-        # Create a horizontal split: editor on the left, output/variables/help on the right
+        # Create a horizontal split: editor on the left,
+        # output/variables/help on the right
         self.main_pane = tk.PanedWindow(self.root, orient=tk.HORIZONTAL)
         self.main_pane.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
@@ -4226,7 +4373,8 @@ class TimeWarpIDE:
         self.right_notebook = ttk.Notebook(self.main_pane)
         self.main_pane.add(self.right_notebook)
 
-        # Try to create professional icons using Pillow; fall back to emoji/text labels
+        # Try to create professional icons using Pillow;
+        # fall back to emoji/text labels
         try:
             from tools.icon_factory import create_toolbar_icons
 
@@ -4700,6 +4848,19 @@ CLEARSCREEN / CS - Clear all drawings and return turtle to home
 CLEARTEXT / CT - Clear text from the command screen
 HOME - Return turtle to center (0,0), facing up
 SETXY x y - Move turtle to coordinates (x,y) without drawing"""
+
+
+def create_demo_program():
+    """Create a demo program for testing purposes"""
+    return """L:START
+T:Time Warp Demo Program
+U:A=10
+U:B=20
+U:SUM=*A*+*B*
+T:Welcome to Time Warp!
+T:A = *A*, B = *B*
+T:Sum = *SUM*
+END"""
 
 
 def main():

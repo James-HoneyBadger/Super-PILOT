@@ -1,6 +1,6 @@
 use crate::languages::basic::ast::{
-    BinaryOperator, Expression, FunctionDefinition, InterpreterError, PrintSeparator, Program,
-    Statement, Token, UnaryOperator,
+    BinaryOperator, Expression, InterpreterError, PrintSeparator, Program, Statement, Token,
+    UnaryOperator,
 };
 
 /// Recursive descent parser for BASIC

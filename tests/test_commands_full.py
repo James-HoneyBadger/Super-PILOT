@@ -93,7 +93,7 @@ END"""
     assert "OK" in out and "END" in out
 
 
-def test_logo_commands(capsys):
+def test_logo_commands():
     prog = """FORWARD 100
 RIGHT 90
 SETXY 10 20
@@ -103,8 +103,11 @@ CLEARSCREEN
 HOME
 END"""
     interp = run_program(prog)
-    out = capsys.readouterr().out
-    assert "Logo command executed" in out or "Turtle moved to position" in out
+    # After all commands, HOME should bring turtle back to 0,0
+    assert interp.turtle_x == 0
+    assert interp.turtle_y == 0
+    # Heading should be 90 from the RIGHT 90 command
+    assert interp.turtle_heading == 90
 
 
 def test_expression_functions_direct():
@@ -120,6 +123,6 @@ def test_expression_functions_direct():
 
 def test_error_next_without_for(capsys):
     prog = "NEXT I\nEND"
-    interp = run_program(prog)
+    run_program(prog)
     out = capsys.readouterr().out
     assert "NEXT without FOR" in out

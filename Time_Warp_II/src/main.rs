@@ -2,6 +2,7 @@ use eframe::egui;
 use rfd::FileDialog;
 use std::collections::HashMap;
 
+mod error;
 mod languages;
 
 #[derive(Clone)]
@@ -173,6 +174,16 @@ impl Default for TimeWarpApp {
 }
 
 impl TimeWarpApp {
+    /// Load file content and return AppResult
+    fn load_file_content(&self, path: &std::path::Path) -> crate::error::AppResult<String> {
+        std::fs::read_to_string(path).map_err(|e| {
+            crate::error::AppError::File(crate::error::FileError::IoError {
+                path: path.to_string_lossy().to_string(),
+                message: e.to_string(),
+            })
+        })
+    }
+
     fn show_error(&mut self, message: String) {
         self.error_message = Some(message);
         self.error_timer = 0.0;
@@ -387,22 +398,30 @@ impl TimeWarpApp {
         // Clear output before execution so only current program output is shown
         self.output.clear();
         let code = self.code.clone();
-        let result = self.execute_tw_basic(&code);
+        match self.execute_tw_basic(&code) {
+            Ok(result) => {
+                // Check if execution needs input
+                if self.waiting_for_input {
+                    // Program is waiting for input - don't mark as complete yet
+                    // The output will be updated when input is provided
+                    self.is_executing = false;
+                    self.output = result;
+                    return;
+                }
 
-        // Check if execution needs input
-        if self.waiting_for_input {
-            // Program is waiting for input - don't mark as complete yet
-            // The output will be updated when input is provided
-            self.is_executing = false;
-            return;
+                // Set output to the result (which may be empty)
+                self.output = result;
+                self.is_executing = false;
+            }
+            Err(err) => {
+                self.output = format!("Error: {}", err);
+                self.is_executing = false;
+                self.show_error(err.to_string());
+            }
         }
-
-        // Set output to the result (which may be empty)
-        self.output = result;
-        self.is_executing = false;
     }
 
-    fn execute_tw_basic(&mut self, code: &str) -> String {
+    fn execute_tw_basic(&mut self, code: &str) -> Result<String, crate::error::AppError> {
         use crate::languages::basic::Interpreter;
 
         // Convert line-numbered BASIC to statements without line numbers
@@ -442,7 +461,7 @@ impl TimeWarpApp {
                     // Process graphics commands
                     self.process_graphics_commands(&graphics_commands);
                     self.basic_interpreter = None; // Clear stored interpreter
-                    output
+                    Ok(output)
                 }
                 crate::languages::basic::ExecutionResult::NeedInput {
                     variable,
@@ -458,16 +477,16 @@ impl TimeWarpApp {
                     // Store the interpreter for continuation
                     self.basic_interpreter = Some(interpreter);
                     // For now, just return the partial output with the prompt
-                    format!("{}{}", partial_output, prompt)
+                    Ok(format!("{}{}", partial_output, prompt))
                 }
                 crate::languages::basic::ExecutionResult::Error(err) => {
                     self.basic_interpreter = None; // Clear on error
-                    format!("Error: {:?}", err)
+                    Err(crate::error::AppError::Interpreter(
+                        crate::languages::basic::ast::InterpreterError::RuntimeError(err),
+                    ))
                 }
             },
-            Err(err) => {
-                format!("Error: {:?}", err)
-            }
+            Err(err) => Err(crate::error::AppError::Interpreter(err)),
         }
     }
 
@@ -1188,10 +1207,15 @@ impl eframe::App for TimeWarpApp {
                 .add_filter("Text", &["txt", "twb", "twp", "tpr"])
                 .pick_file()
             {
-                if let Ok(content) = std::fs::read_to_string(&path) {
-                    self.code = content;
-                    // Don't set output for file operations - keep output clean for program results only
-                    self.last_file_path = Some(path.display().to_string());
+                match self.load_file_content(&path) {
+                    Ok(content) => {
+                        self.code = content;
+                        // Don't set output for file operations - keep output clean for program results only
+                        self.last_file_path = Some(path.display().to_string());
+                    }
+                    Err(e) => {
+                        self.show_error(format!("Failed to open file: {}", e));
+                    }
                 }
             }
         }
@@ -1276,10 +1300,15 @@ impl eframe::App for TimeWarpApp {
                                 .add_filter("Text", &["txt", "twb", "twp", "tpr"])
                                 .pick_file()
                             {
-                                if let Ok(content) = std::fs::read_to_string(&path) {
-                                    self.code = content;
-                                    // Don't set output for file operations - keep output clean for program results only
-                                    self.last_file_path = Some(path.display().to_string());
+                                match self.load_file_content(&path) {
+                                    Ok(content) => {
+                                        self.code = content;
+                                        // Don't set output for file operations - keep output clean for program results only
+                                        self.last_file_path = Some(path.display().to_string());
+                                    }
+                                    Err(e) => {
+                                        self.show_error(format!("Failed to open file: {}", e));
+                                    }
                                 }
                             }
                             ui.close_menu();
@@ -1421,10 +1450,15 @@ impl eframe::App for TimeWarpApp {
                                 .add_filter("Text", &["txt", "twb", "twp", "tpr"])
                                 .pick_file()
                             {
-                                if let Ok(content) = std::fs::read_to_string(&path) {
-                                    self.code = content;
-                                    // Don't set output for file operations - keep output clean for program results only
-                                    self.last_file_path = Some(path.display().to_string());
+                                match self.load_file_content(&path) {
+                                    Ok(content) => {
+                                        self.code = content;
+                                        // Don't set output for file operations - keep output clean for program results only
+                                        self.last_file_path = Some(path.display().to_string());
+                                    }
+                                    Err(e) => {
+                                        self.show_error(format!("Failed to open file: {}", e));
+                                    }
                                 }
                             }
                         }
@@ -1797,44 +1831,47 @@ impl eframe::App for TimeWarpApp {
 
                                                 // Provide input to the BASIC interpreter and continue execution
                                                 if let Some(ref mut interpreter) = self.basic_interpreter {
-                                                    interpreter.provide_input(&self.user_input);
-
-                                                    // Continue execution with the interpreter
-                                                    match interpreter.execute("") {
-                                                        // Empty string since interpreter has state
-                                                        Ok(result) => match result {
-                                                            crate::languages::basic::ExecutionResult::Complete {
-                                                                output,
-                                                                graphics_commands,
-                                                            } => {
-                                                                self.process_graphics_commands(&graphics_commands);
-                                                                self.output = output;
+                                                    if let Err(e) = interpreter.provide_input(&self.user_input) {
+                                                        self.output = format!("{}Error providing input: {:?}", self.output, e);
+                                                        self.basic_interpreter = None;
+                                                    } else {
+                                                        // Continue execution with the interpreter
+                                                        match interpreter.execute("") {
+                                                            // Empty string since interpreter has state
+                                                            Ok(result) => match result {
+                                                                crate::languages::basic::ExecutionResult::Complete {
+                                                                    output,
+                                                                    graphics_commands,
+                                                                } => {
+                                                                    self.process_graphics_commands(&graphics_commands);
+                                                                    self.output = output;
+                                                                    self.basic_interpreter = None;
+                                                                }
+                                                                crate::languages::basic::ExecutionResult::NeedInput {
+                                                                    variable,
+                                                                    prompt,
+                                                                    partial_output,
+                                                                    partial_graphics,
+                                                                } => {
+                                                                    self.process_graphics_commands(&partial_graphics);
+                                                                    self.input_prompt = prompt.clone();
+                                                                    self.current_input_var = variable;
+                                                                    self.output = format!(
+                                                                        "{}{}{}",
+                                                                        self.output, partial_output, prompt
+                                                                    );
+                                                                    // Keep waiting for more input
+                                                                }
+                                                                crate::languages::basic::ExecutionResult::Error(err) => {
+                                                                    self.output =
+                                                                        format!("{}Error: {:?}", self.output, err);
+                                                                    self.basic_interpreter = None;
+                                                                }
+                                                            },
+                                                            Err(err) => {
+                                                                self.output = format!("{}Error: {:?}", self.output, err);
                                                                 self.basic_interpreter = None;
                                                             }
-                                                            crate::languages::basic::ExecutionResult::NeedInput {
-                                                                variable,
-                                                                prompt,
-                                                                partial_output,
-                                                                partial_graphics,
-                                                            } => {
-                                                                self.process_graphics_commands(&partial_graphics);
-                                                                self.input_prompt = prompt.clone();
-                                                                self.current_input_var = variable;
-                                                                self.output = format!(
-                                                                    "{}{}{}",
-                                                                    self.output, partial_output, prompt
-                                                                );
-                                                                // Keep waiting for more input
-                                                            }
-                                                            crate::languages::basic::ExecutionResult::Error(err) => {
-                                                                self.output =
-                                                                    format!("{}Error: {:?}", self.output, err);
-                                                                self.basic_interpreter = None;
-                                                            }
-                                                        },
-                                                        Err(err) => {
-                                                            self.output = format!("{}Error: {:?}", self.output, err);
-                                                            self.basic_interpreter = None;
                                                         }
                                                     }
                                                 }
@@ -2467,7 +2504,9 @@ mod tests {
 
         // Test simple BASIC program execution
         let basic_code = "10 PRINT \"Hello from Time Warp!\"\n20 PRINT \"Testing output console...\"\n30 PRINT \"Count: 1\"\n40 PRINT \"Count: 2\"\n50 PRINT \"Count: 3\"\n60 PRINT \"Test complete!\"";
-        let result = app.execute_tw_basic(basic_code);
+        let result = app
+            .execute_tw_basic(basic_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         // Debug: print the actual result
         println!("Actual result: {:?}", result);
@@ -2487,13 +2526,17 @@ mod tests {
 
         // Test WRITELN command (Pascal-style with newline)
         let writeln_code = "WRITELN \"Hello with newline\"";
-        let result = app.execute_tw_basic(writeln_code);
+        let result = app
+            .execute_tw_basic(writeln_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("WRITELN result: {:?}", result);
         assert!(result.contains("Hello with newline"));
 
         // Test turtle graphics commands
         let turtle_code = "FORWARD 50\nRIGHT 90\nBACK 25";
-        let result = app.execute_tw_basic(turtle_code);
+        let result = app
+            .execute_tw_basic(turtle_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("Turtle commands result: {:?}", result);
         assert!(result.contains("Moved forward 50"));
         assert!(result.contains("Turned right 90"));
@@ -2507,7 +2550,9 @@ mod tests {
 
         // This should not panic or return a parse error
         let mut app = TimeWarpApp::default();
-        let result = app.execute_tw_basic(input_code);
+        let result = app
+            .execute_tw_basic(input_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         // The execution should start (even if it waits for input)
         // We just want to make sure it doesn't fail with a parse error
@@ -2522,7 +2567,9 @@ mod tests {
         let input_code = "10 INPUT \"Name? \"; NAME$";
 
         let mut app = TimeWarpApp::default();
-        let _result = app.execute_tw_basic(input_code);
+        let _result = app
+            .execute_tw_basic(input_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         // After executing an INPUT statement, the app should be waiting for input
         assert!(
@@ -2545,7 +2592,9 @@ mod tests {
 
         // Test TAB function in PRINT statements
         let tab_code = "PRINT \"Hello\"; TAB(10); \"World\"";
-        let result = app.execute_tw_basic(tab_code);
+        let result = app
+            .execute_tw_basic(tab_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("TAB result: {:?}", result);
 
@@ -2560,7 +2609,9 @@ mod tests {
 
         // Test PRINT with a variable
         let print_code = "LET X = 42\nPRINT X";
-        let result = app.execute_tw_basic(print_code);
+        let result = app
+            .execute_tw_basic(print_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("PRINT variable result: {:?}", result);
 
@@ -2574,7 +2625,9 @@ mod tests {
 
         // Test PRINT with a variable (simple case)
         let print_code = "PRINT X";
-        let result = app.execute_tw_basic(print_code);
+        let result = app
+            .execute_tw_basic(print_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("PRINT variable simple result: {:?}", result);
 
@@ -2584,7 +2637,7 @@ mod tests {
 
     #[test]
     fn test_tokenize_input_x() {
-        use crate::languages::basic::Tokenizer;
+        use crate::languages::basic::tokenizer::Tokenizer;
 
         let mut tokenizer = Tokenizer::new("INPUT X");
         let tokens = tokenizer.tokenize().unwrap();
@@ -2597,7 +2650,7 @@ mod tests {
 
     #[test]
     fn test_parse_input_x() {
-        use crate::languages::basic::{Parser, Tokenizer};
+        use crate::languages::basic::{parser::Parser, tokenizer::Tokenizer};
 
         let mut tokenizer = Tokenizer::new("INPUT X");
         let tokens = tokenizer.tokenize().unwrap();
@@ -2612,7 +2665,7 @@ mod tests {
 
     #[test]
     fn test_parse_print_semicolon() {
-        use crate::languages::basic::{Parser, Tokenizer};
+        use crate::languages::basic::{parser::Parser, tokenizer::Tokenizer};
 
         let mut tokenizer = Tokenizer::new("PRINT 42;");
         let tokens = tokenizer.tokenize().unwrap();
@@ -2631,7 +2684,9 @@ mod tests {
 
         // Test PRINT with line number (like user might enter)
         let print_code = "10 PRINT X";
-        let result = app.execute_tw_basic(print_code);
+        let result = app
+            .execute_tw_basic(print_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("PRINT with line number result: {:?}", result);
 
@@ -2647,7 +2702,9 @@ mod tests {
 
         // Test PRINTX (no space) - this should cause a parse error
         let print_code = "PRINTX";
-        let result = app.execute_tw_basic(print_code);
+        let result = app
+            .execute_tw_basic(print_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("PRINT no space result: {:?}", result);
 
@@ -2661,7 +2718,9 @@ mod tests {
 
         // Test print x (lowercase) - should work since tokenizer uppercases
         let print_code = "print x";
-        let result = app.execute_tw_basic(print_code);
+        let result = app
+            .execute_tw_basic(print_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("PRINT lowercase result: {:?}", result);
 
@@ -2677,7 +2736,9 @@ mod tests {
 
         // Test LET X = 5 : PRINT X
         let code = "LET X = 5 : PRINT X";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("LET and PRINT result: {:?}", result);
 
@@ -2693,7 +2754,9 @@ mod tests {
 
         // Test PRINT X Y (without comma) - should cause parse error
         let print_code = "PRINT X Y";
-        let result = app.execute_tw_basic(print_code);
+        let result = app
+            .execute_tw_basic(print_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("PRINT multiple vars no comma result: {:?}", result);
 
@@ -2707,7 +2770,9 @@ mod tests {
 
         // Test PRINT X : PRINTX (what user entered)
         let code = "PRINT X\nPRINTX";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("PRINT X and PRINTX result: {:?}", result);
 
@@ -2722,7 +2787,9 @@ mod tests {
 
         // Test LETX=5 (variable named LETX)
         let code = "LETX=5\nPRINT LETX";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("LETX=5 result: {:?}", result);
 
@@ -2736,7 +2803,9 @@ mod tests {
 
         // Test INPUT X : PRINT X
         let code = "INPUT X\nPRINT X";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("INPUT and PRINT result: {:?}", result);
         println!("Waiting for input: {}", app.waiting_for_input);
@@ -2746,7 +2815,9 @@ mod tests {
 
         // Simulate providing input
         if let Some(ref mut interpreter) = app.basic_interpreter {
-            interpreter.provide_input("42");
+            if let Err(e) = interpreter.provide_input("42") {
+                panic!("Failed to provide input: {:?}", e);
+            }
             let continue_result = interpreter.execute("").unwrap();
             match continue_result {
                 crate::languages::basic::ExecutionResult::Complete { output, .. } => {
@@ -2768,7 +2839,9 @@ mod tests {
 
         // Test PRINT X; (should not add newline)
         let code = "PRINT 42;";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         println!("PRINT with semicolon result: {:?}", result);
 
@@ -2783,19 +2856,25 @@ mod tests {
 
         // Test comma tabulation (GW-BASIC style - every 14 characters)
         let comma_code = "PRINT \"A\",\"B\",\"C\"";
-        let result1 = app.execute_tw_basic(comma_code);
+        let result1 = app
+            .execute_tw_basic(comma_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("PRINT comma tabulation result: {:?}", result1);
         // "A" should be followed by spaces to reach column 14, then "B" at column 15, etc.
 
         // Test TAB function
         let tab_code = "PRINT \"HELLO\";TAB(15);\"WORLD\"";
-        let result2 = app.execute_tw_basic(tab_code);
+        let result2 = app
+            .execute_tw_basic(tab_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("PRINT TAB function result: {:?}", result2);
         // Should have "HELLO" followed by spaces to column 15, then "WORLD"
 
         // Test SPC function
         let spc_code = "PRINT \"TEST\";SPC(3);\"SPACES\"";
-        let result3 = app.execute_tw_basic(spc_code);
+        let result3 = app
+            .execute_tw_basic(spc_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("PRINT SPC function result: {:?}", result3);
         // Should have "TEST" followed by 3 spaces, then "SPACES"
 
@@ -2815,7 +2894,9 @@ mod tests {
 
         // Test DEF FN and calling user-defined functions
         let def_code = "DEF FN SQUARE(X) = X * X\nPRINT FN SQUARE(5)";
-        let result = app.execute_tw_basic(def_code);
+        let result = app
+            .execute_tw_basic(def_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("DEF FN result: {:?}", result);
 
         // Should contain 25 (5 squared)
@@ -2828,11 +2909,14 @@ mod tests {
 
         // Set up some variables and functions
         let setup_code = "LET X = 42\nDEF FN TEST(Y) = Y + 1\nDIM A(10)";
-        app.execute_tw_basic(setup_code);
+        app.execute_tw_basic(setup_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         // Clear everything
         let clear_code = "CLEAR";
-        let result = app.execute_tw_basic(clear_code);
+        let result = app
+            .execute_tw_basic(clear_code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("CLEAR result: {:?}", result);
 
         // Should contain confirmation message
@@ -2845,7 +2929,9 @@ mod tests {
 
         // Test just FOR loop
         let code = "for i=1 to 3\nprint i\nnext";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         // Should work and produce 1\n2\n3\n
         assert!(result == "1\n2\n3\n");
@@ -2858,7 +2944,9 @@ mod tests {
 
         // Test the user's program
         let code = "10 cls\n20 print \"Hello\"\n30 for i=1 to 10\n40 print 1/i\n50 next\n60 end";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         // Should work and contain Hello and the divisions
         assert!(result.contains("Hello"));
@@ -2872,7 +2960,9 @@ mod tests {
 
         // Test FORWARD in a line-numbered BASIC program
         let code = "10 FORWARD 5\n20 END";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("FORWARD test result: {:?}", result);
         println!("Turtle commands after FORWARD: {:?}", app.turtle_commands);
         println!(
@@ -2892,7 +2982,9 @@ mod tests {
 
         // Test FORWARD as a direct command (not line-numbered) with longer distance
         let code = "FORWARD 50";
-        let result = app.execute_tw_basic(code);
+        let result = app
+            .execute_tw_basic(code)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("Direct FORWARD test result: {:?}", result);
         println!(
             "Turtle commands after direct FORWARD: {:?}",
@@ -3516,7 +3608,9 @@ mod tests {
 
         // Test DEFINT with range
         let program = "10 DEFINT A-Z\n20 A = 3.14\n30 B = 5.9\n40 PRINT A, B";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("DEFINT test output: {}", result);
         assert!(
             result.contains("3") && result.contains("5"),
@@ -3525,7 +3619,9 @@ mod tests {
 
         // Test DEFSTR
         let program = "10 DEFSTR S\n20 S = 123\n30 PRINT S";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("DEFSTR test output: {}", result);
         assert!(
             result.contains("123"),
@@ -3534,7 +3630,9 @@ mod tests {
 
         // Test DEFSNG (default behavior)
         let program = "10 DEFSNG X\n20 X = 3.14159\n30 PRINT X";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("DEFSNG test output: {}", result);
         assert!(
             result.contains("3.14159"),
@@ -3543,7 +3641,9 @@ mod tests {
 
         // Test CLEAR resets type defaults
         let program = "10 DEFINT A-Z\n20 CLEAR\n30 A = 3.14\n40 PRINT A";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("CLEAR type defaults test output: {}", result);
         assert!(
             result.contains("3.14"),
@@ -3560,21 +3660,27 @@ mod tests {
 
         // Test DATE$ function
         let program = "PRINT DATE$";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("DATE$ test output: {}", result);
         // Should return a date string in MM-DD-YYYY format
         assert!(result.contains("-"), "DATE$ should return formatted date");
 
         // Test TIME$ function
         let program = "PRINT TIME$";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("TIME$ test output: {}", result);
         // Should return a time string in HH:MM:SS format
         assert!(result.contains(":"), "TIME$ should return formatted time");
 
         // Test TIMER function
         let program = "PRINT TIMER";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("TIMER test output: {}", result);
         // Should return a number (seconds since midnight)
         assert!(
@@ -3586,20 +3692,26 @@ mod tests {
 
         // Test ENVIRON$ with variable name
         let program = "PRINT ENVIRON$(\"PATH\")";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("ENVIRON$ test output: {}", result);
         // Should return the PATH environment variable or empty string
         // (We can't assert specific content since it depends on the environment)
 
         // Test ENVIRON$ with numeric index
         let program = "PRINT ENVIRON$(1)";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("ENVIRON$ numeric test output: {}", result);
         // Should return the first environment variable in KEY=VALUE format
 
         // Test INT(RND(1)*100) expression
         let program = "PRINT INT(RND(1)*100)";
-        let result = app.execute_tw_basic(program);
+        let result = app
+            .execute_tw_basic(program)
+            .unwrap_or_else(|e| format!("Error: {}", e));
         println!("INT(RND(1)*100) test output: {}", result);
         // Should return an integer between 0 and 99
         let num_result: f64 = result.trim().parse().expect("Should parse as number");

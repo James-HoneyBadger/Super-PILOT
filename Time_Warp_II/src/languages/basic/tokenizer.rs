@@ -249,8 +249,6 @@ impl Tokenizer {
             "RND" => Token::Rnd,
             "LEN" => Token::Len,
             "MID" => Token::Mid,
-            "LEFT" => Token::Left,
-            "RIGHT" => Token::Right,
             "CHR" => Token::Chr,
             "ASC" => Token::Asc,
             "VAL" => Token::Val,

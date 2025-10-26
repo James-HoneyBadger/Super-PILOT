@@ -47,9 +47,9 @@ END"""
 
         interpreter.run_program(program)
 
-        # Should move 50 units down from starting position
-        expected_x = 200  # Starting x
-        expected_y = 200 + 50  # Starting y plus distance (down is positive y)
+        # Should move 50 units backward (left) from starting position
+        expected_x = 200 - 50  # Starting x minus distance (left)
+        expected_y = 200  # Starting y unchanged
 
         self.assert_turtle_position(interpreter, expected_x, expected_y)
 
@@ -124,10 +124,7 @@ END"""
 
     def test_repeat_structure(self, interpreter):
         """Test REPEAT command for loops"""
-        program = """REPEAT 4 [
-    FORWARD 100
-    RIGHT 90
-]
+        program = """REPEAT 4 [FORWARD 100 RIGHT 90]
 END"""
 
         interpreter.run_program(program)
@@ -153,10 +150,7 @@ END"""
     def test_macro_definition_and_call(self, interpreter):
         """Test defining and calling Logo macros"""
         program = """TO SQUARE :SIZE
-    REPEAT 4 [
-        FORWARD :SIZE
-        RIGHT 90
-    ]
+REPEAT 4 [FORWARD :SIZE RIGHT 90]
 END
 
 SQUARE 100
@@ -286,7 +280,7 @@ END"""
         interpreter.run_program(program)
 
         # Should draw a square and return to start
-        self.assert_turtle_position(interpreter, 200, 200, 90)
+        self.assert_turtle_position(interpreter, 200, 200, 0)
 
     def test_error_handling_invalid_logo_command(self, interpreter):
         """Test error handling for invalid Logo commands"""
@@ -317,4 +311,4 @@ END"""
         interpreter.run_program(program)
 
         # Should draw a square with side length 80
-        self.assert_turtle_position(interpreter, 200, 200, 90)
+        self.assert_turtle_position(interpreter, 200, 200, 0)

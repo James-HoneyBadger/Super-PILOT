@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::time::{SystemTime, UNIX_EPOCH};
 
 /// Variable type declarations
 #[derive(Debug, Clone, PartialEq)]
@@ -98,8 +97,6 @@ pub enum Token {
     Rnd,
     Len,
     Mid,
-    Left,
-    Right,
     Chr,
     Asc,
     Val,
@@ -132,6 +129,7 @@ pub enum Token {
 
 /// Abstract Syntax Tree node types
 #[derive(Debug, Clone, PartialEq)]
+#[allow(dead_code)]
 pub enum Expression {
     Number(f64),
     String(String),
@@ -302,6 +300,7 @@ pub struct FunctionDefinition {
 
 /// Execution context and state
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct ExecutionContext {
     pub variables: HashMap<String, VariableInfo>,
     pub arrays: HashMap<String, Vec<Value>>,
@@ -390,6 +389,7 @@ impl ExecutionContext {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct ForLoop {
     pub variable: String,
     pub end_value: f64,
@@ -400,6 +400,7 @@ pub struct ForLoop {
 
 /// Execution results
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum ExecutionResult {
     Complete {
         output: String,
@@ -422,6 +423,7 @@ pub struct GraphicsCommand {
 
 /// Error types
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum InterpreterError {
     ParseError(String),
     RuntimeError(String),
@@ -431,3 +433,19 @@ pub enum InterpreterError {
     DivisionByZero,
     IndexOutOfBounds,
 }
+
+impl std::fmt::Display for InterpreterError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            InterpreterError::ParseError(msg) => write!(f, "Parse error: {}", msg),
+            InterpreterError::RuntimeError(msg) => write!(f, "Runtime error: {}", msg),
+            InterpreterError::TypeError(msg) => write!(f, "Type error: {}", msg),
+            InterpreterError::UndefinedVariable(name) => write!(f, "Undefined variable: {}", name),
+            InterpreterError::UndefinedFunction(name) => write!(f, "Undefined function: {}", name),
+            InterpreterError::DivisionByZero => write!(f, "Division by zero"),
+            InterpreterError::IndexOutOfBounds => write!(f, "Index out of bounds"),
+        }
+    }
+}
+
+impl std::error::Error for InterpreterError {}

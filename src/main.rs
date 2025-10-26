@@ -1188,10 +1188,15 @@ impl eframe::App for TimeWarpApp {
                 .add_filter("Text", &["txt", "twb", "twp", "tpr"])
                 .pick_file()
             {
-                if let Ok(content) = std::fs::read_to_string(&path) {
-                    self.code = content;
-                    // Don't set output for file operations - keep output clean for program results only
-                    self.last_file_path = Some(path.display().to_string());
+                match std::fs::read_to_string(&path) {
+                    Ok(content) => {
+                        self.code = content;
+                        // Don't set output for file operations - keep output clean for program results only
+                        self.last_file_path = Some(path.display().to_string());
+                    }
+                    Err(e) => {
+                        self.show_error(format!("Failed to open file: {}", e));
+                    }
                 }
             }
         }
@@ -1276,10 +1281,15 @@ impl eframe::App for TimeWarpApp {
                                 .add_filter("Text", &["txt", "twb", "twp", "tpr"])
                                 .pick_file()
                             {
-                                if let Ok(content) = std::fs::read_to_string(&path) {
-                                    self.code = content;
-                                    // Don't set output for file operations - keep output clean for program results only
-                                    self.last_file_path = Some(path.display().to_string());
+                                match std::fs::read_to_string(&path) {
+                                    Ok(content) => {
+                                        self.code = content;
+                                        // Don't set output for file operations - keep output clean for program results only
+                                        self.last_file_path = Some(path.display().to_string());
+                                    }
+                                    Err(e) => {
+                                        self.show_error(format!("Failed to open file: {}", e));
+                                    }
                                 }
                             }
                             ui.close_menu();
@@ -1421,10 +1431,15 @@ impl eframe::App for TimeWarpApp {
                                 .add_filter("Text", &["txt", "twb", "twp", "tpr"])
                                 .pick_file()
                             {
-                                if let Ok(content) = std::fs::read_to_string(&path) {
-                                    self.code = content;
-                                    // Don't set output for file operations - keep output clean for program results only
-                                    self.last_file_path = Some(path.display().to_string());
+                                match std::fs::read_to_string(&path) {
+                                    Ok(content) => {
+                                        self.code = content;
+                                        // Don't set output for file operations - keep output clean for program results only
+                                        self.last_file_path = Some(path.display().to_string());
+                                    }
+                                    Err(e) => {
+                                        self.show_error(format!("Failed to open file: {}", e));
+                                    }
                                 }
                             }
                         }
