@@ -3,7 +3,7 @@
 # For integration with Time Warp IDE
 
 import tkinter as tk
-from tkinter import ttk, scrolledtext, messagebox, simpledialog
+from tkinter import ttk, scrolledtext, messagebox, simpledialog, filedialog
 import random
 import math
 import re
@@ -2634,62 +2634,6 @@ class IntelligentCodeCompletion:
                 "context": "ml",
                 "example": "MLDEMO linear",
             },
-            "LISTMODELS": {
-                "desc": "List all loaded ML models",
-                "context": "ml",
-                "example": "LISTMODELS",
-            },
-            "LISTDATA": {
-                "desc": "List all ML datasets",
-                "context": "ml",
-                "example": "LISTDATA",
-            },
-            "CLEARML": {
-                "desc": "Clear all ML models and data",
-                "context": "ml",
-                "example": "CLEARML",
-            },
-            # Game Development Commands
-            "CREATEOBJECT": {
-                "desc": "Create game object",
-                "context": "game",
-                "example": "CREATEOBJECT player sprite 100 100 32 32",
-            },
-            "MOVEOBJECT": {
-                "desc": "Move game object",
-                "context": "game",
-                "example": "MOVEOBJECT player 10 0 5",
-            },
-            "SETGRAVITY": {
-                "desc": "Set physics gravity",
-                "context": "game",
-                "example": "SETGRAVITY 9.8",
-            },
-            "SETVELOCITY": {
-                "desc": "Set object velocity",
-                "context": "game",
-                "example": "SETVELOCITY player 5 -10",
-            },
-            "CHECKCOLLISION": {
-                "desc": "Check collision between objects",
-                "context": "game",
-                "example": "CHECKCOLLISION player enemy",
-            },
-            "RENDERGAME": {
-                "desc": "Render game scene",
-                "context": "game",
-                "example": "RENDERGAME",
-            },
-            "UPDATEGAME": {
-                "desc": "Update game physics",
-                "context": "game",
-                "example": "UPDATEGAME 0.016",
-            },
-            "GAMEDEMO": {
-                "desc": "Run game demonstration",
-                "context": "game",
-                "example": "GAMEDEMO pong",
-            },
         }
 
         # Bind events for code completion
@@ -2712,7 +2656,7 @@ class IntelligentCodeCompletion:
         words = line_text.split()
         if words and not line_text.endswith(" "):
             self.current_word = words[-1].upper()
-            if len(self.current_word) >= 2:  # Start completion after 2 characters
+            if len(self.current_word) >= 2:  # Start completion after 2 chars
                 self.show_completion_suggestions()
         else:
             self.hide_completion()
@@ -2876,6 +2820,344 @@ class IntelligentCodeCompletion:
         return None
 
 
+class RealTimeSyntaxChecker:
+    """Real-time syntax error detection and highlighting"""
+
+    def __init__(self, text_widget, ide):
+        self.text_widget = text_widget
+        self.ide = ide
+        self.error_tag = "syntax_error"
+        self.warning_tag = "syntax_warning"
+        self.setup_error_tags()
+
+    def setup_error_tags(self):
+        """Setup text tags for error highlighting"""
+        self.text_widget.tag_configure(
+            self.error_tag, background="#FFE6E6", foreground="#CC0000", underline=True
+        )
+        self.text_widget.tag_configure(
+            self.warning_tag, background="#FFF4E6", foreground="#CC6600", underline=True
+        )
+
+    def check_syntax(self, event=None):
+        """Check syntax of current content and highlight errors"""
+        # Clear existing error highlights
+        self.text_widget.tag_remove(self.error_tag, "1.0", tk.END)
+        self.text_widget.tag_remove(self.warning_tag, "1.0", tk.END)
+
+        content = self.text_widget.get("1.0", tk.END)
+        lines = content.split("\n")
+
+        errors = []
+        warnings = []
+
+        for line_num, line in enumerate(lines, 1):
+            line = line.strip()
+            if not line:
+                continue
+
+            # Check PILOT syntax
+            pilot_errors = self.check_pilot_syntax(line, line_num)
+            errors.extend(pilot_errors)
+
+            # Check Logo syntax
+            logo_errors = self.check_logo_syntax(line, line_num)
+            errors.extend(logo_errors)
+
+            # Check BASIC syntax
+            basic_errors = self.check_basic_syntax(line, line_num)
+            errors.extend(basic_errors)
+
+            # Check for common issues
+            common_warnings = self.check_common_issues(line, line_num)
+            warnings.extend(common_warnings)
+
+        # Highlight errors and warnings
+        self.highlight_issues(errors, warnings)
+
+        # Update status bar with error count
+        if hasattr(self.ide, "status_label"):
+            if errors:
+                self.ide.status_label.config(
+                    text=f"❌ {len(errors)} syntax errors found"
+                )
+            elif warnings:
+                self.ide.status_label.config(text=f"⚠️ {len(warnings)} warnings")
+            else:
+                self.ide.status_label.config(text="✅ No syntax errors")
+
+    def check_pilot_syntax(self, line, line_num):
+        """Check PILOT command syntax"""
+        errors = []
+
+        if ":" in line and len(line) > 1:
+            if line[1] == ":":  # PILOT command
+                cmd = line[:2]
+                payload = line[2:].strip()
+
+                valid_pilot_cmds = [
+                    "T:",
+                    "A:",
+                    "Y:",
+                    "N:",
+                    "J:",
+                    "M:",
+                    "R:",
+                    "C:",
+                    "L:",
+                    "U:",
+                ]
+
+                if cmd not in valid_pilot_cmds:
+                    errors.append(
+                        {
+                            "line": line_num,
+                            "message": f"Unknown PILOT command: {cmd}",
+                            "type": "error",
+                        }
+                    )
+
+                # Command-specific validation
+                if cmd == "J:" and payload:
+                    # Check conditional jump syntax J(condition):label
+                    import re
+
+                    if "(" in payload and ")" in payload and ":" in payload:
+                        match = re.match(r"^\((.+?)\):(.+)$", payload)
+                        if not match:
+                            errors.append(
+                                {
+                                    "line": line_num,
+                                    "message": "Invalid conditional jump syntax. Use J(condition):label",
+                                    "type": "error",
+                                }
+                            )
+                    elif payload and not payload.isalnum():
+                        # Simple jump to label - should be alphanumeric
+                        if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", payload):
+                            errors.append(
+                                {
+                                    "line": line_num,
+                                    "message": "Invalid label name. Use letters, numbers, and underscores only",
+                                    "type": "error",
+                                }
+                            )
+
+                elif cmd == "L:" and payload:
+                    # Label definition - should be alphanumeric
+                    if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", payload):
+                        errors.append(
+                            {
+                                "line": line_num,
+                                "message": "Invalid label name. Use letters, numbers, and underscores only",
+                                "type": "error",
+                            }
+                        )
+
+        return errors
+
+    def check_logo_syntax(self, line, line_num):
+        """Check Logo command syntax"""
+        errors = []
+
+        words = line.upper().split()
+        if not words:
+            return errors
+
+        first_word = words[0]
+        logo_movement_cmds = [
+            "FORWARD",
+            "FD",
+            "BACK",
+            "BK",
+            "LEFT",
+            "LT",
+            "RIGHT",
+            "RT",
+        ]
+        logo_positioning_cmds = ["SETXY", "SETHEADING", "SETH"]
+        logo_repeat_cmds = ["REPEAT"]
+
+        if first_word in logo_movement_cmds:
+            # Movement commands need a numeric parameter
+            if len(words) < 2:
+                errors.append(
+                    {
+                        "line": line_num,
+                        "message": f"{first_word} command requires a numeric parameter",
+                        "type": "error",
+                    }
+                )
+            elif not self.is_numeric_or_variable(words[1]):
+                errors.append(
+                    {
+                        "line": line_num,
+                        "message": f"{first_word} parameter must be a number or variable",
+                        "type": "error",
+                    }
+                )
+
+        elif first_word in logo_positioning_cmds:
+            if first_word == "SETXY" and len(words) < 3:
+                errors.append(
+                    {
+                        "line": line_num,
+                        "message": "SETXY requires two parameters (X and Y coordinates)",
+                        "type": "error",
+                    }
+                )
+            elif first_word in ["SETHEADING", "SETH"] and len(words) < 2:
+                errors.append(
+                    {
+                        "line": line_num,
+                        "message": f"{first_word} requires a numeric parameter (degrees)",
+                        "type": "error",
+                    }
+                )
+
+        elif first_word == "REPEAT":
+            if len(words) < 3:
+                errors.append(
+                    {
+                        "line": line_num,
+                        "message": "REPEAT requires count and command list [...]",
+                        "type": "error",
+                    }
+                )
+            elif "[" not in line or "]" not in line:
+                errors.append(
+                    {
+                        "line": line_num,
+                        "message": "REPEAT commands must be enclosed in brackets [...]",
+                        "type": "error",
+                    }
+                )
+
+        return errors
+
+    def check_basic_syntax(self, line, line_num):
+        """Check BASIC syntax"""
+        errors = []
+
+        # Check for line numbers at start
+        words = line.split()
+        if words and words[0].isdigit():
+            # BASIC line with line number
+            if len(words) < 2:
+                errors.append(
+                    {
+                        "line": line_num,
+                        "message": "Line number must be followed by a command",
+                        "type": "error",
+                    }
+                )
+            else:
+                command = words[1].upper()
+                basic_cmds = [
+                    "LET",
+                    "PRINT",
+                    "INPUT",
+                    "GOTO",
+                    "IF",
+                    "FOR",
+                    "GOSUB",
+                    "RETURN",
+                    "END",
+                    "REM",
+                ]
+
+                if command not in basic_cmds:
+                    errors.append(
+                        {
+                            "line": line_num,
+                            "message": f"Unknown BASIC command: {command}",
+                            "type": "error",
+                        }
+                    )
+
+                # Command-specific validation
+                if command == "LET" and "=" not in line:
+                    errors.append(
+                        {
+                            "line": line_num,
+                            "message": "LET statement requires assignment with =",
+                            "type": "error",
+                        }
+                    )
+                elif command == "GOTO" and len(words) < 3:
+                    errors.append(
+                        {
+                            "line": line_num,
+                            "message": "GOTO requires a line number",
+                            "type": "error",
+                        }
+                    )
+
+        return errors
+
+    def check_common_issues(self, line, line_num):
+        """Check for common programming issues"""
+        warnings = []
+
+        # Check for potential variable naming issues
+        if "*" in line:
+            # Variable interpolation - check for proper format
+            import re
+
+            vars_in_line = re.findall(r"\*([^*]+)\*", line)
+            for var in vars_in_line:
+                if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", var):
+                    warnings.append(
+                        {
+                            "line": line_num,
+                            "message": f"Variable name '{var}' should use letters, numbers, and underscores only",
+                            "type": "warning",
+                        }
+                    )
+
+        # Check for missing colons in PILOT commands
+        if len(line) >= 2 and line[1] in "TAYNMJRCLU" and line[1] != ":":
+            warnings.append(
+                {
+                    "line": line_num,
+                    "message": "PILOT commands should end with colon (:)",
+                    "type": "warning",
+                }
+            )
+
+        return warnings
+
+    def is_numeric_or_variable(self, value):
+        """Check if value is numeric or a valid variable reference"""
+        # Check if it's a number
+        try:
+            float(value)
+            return True
+        except ValueError:
+            pass
+
+        # Check if it's a variable (contains *)
+        if "*" in value:
+            return True
+
+        # Check if it's a valid identifier
+        import re
+
+        return bool(re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", value))
+
+    def highlight_issues(self, errors, warnings):
+        """Highlight errors and warnings in the text"""
+        for error in errors:
+            line_start = f"{error['line']}.0"
+            line_end = f"{error['line']}.end"
+            self.text_widget.tag_add(self.error_tag, line_start, line_end)
+
+        for warning in warnings:
+            line_start = f"{warning['line']}.0"
+            line_end = f"{warning['line']}.end"
+            self.text_widget.tag_add(self.warning_tag, line_start, line_end)
+
+
 # Integration with Time Warp IDE
 class TimeWarpIDE:
     def __init__(self, root):
@@ -2931,7 +3213,6 @@ class TimeWarpIDE:
                         self.widget.after_cancel(self.id)
                     except Exception:
                         pass
-                    self.id = None
                 if self.tipwindow:
                     try:
                         self.tipwindow.destroy()
@@ -3072,6 +3353,9 @@ class TimeWarpIDE:
         y_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         x_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
 
+        # Initialize code completion system
+        self.code_completion = IntelligentCodeCompletion(self.editor, self)
+
         # Control buttons under editor
         button_frame = ttk.Frame(self.editor_frame)
         button_frame.pack(fill=tk.X, padx=5, pady=5)
@@ -3162,6 +3446,9 @@ class TimeWarpIDE:
         except Exception:
             pass
 
+        # Real-time syntax checker
+        self.syntax_checker = RealTimeSyntaxChecker(self.editor, self)
+
     def setup_theme(self):
         """Apply simple color scheme and font choices for a modern look."""
         try:
@@ -3219,6 +3506,127 @@ class TimeWarpIDE:
     def update_status(self):
         """Update the status bar (placeholder for future use)"""
         pass
+
+    def run_program(self):
+        """Run the program in the editor"""
+        try:
+            code = self.editor.get(1.0, tk.END).strip()
+            if code:
+                self.interpreter.reset()
+                self.output_text.delete(1.0, tk.END)
+                self.interpreter.execute_program(code)
+                self.update_variables_display()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to run program: {e}")
+
+    def stop_program(self):
+        """Stop program execution"""
+        self.interpreter.running = False
+        self.status_bar.config(text="Program stopped")
+
+    def debug_program(self):
+        """Run program in debug mode"""
+        # Placeholder for debug functionality
+        messagebox.showinfo("Debug", "Debug mode not yet implemented")
+
+    def step_once(self):
+        """Execute one line (step)"""
+        # Placeholder for step functionality
+        messagebox.showinfo("Step", "Step execution not yet implemented")
+
+    def continue_execution(self):
+        """Continue execution until breakpoint"""
+        # Placeholder for continue functionality
+        messagebox.showinfo("Continue", "Continue execution not yet implemented")
+
+    def load_demo(self):
+        """Load the demo program"""
+        demo_code = """T:Hello World!
+T:Welcome to Time Warp IDE
+A:name
+T:*name*, nice to meet you!"""
+        self.editor.delete(1.0, tk.END)
+        self.editor.insert(1.0, demo_code)
+
+    def save_file(self):
+        """Save current file"""
+        try:
+            filename = filedialog.asksaveasfilename(
+                defaultextension=".tw",
+                filetypes=[("Time Warp files", "*.tw"), ("All files", "*.*")],
+            )
+            if filename:
+                with open(filename, "w") as f:
+                    f.write(self.editor.get(1.0, tk.END))
+                self.status_bar.config(text=f"Saved: {filename}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save file: {e}")
+
+    def new_file(self):
+        """Create a new file"""
+        self.editor.delete(1.0, tk.END)
+        self.status_bar.config(text="New file")
+
+    def open_file(self):
+        """Open a file"""
+        try:
+            filename = filedialog.askopenfilename(
+                filetypes=[("Time Warp files", "*.tw"), ("All files", "*.*")]
+            )
+            if filename:
+                with open(filename, "r") as f:
+                    content = f.read()
+                self.editor.delete(1.0, tk.END)
+                self.editor.insert(1.0, content)
+                self.status_bar.config(text=f"Opened: {filename}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to open file: {e}")
+
+    def load_hello_world(self):
+        """Load Hello World example"""
+        code = """T:Hello World!
+T:Welcome to Time Warp IDE"""
+        self.editor.delete(1.0, tk.END)
+        self.editor.insert(1.0, code)
+
+    def load_math_demo(self):
+        """Load Math Demo example"""
+        code = """U:x=5
+U:y=3
+T:The sum of *x* and *y* is *x+y*
+T:The product is *x*y*"""
+        self.editor.delete(1.0, tk.END)
+        self.editor.insert(1.0, code)
+
+    def load_quiz_game(self):
+        """Load Quiz Game example"""
+        code = """T:Math Quiz Game
+T:What is 2 + 2?
+A:answer
+Y:*answer*=4
+T:Correct! Well done.
+N:*answer*=4
+T:Sorry, the answer is 4.
+END"""
+        self.editor.delete(1.0, tk.END)
+        self.editor.insert(1.0, code)
+
+    def toggle_dark_mode(self):
+        """Toggle dark mode"""
+        # Placeholder for dark mode toggle
+        messagebox.showinfo("Dark Mode", "Dark mode toggle not yet implemented")
+
+    def update_variables_display(self):
+        """Update the variables tree display"""
+        # Clear existing items
+        for item in self.variables_tree.get_children():
+            self.variables_tree.delete(item)
+
+        # Add current variables
+        for var_name, var_value in self.interpreter.variables.items():
+            self.variables_tree.insert(
+                "", tk.END, text=var_name, values=(str(var_value),)
+            )
 
     def get_help_text(self):
         return """
@@ -3301,9 +3709,3 @@ CLEARSCREEN / CS - Clear all drawings and return turtle to home
 CLEARTEXT / CT - Clear text from the command screen
 HOME - Return turtle to center (0,0), facing up
 SETXY x y - Move turtle to coordinates (x,y) without drawing
-SETX x - Move turtle to specified X coordinate, keep Y
-SETY y - Move turtle to specified Y coordinate, keep X
-SETHEADING degrees / SETH degrees - Set turtle's heading to specified angle
-REPEAT count [commands] - Execute commands count times
-
-=== EXPRESSIONS ===
