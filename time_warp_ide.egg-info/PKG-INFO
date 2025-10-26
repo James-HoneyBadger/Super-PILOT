@@ -1,0 +1,316 @@
+Metadata-Version: 2.4
+Name: time-warp-ide
+Version: 2.0.0
+Summary: Educational programming IDE supporting multiple languages with turtle graphics
+Author-email: James HoneyBadger <contact@timewarpide.com>
+Maintainer: Time Warp IDE Team
+License: MIT
+Project-URL: Homepage, https://github.com/James-HoneyBadger/Time_Warp
+Project-URL: Documentation, https://timewarpide.readthedocs.io/
+Project-URL: Repository, https://github.com/James-HoneyBadger/Time_Warp.git
+Project-URL: Issues, https://github.com/James-HoneyBadger/Time_Warp/issues
+Project-URL: Changelog, https://github.com/James-HoneyBadger/Time_Warp/blob/main/CHANGELOG.md
+Keywords: education,programming,ide,turtle-graphics,pil,basic,logo
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Education
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Education
+Classifier: Topic :: Software Development :: Interpreters
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pillow>=10.0.0
+Requires-Dist: setuptools>=61.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: pytest-mock>=3.10.0; extra == "dev"
+Requires-Dist: pytest-xdist>=3.0.0; extra == "dev"
+Requires-Dist: pytest-html>=3.1.0; extra == "dev"
+Requires-Dist: pytest-benchmark>=4.0.0; extra == "dev"
+Requires-Dist: flake8>=6.0.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: isort>=5.12.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: memory-profiler>=0.60.0; extra == "dev"
+Requires-Dist: psutil>=5.9.0; extra == "dev"
+Requires-Dist: responses>=0.23.0; extra == "dev"
+Requires-Dist: factory-boy>=3.2.0; extra == "dev"
+Requires-Dist: freezegun>=1.2.0; extra == "dev"
+Requires-Dist: sphinx>=6.0.0; extra == "dev"
+Requires-Dist: sphinx-rtd-theme>=1.2.0; extra == "dev"
+Provides-Extra: qt
+Requires-Dist: PyQt6>=6.5.0; extra == "qt"
+Requires-Dist: PyQt6-Qt6>=6.5.0; extra == "qt"
+Provides-Extra: pyside
+Requires-Dist: PySide6>=6.5.0; extra == "pyside"
+
+# Time Warp IDE# Time Warp
+
+
+
+[![CI](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml)CI: ![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)
+
+[![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)Quick start
+
+
+
+An educational programming IDE supporting multiple languages (PILOT, BASIC, Logo) with integrated turtle graphics, game development tools, and hardware integration capabilities.Install dev requirements:
+
+
+
+## 🚀 Quick Start```bash
+
+python -m pip install -r requirements-dev.txt
+
+### Requirements```
+
+- **Python 3.11+** (tested on Python 3.13)
+
+- Modern pip with pyproject.toml supportRun tests:
+
+
+
+### Installation```bash
+
+python -m pytest -q
+
+#### For Development```
+
+```bash
+
+# Clone the repositoryRun the simple IDE:
+
+git clone https://github.com/James-HoneyBadger/Time_Warp.git
+
+cd Time_Warp```bash
+
+python pilot.py
+
+# Install with development dependencies```
+
+pip install -e ".[dev]"
+
+```
+
+![CI](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml/badge.svg?branch=main)
+
+#### For End Users
+
+```bash## Recent changes and semantics
+
+# Install from source
+
+pip install .- Conditional jump semantics: `J:label` now behaves as a conditional jump when it immediately follows a `Y:` or `N:` command (it consumes the match sentinel).
+
+```
+
+  Example:
+
+#### Alternative UI Frameworks (Optional)
+
+```bash  ```text
+
+# Install with PyQt6 support  Y:*COUNT* > 5
+
+pip install -e ".[qt]"  J:END_LOOP
+
+  ```
+
+# Install with PySide6 support
+
+pip install -e ".[pyside]"- `T:` and `MT:` interpolation consolidated into a helper for consistent evaluation of `*VAR*` and `*expr*` tokens.
+
+```
+
+- `N:` currently acts as a conditional test that sets the match flag when its condition is TRUE (this aligns with demo programs). `Y:` and `N:` both set the `_last_match_set` sentinel which consumer commands may use.
+
+### Running the IDE
+
+## Version 3 Highlights (3.0.0)
+
+```bash
+
+# Launch the main IDETurtle / Logo Extensions:
+
+python Time_Warp.py
+
+- New commands: `COLOR`, `TRACE`, `KEEP_CANVAS`, `CENTER`, `PENSTYLE`, `DEBUGLINES`, `FIT`, aliases (`SETCOLOR/SETCOLOUR`, `SETPENSIZE`).
+
+# Or use the installed script- Pen style customization: `PENSTYLE solid|dashed|dotted` (teaching different stroke semantics).
+
+time-warp- Auto color cycle per shape (each PENUP→PENDOWN transition advances palette).
+
+```- Pen-down start markers (small dots) + optional tracing (movement, heading, pen state).
+
+- Auto-pan and dynamic scrollregion (shapes no longer appear to “disappear” off canvas).
+
+### Running Tests- Canvas preservation toggle via command or Turtle menu.
+
+- Geometry inspection: `DEBUGLINES` prints first N line segments & metadata; `FIT` recenters viewport to drawing bounds.
+
+```bash
+
+# Run all testsInterpreter / Core:
+
+pytest
+
+- Conditional jump sentinel consumption (`Y:`/`N:` + subsequent `J:` / `T:` logic stabilized).
+
+# Run with coverage- Compute assignment form: `C:VAR=EXPR`.
+
+pytest --cov=core --cov-report=html- Nested `REPEAT` loops: `REPEAT 3 [ REPEAT 2 [ FORWARD 50 RIGHT 90 ] LEFT 45 ]`.
+
+- Macro system: `DEFINE STAR [ REPEAT 5 [ FORWARD 80 RIGHT 144 ] ]` then `CALL STAR`.
+
+# Run specific test categories- Performance profiling: `PROFILE ON`, run program, `PROFILE REPORT` (per-command counts, avg, max, total ms).
+
+pytest -m "unit"        # Unit tests only- Style-aware line metadata tracked for debugging & future analytics.
+
+pytest -m "integration" # Integration tests only
+
+```IDE / UX:
+
+
+
+## 🎯 Key Features- Output pane context menu (Copy / Copy All / Clear).
+
+- Dedicated Turtle menu: Trace toggle, Preserve Canvas, Clear.
+
+### Multi-Language Support- Accent theme switching + dark/light mode.
+
+- **PILOT**: Educational language with conditional commands (`T:`, `A:`, `J:`, `Y:`, `N:`)- Auto-completion & syntax highlighting extended for: `DEFINE`, `CALL`, `REPEAT` (nested), `PENSTYLE`, `DEBUGLINES`, `FIT`, `PROFILE`.
+
+- **BASIC**: Classic line-numbered programming with graphics extensions
+
+- **Logo**: Turtle graphics with advanced drawing capabilities## Roadmap (Planned >3.0.0)
+
+- **Extended Commands**: Game development, hardware I/O, audio, and more
+
+- Polygon fill & EXPORT (PNG/SVG) commands.
+
+### Modern Python Architecture- Settings persistence (trace / keep-canvas / last theme, profiling preference).
+
+- **Python 3.11+** with modern language features- BOUNDS and ZOOM/ZOOMRESET viewport helpers.
+
+- **Asyncio Support** for responsive UI operations- FILL mode or SHAPE capture API for teaching geometry.
+
+- **Type Hints** throughout the codebase- Sandboxed expression evaluator refactor (remove eval).
+
+- **Secure Expression Evaluation** (AST-based, no eval)- Live variable watch + time-travel execution (stretch goal).
+
+- **Plugin System** with hot-reloading capabilities
+
+## Running tests
+
+### Educational Tools
+
+- **Interactive Turtle Graphics** with real-time renderingFrom project root:
+
+- **Step-by-Step Debugging** with variable inspection
+
+- **Syntax Highlighting** and auto-completion```bash
+
+- **Performance Profiling** for optimization learningPYTHONPATH=. pytest -q
+
+- **Hardware Integration** (Raspberry Pi, Arduino simulation)```
+
+
+
+### Game DevelopmentIf you want me to open a pull request for these changes, tell me the target
+
+- **2D Game Engine** with physics and collision detectionbranch (default `main`) and whether to create a descriptive PR title and body.
+
+- **Sprite Management** and animation systems
+- **Sound and Music** playback capabilities
+- **Save/Load System** for game states
+
+## 📋 Recent Changes
+
+### Version 2.0.0 (Modernization)
+- **Python 3.11+** requirement with modern syntax
+- **Asyncio Integration** for UI responsiveness
+- **Type Annotations** for better maintainability
+- **PyQt6/PySide6 Support** as tkinter alternatives
+- **Enhanced Security** with AST-based expression evaluation
+- **Improved Plugin System** with better error handling
+
+### Conditional Jump Semantics
+`J:label` now behaves as a conditional jump when following `Y:` or `N:` commands:
+
+```pilot
+Y:*COUNT* > 5
+J:END_LOOP
+```
+
+### Expression Interpolation
+`T:` and `MT:` commands support advanced interpolation:
+- `*VAR*` for variable substitution
+- `*expr*` for evaluated expressions
+
+## 🛠️ Development
+
+### Code Quality
+```bash
+# Format code
+black .
+isort .
+
+# Type checking
+mypy .
+
+# Lint code
+flake8 .
+```
+
+### Building Documentation
+```bash
+# Install docs dependencies
+pip install -e ".[dev]"
+
+# Build docs
+cd docs
+make html
+```
+
+## 🗺️ Roadmap
+
+### Planned Features
+- **Polygon Fill & Export** (PNG/SVG) commands
+- **Settings Persistence** (themes, preferences)
+- **Advanced Viewport Controls** (zoom, bounds, fit)
+- **Live Variable Watch** and debugging enhancements
+- **Web-based Interface** option
+- **Mobile/Tablet Support**
+
+### Long-term Goals
+- **Time-travel Debugging** (execution replay)
+- **Collaborative Coding** features
+- **AI-assisted Code Generation**
+- **Cross-platform Native Binaries**
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Install development dependencies: `pip install -e ".[dev]"`
+4. Run tests: `pytest`
+5. Commit changes: `git commit -m 'Add amazing feature'`
+6. Push to branch: `git push origin feature/amazing-feature`
+7. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with modern Python practices
+- Inspired by classic educational programming environments
+- Community contributions welcome!
