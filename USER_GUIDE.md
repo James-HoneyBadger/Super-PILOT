@@ -51,7 +51,8 @@ Notes:
 
 - `LET var = expr` - Variable assignment
 - `PRINT expr` - Output expression or string
-- `INPUT var` - Get user input
+- `INPUT var` - Get user input (blocking, waits for Enter)
+- `LET var$ = INKEY$` - Get key press (non-blocking, for game loops)
 - `GOTO line` - Jump to line number
 - `IF condition THEN command` - Conditional execution
 - `FOR var = start TO end [STEP step]` - Loop construct

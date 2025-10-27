@@ -163,6 +163,11 @@ fn run_program(app: &mut TimeWarpApp) {
     app.is_executing = true;
     let code = app.current_code();
     
+    // Transfer any pending key press to interpreter for INKEY$
+    if app.last_key_pressed.is_some() {
+        app.interpreter.last_key_pressed = app.last_key_pressed.take();
+    }
+    
     if let Err(e) = app.interpreter.load_program(&code) {
         app.error_message = Some(format!("Failed to load program: {}", e));
         app.is_executing = false;
@@ -177,6 +182,7 @@ fn run_program(app: &mut TimeWarpApp) {
             app.error_message = Some(format!("Execution error: {}", e));
         }
     }
+
 
     // If execution is waiting for input, keep executing flag set so UI can resume
     if app.interpreter.pending_input.is_none() {

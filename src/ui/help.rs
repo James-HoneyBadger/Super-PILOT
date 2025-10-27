@@ -28,7 +28,8 @@ pub fn render(_app: &TimeWarpApp, ui: &mut egui::Ui) {
         
         ui.heading("BASIC Language");
         ui.label("PRINT \"text\" - Display text");
-        ui.label("INPUT var - Get user input");
+        ui.label("INPUT var - Get user input (blocking)");
+        ui.label("LET var$ = INKEY$ - Get key press (non-blocking)");
         ui.label("LET var = value - Set variable");
         ui.label("GOTO line - Jump to line number");
         ui.label("IF condition THEN command - Conditional");

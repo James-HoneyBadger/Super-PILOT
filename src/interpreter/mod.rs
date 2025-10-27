@@ -96,6 +96,10 @@ pub struct Interpreter {
     // Pending input request (when running in UI without callback)
     pub pending_input: Option<InputRequest>,
     pub pending_resume_line: Option<usize>,
+    
+    // Keyboard state for INKEY$ (callback for tests, direct field for UI)
+    pub inkey_callback: Option<Box<dyn Fn() -> Option<String>>>,
+    pub last_key_pressed: Option<String>,
 }
 
 #[derive(Clone)]
@@ -141,6 +145,8 @@ impl Interpreter {
             logo_procedures: HashMap::new(),
             pending_input: None,
             pending_resume_line: None,
+            inkey_callback: None,
+            last_key_pressed: None,
         }
     }
     
@@ -432,6 +438,21 @@ impl Interpreter {
                 // Advance to next line after the INPUT command
                 self.current_line = line + 1;
             }
+        }
+    }
+    
+    /// Get the last key pressed (INKEY$ functionality)
+    pub fn get_inkey(&mut self) -> String {
+        // Check direct field first (UI mode)
+        if let Some(key) = self.last_key_pressed.take() {
+            return key;
+        }
+        
+        // Fall back to callback (test mode)
+        if let Some(ref callback) = self.inkey_callback {
+            callback().unwrap_or_default()
+        } else {
+            String::new()
         }
     }
 }

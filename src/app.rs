@@ -44,6 +44,9 @@ pub struct TimeWarpApp {
     // Input prompt state
     pub input_buffer: String,
     
+    // Keyboard state for INKEY$
+    pub last_key_pressed: Option<String>,
+    
     // Debug state (future features)
     #[allow(dead_code)]
     pub debug_mode: bool,
@@ -82,6 +85,7 @@ impl TimeWarpApp {
             turtle_pan: egui::Vec2::ZERO,
             
             input_buffer: String::new(),
+            last_key_pressed: None,
             
             debug_mode: false,
             breakpoints: HashMap::new(),
@@ -110,6 +114,23 @@ impl TimeWarpApp {
 
 impl eframe::App for TimeWarpApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Capture keyboard input for INKEY$
+        ctx.input(|i| {
+            // Check for any key events
+            for event in &i.events {
+                if let egui::Event::Key { key, pressed: true, .. } = event {
+                    // Convert key to string representation
+                    self.last_key_pressed = Some(format!("{:?}", key));
+                }
+                // Also capture text input for printable characters
+                if let egui::Event::Text(text) = event {
+                    if !text.is_empty() {
+                        self.last_key_pressed = Some(text.clone());
+                    }
+                }
+            }
+        });
+        
         // Apply theme
         self.current_theme.apply(ctx);
         

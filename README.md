@@ -21,7 +21,7 @@ cargo build --release
 ## Features
 
 - **PILOT**: Full implementation (text, variables, conditionals, jumps)
-- **BASIC**: Core commands (PRINT, LET, INPUT, IF...THEN, FOR/NEXT, GOTO, GOSUB, RETURN, LINE, CIRCLE)
+- **BASIC**: Core commands (PRINT, LET, INPUT, INKEY$, IF...THEN, FOR/NEXT, GOTO, GOSUB, RETURN, LINE, CIRCLE)
 - **Logo**: Turtle graphics with REPEAT, procedures (TO/END), PENWIDTH, named/hex colors, PNG export
 - Safe expression evaluator (no eval())
 - Async execution with tokio
@@ -29,6 +29,7 @@ cargo build --release
 - Security limits and timeouts
 - Modern egui UI with 8 themes
 - Input prompts: interactive 📝 dialog for BASIC INPUT and PILOT A:
+- Real-time keyboard detection: INKEY$ for game loops and interactive programs
 
 ## Example Programs
 
@@ -75,7 +76,7 @@ PNG export: use View → "Save Canvas as PNG…" in the UI.
 
 ## Testing
 
-- 18 unit tests (100% pass)
+- 22 integration tests (100% pass)
 - 5 doc tests
 - Zero warnings
 

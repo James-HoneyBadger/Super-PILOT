@@ -27,6 +27,8 @@ A curated set of sample programs to explore Time Warp IDE features.
 ### Intermediate
 - `basic_hangman.bas` — Classic hangman game with letter guessing
 - `basic_rock_paper_scissors.bas` — Play rock-paper-scissors against computer
+- `basic_inkey_demo.bas` — Real-time keyboard detection with INKEY$
+- `basic_arrow_keys.bas` — Interactive movement using arrow keys and INKEY$
 
 ## Logo
 

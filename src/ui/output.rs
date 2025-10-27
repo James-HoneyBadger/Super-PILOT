@@ -39,9 +39,13 @@ pub fn render(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
                         .hint_text("Type here and press Enter")
                         .desired_width(300.0)
                 );
-                let submitted = response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter));
+                
+                // Check for Enter key press directly
+                let enter_pressed = ui.input(|i| i.key_pressed(egui::Key::Enter));
+                let should_submit = enter_pressed && response.has_focus();
+                
                 ui.horizontal(|ui| {
-                    if ui.button("Submit").clicked() || submitted {
+                    if ui.button("Submit").clicked() || should_submit {
                         let value = app.input_buffer.clone();
                         app.input_buffer.clear();
                         app.interpreter.provide_input(&value);
@@ -60,9 +64,8 @@ pub fn render(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
                     }
                     if ui.button("Cancel").clicked() {
                         // Treat cancel as empty input
-                        let value = app.input_buffer.clone();
                         app.input_buffer.clear();
-                        app.interpreter.provide_input(&value);
+                        app.interpreter.provide_input("");
                         if app.is_executing {
                             if let Err(e) = app.interpreter.execute(&mut app.turtle_state) {
                                 app.error_message = Some(format!("Execution error: {}", e));
@@ -73,10 +76,8 @@ pub fn render(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
                         }
                     }
                 });
-                // Keep focus on the text edit for quick typing
-                if !response.has_focus() {
-                    response.request_focus();
-                }
+                // Request focus on first frame
+                response.request_focus();
             });
     }
 }

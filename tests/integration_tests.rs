@@ -432,3 +432,53 @@ REPEAT 2 [REPEAT 2 [FORWARD 10 RIGHT 90]]
     // 2 outer * 2 inner * 1 line each = 4 lines
     assert_eq!(turtle.lines.len(), 4);
 }
+
+#[test]
+fn test_basic_inkey_with_callback() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::new();
+    
+    // Set up callback to simulate key presses
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    
+    let key_sequence = Rc::new(RefCell::new(vec!["a", "b", ""]));
+    let index = Rc::new(RefCell::new(0));
+    
+    let seq_clone = key_sequence.clone();
+    let idx_clone = index.clone();
+    
+    interp.inkey_callback = Some(Box::new(move || {
+        let mut idx = idx_clone.borrow_mut();
+        let seq = seq_clone.borrow();
+        
+        if *idx < seq.len() {
+            let result = if seq[*idx].is_empty() {
+                None
+            } else {
+                Some(seq[*idx].to_string())
+            };
+            *idx += 1;
+            result
+        } else {
+            None
+        }
+    }));
+    
+    let code = r#"
+10 LET K$ = INKEY$
+20 PRINT K$
+30 LET K$ = INKEY$
+40 PRINT K$
+50 LET K$ = INKEY$
+60 PRINT K$
+"#;
+    
+    interp.load_program(code).unwrap();
+    let output = interp.execute(&mut turtle).unwrap();
+    
+    // Should print "a", "b", ""
+    assert!(output.iter().any(|s| s.contains("a")));
+    assert!(output.iter().any(|s| s.contains("b")));
+}
+

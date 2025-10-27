@@ -59,6 +59,9 @@ fn execute_print(interp: &mut Interpreter, args: &str) -> Result<ExecutionResult
         if item_trim.starts_with('"') && item_trim.ends_with('"') && item_trim.len() >= 2 {
             // String literal
             out_items.push(item_trim[1..item_trim.len()-1].to_string());
+        } else if item_trim.to_uppercase() == "INKEY$" {
+            // Special handling for INKEY$
+            out_items.push(interp.get_inkey());
         } else {
             // Try numeric expression first
             match interp.evaluate_expression(item_trim) {
@@ -85,6 +88,13 @@ fn execute_let(interp: &mut Interpreter, assignment: &str) -> Result<ExecutionRe
     if let Some(pos) = assignment.find('=') {
         let var_name = assignment[..pos].trim().to_string();
         let expr = assignment[pos + 1..].trim();
+        
+        // Special handling for INKEY$
+        if expr.trim().to_uppercase() == "INKEY$" {
+            let key = interp.get_inkey();
+            interp.string_variables.insert(var_name, key);
+            return Ok(ExecutionResult::Continue);
+        }
         
         match interp.evaluate_expression(expr) {
             Ok(value) => {
