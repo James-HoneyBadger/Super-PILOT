@@ -2750,6 +2750,10 @@ class SuperPILOTII:
         self.root = root
         self.root.title("SuperPILOT IDE - Professional Edition")
         self.root.geometry("1000x700")
+        
+        # Track current file
+        self.current_file = 'Untitled'
+        
         # Apply a friendly theme and fonts
         self.setup_theme()
 
@@ -2815,6 +2819,18 @@ class SuperPILOTII:
         # Create a horizontal split: editor on the left, output/variables/help on the right
         self.main_pane = tk.PanedWindow(self.root, orient=tk.HORIZONTAL)
         self.main_pane.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        
+        # Status bar at the bottom
+        self.status_bar = ttk.Frame(self.root)
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X, padx=5, pady=2)
+        
+        self.status_label = ttk.Label(
+            self.status_bar,
+            text="Ready | Line: 1 | Column: 0",
+            relief=tk.SUNKEN,
+            anchor=tk.W
+        )
+        self.status_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
         # Left pane: editor container
         self.editor_container = ttk.Frame(self.main_pane)
@@ -2940,6 +2956,19 @@ class SuperPILOTII:
         y_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         x_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
 
+        # Configure syntax highlighting tags
+        self.editor.tag_configure("keyword", foreground="#0066CC", font=("Consolas", 13, "bold"))
+        self.editor.tag_configure("comment", foreground="#666666", font=("Consolas", 13, "italic"))
+        self.editor.tag_configure("string", foreground="#008800")
+        self.editor.tag_configure("number", foreground="#990000")
+        self.editor.tag_configure("label", foreground="#CC6600", font=("Consolas", 13, "bold"))
+        
+        # Bind text change event for live syntax highlighting
+        self.editor.bind("<KeyRelease>", self._on_text_change)
+        self.editor.bind("<<Modified>>", self._on_text_modified)
+        self.editor.bind("<ButtonRelease-1>", self._update_status_bar)
+        self.editor.bind("<KeyRelease>", lambda e: (self._on_text_change(e), self._update_status_bar()), add="+")
+
         # Control buttons under editor
         button_frame = ttk.Frame(self.editor_frame)
         button_frame.pack(fill=tk.X, padx=5, pady=5)
@@ -3057,18 +3086,19 @@ class SuperPILOTII:
         # File menu
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="New", command=self.new_file)
-        file_menu.add_command(label="Open", command=self.open_file)
-        file_menu.add_command(label="Save", command=self.save_file)
+        file_menu.add_command(label="New", command=self.new_file, accelerator="Ctrl+N")
+        file_menu.add_command(label="Open", command=self.open_file, accelerator="Ctrl+O")
+        file_menu.add_command(label="Save", command=self.save_file, accelerator="Ctrl+S")
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.root.quit)
+        file_menu.add_command(label="Exit", command=self.root.quit, accelerator="Ctrl+Q")
 
         # Run menu
         run_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Run", menu=run_menu)
-        run_menu.add_command(label="Run Program", command=self.run_program)
-        run_menu.add_command(label="Debug Program", command=self.debug_program)
-        run_menu.add_command(label="Stop Program", command=self.stop_program)
+        run_menu.add_command(label="Run Program", command=self.run_program, accelerator="F5")
+        run_menu.add_command(label="Debug Program", command=self.debug_program, accelerator="F8")
+        run_menu.add_command(label="Stop Program", command=self.stop_program, accelerator="Shift+F5")
+        run_menu.add_command(label="Step", command=self.step_once, accelerator="F10")
 
         # Examples menu
         examples_menu = tk.Menu(menubar, tearoff=0)
@@ -3081,6 +3111,17 @@ class SuperPILOTII:
         view_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="View", menu=view_menu)
         view_menu.add_command(label="Dark Mode", command=self.toggle_dark_mode)
+        
+        # Bind keyboard shortcuts
+        self.root.bind("<Control-n>", lambda e: self.new_file())
+        self.root.bind("<Control-o>", lambda e: self.open_file())
+        self.root.bind("<Control-s>", lambda e: self.save_file())
+        self.root.bind("<Control-q>", lambda e: self.root.quit())
+        self.root.bind("<F5>", lambda e: self.run_program())
+        self.root.bind("<Control-r>", lambda e: self.run_program())  # Alternate
+        self.root.bind("<F8>", lambda e: self.debug_program())
+        self.root.bind("<Shift-F5>", lambda e: self.stop_program())
+        self.root.bind("<F10>", lambda e: self.step_once())
 
     # end create_menu
 
@@ -3358,6 +3399,133 @@ END
         for var_name, var_value in self.interpreter.variables.items():
             self.variables_tree.insert("", "end", text=var_name, values=(var_value,))
 
+    def _on_text_change(self, event=None):
+        """Handle text change event for syntax highlighting"""
+        # Schedule highlighting after a short delay to avoid lag
+        if hasattr(self, '_highlight_timer'):
+            self.root.after_cancel(self._highlight_timer)
+        self._highlight_timer = self.root.after(100, self._apply_syntax_highlighting)
+
+    def _on_text_modified(self, event=None):
+        """Handle Modified event from Text widget"""
+        # Reset the modified flag
+        try:
+            self.editor.edit_modified(False)
+        except Exception:
+            pass
+
+    def _update_status_bar(self, event=None):
+        """Update status bar with cursor position"""
+        try:
+            # Get cursor position
+            cursor_pos = self.editor.index(tk.INSERT)
+            line, column = cursor_pos.split(".")
+            
+            # Get current file name (if available)
+            filename = getattr(self, 'current_file', 'Untitled')
+            if filename and filename != 'Untitled':
+                import os
+                filename = os.path.basename(filename)
+            
+            # Update status text
+            status_text = f"{filename} | Line: {line} | Column: {column}"
+            self.status_label.config(text=status_text)
+        except Exception:
+            pass
+
+    def _apply_syntax_highlighting(self):
+        """Apply syntax highlighting to editor content"""
+        try:
+            # Get all text
+            content = self.editor.get("1.0", tk.END)
+            
+            # Remove all existing tags
+            for tag in ["keyword", "comment", "string", "number", "label"]:
+                self.editor.tag_remove(tag, "1.0", tk.END)
+            
+            # PILOT/BASIC/Logo keywords
+            keywords = [
+                # PILOT
+                "T:", "A:", "U:", "C:", "J:", "Y:", "N:", "M:", "L:", "E:",
+                "R:", "MT:", "MA:", "MC:", "TY:", "TN:",
+                # BASIC
+                "PRINT", "LET", "INPUT", "IF", "THEN", "ELSE", "GOTO", "FOR",
+                "TO", "STEP", "NEXT", "DIM", "DATA", "READ", "RESTORE",
+                "GOSUB", "RETURN", "END", "REM", "CLS", "LOCATE", "COLOR",
+                "SOUND", "BEEP", "PLAY", "INKEY", "SWAP",
+                # Logo
+                "FORWARD", "FD", "BACK", "BK", "LEFT", "LT", "RIGHT", "RT",
+                "PENUP", "PU", "PENDOWN", "PD", "CLEARSCREEN", "CS", "HOME",
+                "SETXY", "SETX", "SETY", "SETHEADING", "SETH", "SETCOLOR",
+                "PENCOLOR", "PC", "PENSIZE", "HIDETURTLE", "HT", "SHOWTURTLE",
+                "ST", "REPEAT", "TO", "CLEARTEXT", "CT",
+            ]
+            
+            lines = content.split("\n")
+            for line_num, line in enumerate(lines, 1):
+                line_upper = line.upper()
+                
+                # Highlight comments (REM in BASIC, # anywhere)
+                if "REM" in line_upper or line.strip().startswith("#"):
+                    rem_idx = line_upper.find("REM") if "REM" in line_upper else 0
+                    if line.strip().startswith("#"):
+                        rem_idx = line.find("#")
+                    start_idx = f"{line_num}.{rem_idx}"
+                    end_idx = f"{line_num}.{len(line)}"
+                    self.editor.tag_add("comment", start_idx, end_idx)
+                    continue
+                
+                # Highlight labels (L:NAME)
+                if line_upper.strip().startswith("L:"):
+                    self.editor.tag_add("label", f"{line_num}.0", f"{line_num}.end")
+                    continue
+                
+                # Highlight keywords
+                for keyword in keywords:
+                    # Find all occurrences
+                    col = 0
+                    while True:
+                        idx = line_upper.find(keyword, col)
+                        if idx == -1:
+                            break
+                        # Check if it's a word boundary (not part of a larger word)
+                        if idx > 0 and line_upper[idx-1].isalnum():
+                            col = idx + 1
+                            continue
+                        if idx + len(keyword) < len(line) and line[idx + len(keyword)].isalnum():
+                            col = idx + 1
+                            continue
+                        start_idx = f"{line_num}.{idx}"
+                        end_idx = f"{line_num}.{idx + len(keyword)}"
+                        self.editor.tag_add("keyword", start_idx, end_idx)
+                        col = idx + len(keyword)
+                
+                # Highlight strings (quoted text)
+                in_string = False
+                string_start = 0
+                for col, char in enumerate(line):
+                    if char == '"':
+                        if not in_string:
+                            in_string = True
+                            string_start = col
+                        else:
+                            # End of string
+                            start_idx = f"{line_num}.{string_start}"
+                            end_idx = f"{line_num}.{col + 1}"
+                            self.editor.tag_add("string", start_idx, end_idx)
+                            in_string = False
+                
+                # Highlight numbers
+                import re
+                for match in re.finditer(r'\b\d+\.?\d*\b', line):
+                    start_idx = f"{line_num}.{match.start()}"
+                    end_idx = f"{line_num}.{match.end()}"
+                    self.editor.tag_add("number", start_idx, end_idx)
+        
+        except Exception as e:
+            # Don't let highlighting errors break the editor
+            pass
+
     def highlight_current_line(self):
         """Highlight the current interpreter line in the editor."""
         # Remove previous
@@ -3427,6 +3595,8 @@ END
 
     def new_file(self):
         self.editor.delete(1.0, tk.END)
+        self.current_file = 'Untitled'
+        self._update_status_bar()
 
     def open_file(self):
         from tkinter import filedialog
@@ -3443,6 +3613,8 @@ END
                 content = file.read()
                 self.editor.delete(1.0, tk.END)
                 self.editor.insert(1.0, content)
+                self.current_file = file_path
+                self._update_status_bar()
 
     def save_file(self):
         from tkinter import filedialog
@@ -3459,6 +3631,8 @@ END
             content = self.editor.get("1.0", tk.END)
             with open(file_path, "w") as file:
                 file.write(content)
+            self.current_file = file_path
+            self._update_status_bar()
             messagebox.showinfo("Save", "File saved successfully!")
 
     def load_demo(self):
