@@ -50,6 +50,15 @@ config.json
 # Cache directories
 .cache/
 
+# Python
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+.venv/
+
 # Build directory
 build/
 

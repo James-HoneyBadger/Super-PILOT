@@ -1,33 +1,33 @@
-# Time Warp IDE - User Guide
+# Time Warp IDE — User Guide
 
-**© 2025 Honey Badger Universe**
-**For support, contact: james@honey-badger.org**
+Welcome to Time Warp IDE, a retromodern learning environment supporting PILOT, BASIC, and Logo with turtle graphics. This guide covers daily use across the Python and Rust IDEs.
+
+For help: james@honey-badger.org
 
 ---
 
-## Welcome to Time Warp IDE
-
-Time Warp IDE is a comprehensive educational programming environment that supports three integrated programming languages:
-
-- **PILOT** - A teaching language designed for computer-assisted instruction
-- **BASIC** - Classic structured programming constructs  
-- **Logo** - Turtle graphics and procedural programming
-
 ## Getting Started
 
-### Running Time Warp IDE
+Pick one IDE:
 
-```bash
-python3 Time_Warp.py
-```
+- Python (modern, PySide6): `python Time_Warp_IDE.py`
+- Python (classic, Tkinter): `python Time_Warp.py`
+- Rust (egui):
+	```bash
+	cd Time_Warp_Rust
+	cargo run
+	```
 
-### Basic Operation
+## Core Workflow
 
-1. **Editor Tab**: Write your programs using any combination of PILOT, BASIC, and Logo commands
-2. **Output Tab**: View program execution results
-3. **Watch Variables Tab**: Monitor variable values during execution
-4. **Tutorials Tab**: Access interactive learning materials
-5. **Exercises Tab**: Practice programming challenges
+1. Open or create files from the file explorer (left).
+2. Edit code in tabs (center). Multiple files can be open at once.
+3. Run the program to view output and graphics.
+4. Save often. Unsaved tabs show a modified indicator.
+
+Notes:
+- Examples are in `examples/` and top-level `*.spt`, `*.pilot`, `*.logo`.
+- Turtle graphics render on the canvas (Python IDE) or unified canvas (Rust IDE).
 
 ## Language Reference
 
@@ -80,26 +80,11 @@ python3 Time_Warp.py
 - `LOWER(string)` - Convert to lowercase
 - `MID(string,start,length)` - Extract substring
 
-## Advanced Features
+## Tips & Good Practices
 
-### Debugging
-
-- Set breakpoints by clicking in the line number area
-- Use **Step** to execute one line at a time
-- Use **Continue** to run until the next breakpoint
-- Monitor variables in the Watch Variables tab
-
-### Version Control
-
-- Automatic version saving before each run
-- Access version history through File → Version History
-
-### Educational Features
-
-- Interactive tutorials for each language
-- Programming exercises with automatic checking
-- Comprehensive help system
-- Example programs included
+- Keep programs small and focused; split into multiple files when helpful.
+- Save before running to avoid losing changes.
+- Explore example programs to learn language features quickly.
 
 ## Example Programs
 
@@ -140,18 +125,12 @@ HOME
 
 ## Keyboard Shortcuts
 
-- `Ctrl+N` - New file
-- `Ctrl+O` - Open file
-- `Ctrl+S` - Save file
-- `Ctrl+Z` - Undo
-- `Ctrl+Y` - Redo
-- `Ctrl+F` - Find text
-- `Ctrl+H` - Replace text
-- `F5` - Run program
-- `F6` - Run with debugger
-- `F8` - Stop program
-- `F10` - Step over
-- `F11` - Step into
+- `Ctrl+N` — New file
+- `Ctrl+O` — Open file
+- `Ctrl+S` — Save file
+- `Ctrl+Z` / `Ctrl+Y` — Undo/Redo
+- `Ctrl+F` — Find
+- `F5` — Run
 
 ## File Formats
 
@@ -162,17 +141,14 @@ Time Warp IDE supports:
 
 ## Troubleshooting
 
-### Common Issues
+Common issues:
 
-1. **Import errors**: Ensure Python 3.x is installed with tkinter support
-2. **Missing Pillow**: Install with `pip install pillow`
-3. **Display issues**: Ensure your system supports GUI applications
+1. Python GUI fails to start: verify PySide6 (modern) or tkinter (classic) is installed.
+2. Turtle graphics not showing: ensure your system supports GUI apps (X11/Wayland on Linux).
+3. Rust IDE build fails: run `rustup update` and `cargo clean && cargo build`.
 
-### Getting Help
-
-- Access built-in help via the Help menu
-- Visit tutorials for step-by-step guidance
-- Try the included example programs
+Getting help:
+- See examples and `docs/`
 - Contact support: james@honey-badger.org
 
 ## System Requirements
@@ -184,9 +160,4 @@ Time Warp IDE supports:
 
 ---
 
-**Time Warp IDE - Empowering Educational Programming**
-
-*© 2025 Honey Badger Universe - All Rights Reserved*
-
-For technical support, feature requests, or educational licensing:
-**james@honey-badger.org**
+Empowering educational programming — © 2025 Honey Badger Universe

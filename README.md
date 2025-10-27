@@ -1,41 +1,102 @@
 # Time Warp IDE
 
-[![CI](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml)
+[![Rust CI](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml)
+[![Python CI](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/python-tests.yml/badge.svg?branch=main)](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/python-tests.yml)
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Retromodern educational IDE with multi-language support (PILOT, BASIC, Logo) and turtle graphics. Includes both a modern Python IDE and an egui-based Rust IDE.
 
 ## 🚀 Quick Start
 
-**Official IDE:**
+Choose your preferred IDE flavor.
+
+### Python IDE (Modern, PySide6)
 
 ```bash
 python Time_Warp_IDE.py
 ```
 
-- The modern PySide6-based IDE is now the official version.
-- The classic Tkinter IDE (`Time_Warp.py`) is archived in `archive/` for reference only.
+### Python IDE (Classic, Tkinter)
 
-For more details, see documentation and examples in the repo.
+```bash
+python Time_Warp.py
+```
+
+### Rust IDE (Retromodern, egui)
+
+```bash
+cd Time_Warp_Rust
+cargo run
+```
+
+## ✨ Features
+
+- Project explorer and tabbed multi-file editing
+- Turtle graphics and educational language executors (PILOT, BASIC, Logo)
+- Retromodern UI themes (green/amber/white phosphor)
+- Cross-platform file I/O and examples library
+- Python and Rust implementations side-by-side
+
+Roadmap (in progress): variable inspector, debugger, command palette, integrated terminal.
+
+## 📦 Install
+
+Python 3.11+ recommended. Optional Rust toolchain for the Rust IDE.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -r requirements-dev.txt
+```
+
+## 🧪 Tests
+
+Run the Python test suite:
+
+```bash
+pytest -q
+```
+
+Rust build and tests:
+
+```bash
+cd Time_Warp_Rust
+cargo build && cargo test
+```
+
+## 📚 Documentation
+
+See `USER_GUIDE.md` for usage and `DEVELOPMENT.md` for contributing and local setup. Sphinx docs live in `docs/`.
+
+## 🤝 Contributing
+
+See `CONTRIBUTING.md` and our `CODE_OF_CONDUCT.md`.
+
+## 🔐 Security
+
+Please report vulnerabilities privately. See `SECURITY.md`.
+
+## 📝 License
+
+MIT — see `LICENSE`.
 
 ## 🔧 Troubleshooting
 
 ### "Illegal instruction" or "Illegal instruction (core dumped)" Error
 
-**Symptoms:** The IDE crashes immediately with "Illegal instruction" when starting.
+Some environments (older VMs) may lack CPU instructions PySide6/Qt expects (SSSE3/SSE4.*/POPCNT).
 
-**Cause:** This system is running on a virtual CPU that lacks support for modern CPU instructions (SSSE3, SSE4.1, SSE4.2, POPCNT) required by PySide6/Qt and other modern libraries.
+Solutions:
+1. Run on physical hardware or a newer VM
+2. Try a different Linux distro or updated QEMU/KVM
+3. Use a cloud instance with a modern CPU
 
-**Solutions:**
-1. **Run on physical hardware** or a newer virtual environment with proper CPU instruction support
-2. **Use a different Linux distribution** or container with better CPU emulation
-3. **Update QEMU/KVM** to a version that supports newer CPU instructions
-4. **Use cloud instances** with modern CPU architectures (AWS, GCP, Azure, etc.)
+Verify CPU flags:
 
-**Verification:** Check your CPU flags:
 ```bash
 cat /proc/cpuinfo | grep -E "(flags|model name)" | head -5
 ```
 
-Required CPU flags include: `ssse3`, `sse4_1`, `sse4_2`, `popcnt`
-
-The Time Warp IDE requires a CPU with SSSE3, SSE4.1, SSE4.2, and POPCNT support.
+Required: `ssse3`, `sse4_1`, `sse4_2`, `popcnt`.

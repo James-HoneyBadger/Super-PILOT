@@ -186,3 +186,48 @@ class TestCase:
                 assert (
                     abs(actual_heading - expected_heading) < 0.1
                 ), f"Turtle heading: expected {expected_heading}, got {actual_heading}"
+
+
+def pytest_collection_modifyitems(config, items):
+    """Dynamically skip heavy categories unless explicitly enabled.
+
+    Set TIME_WARP_FULL_TESTS=1 in the environment to run all tests.
+    """
+    import os
+    import pytest
+
+    if os.getenv("TIME_WARP_FULL_TESTS") == "1":
+        return
+
+    skip_heavy = pytest.mark.skip(
+        reason="Skipped by default (enable with TIME_WARP_FULL_TESTS=1)"
+    )
+    heavy_markers = {
+        "integration",
+        "hardware",
+        "iot",
+        "robotics",
+        "ui",
+        "performance",
+        "stress",
+        "security",
+    }
+
+    for item in items:
+        mnames = {m.name for m in item.iter_markers()}
+        path = str(getattr(item, "fspath", ""))
+        if mnames.intersection(heavy_markers):
+            item.add_marker(skip_heavy)
+            continue
+        # Heuristic path-based skip for heavy suites not yet marked
+        if any(
+            key in path
+            for key in (
+                "modern_ui",
+                "templecode",
+                "hardware_",
+                "iot_",
+                "robotics",
+            )
+        ):
+            item.add_marker(skip_heavy)

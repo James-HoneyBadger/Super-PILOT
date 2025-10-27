@@ -1166,16 +1166,11 @@ class TimeWarpInterpreter:
                     return "continue"
 
             elif cmd_type == "C:":
-                # Conditional - evaluate condition and set match flag
-                condition = command[2:].strip()
-                try:
-                    result = self.evaluate_expression(condition)
-                    self.match_flag = bool(result)
-                except Exception as e:
-                    self.match_flag = False
-                    self.log_output(f"Error in C: condition '{condition}': {e}")
-                # mark that the last command set the match flag
-                self._last_match_set = True
+                # Return from subroutine (PILOT C:)
+                # If a return address is on the stack, jump back to it.
+                if self.stack:
+                    return f"jump:{self.stack.pop()}"
+                # No return address: treat as a no-op return
                 return "continue"
 
             elif cmd_type == "L:":
@@ -1262,6 +1257,11 @@ class TimeWarpInterpreter:
                         self.variables[f"GAME_OBJECT_{obj_id}_VISIBLE"] = 1
                         self.variables[f"GAME_OBJECT_{obj_id}_VELOCITY_X"] = 0
                         self.variables[f"GAME_OBJECT_{obj_id}_VELOCITY_Y"] = 0
+                        # Convenience per-name variables (e.g., GAME_PLAYER_CREATED)
+                        name_up = obj_name.upper()
+                        self.variables[f"GAME_{name_up}_CREATED"] = 1
+                        self.variables[f"GAME_{name_up}_X"] = x
+                        self.variables[f"GAME_{name_up}_Y"] = y
                     else:
                         self.log_output(
                             "GAME:CREATE requires: name type x y width height"
@@ -1297,6 +1297,10 @@ class TimeWarpInterpreter:
                                 self.game_objects[obj_id]["y"]
                             )
                             self.variables["GAME_LAST_MOVE_RESULT"] = 1
+                            # Convenience per-name vars
+                            name_up = obj_name.upper()
+                            self.variables[f"GAME_{name_up}_X"] = self.game_objects[obj_id]["x"]
+                            self.variables[f"GAME_{name_up}_Y"] = self.game_objects[obj_id]["y"]
                         else:
                             self.variables["GAME_LAST_MOVE_RESULT"] = 0
                     else:
@@ -1304,23 +1308,30 @@ class TimeWarpInterpreter:
                     return "continue"
 
                 elif game_cmd.startswith("PHYSICS"):
-                    # GAME:PHYSICS GRAVITY value
+                    # Support: GAME:PHYSICS GRAVITY value  |  GAME:PHYSICS name VELOCITY vx vy
                     parts = game_cmd[7:].strip().split()
-                    if len(parts) >= 2 and parts[0] == "GRAVITY":
+                    if len(parts) >= 2 and parts[0].upper() == "GRAVITY":
                         gravity = self.evaluate_expression(parts[1])
                         self.variables["GAME_GRAVITY"] = gravity
                         self.variables["GAME_PHYSICS_ENABLED"] = 1
+                    elif len(parts) >= 4 and parts[1].upper() == "VELOCITY":
+                        obj_name = parts[0]
+                        vx = self.evaluate_expression(parts[2])
+                        vy = self.evaluate_expression(parts[3])
+                        name_up = obj_name.upper()
+                        self.variables[f"GAME_{name_up}_VX"] = vx
+                        self.variables[f"GAME_{name_up}_VY"] = vy
                     else:
-                        self.log_output("GAME:PHYSICS syntax: GRAVITY value")
+                        self.log_output("GAME:PHYSICS syntax: GRAVITY value | name VELOCITY vx vy")
                     return "continue"
 
                 elif game_cmd.startswith("COLLISION"):
-                    # GAME:COLLISION CHECK obj1 obj2 result_var
+                    # GAME:COLLISION CHECK obj1 obj2 [result_var]
                     parts = game_cmd[9:].strip().split()
-                    if len(parts) >= 4 and parts[0] == "CHECK":
+                    if len(parts) >= 3 and parts[0] == "CHECK":
                         obj1_name = parts[1]
                         obj2_name = parts[2]
-                        result_var = parts[3]
+                        result_var = parts[3] if len(parts) > 3 else "GAME_COLLISION"
 
                         # Find objects
                         obj1 = None
@@ -1464,6 +1475,22 @@ class TimeWarpInterpreter:
                             self.variables["GAME_INFO_FOUND"] = 0
                     else:
                         self.log_output("GAME:INFO requires object_name")
+                    return "continue"
+
+                elif game_cmd.startswith("MPHOST"):
+                    # GAME:MPHOST room mode max_players
+                    parts = game_cmd[6:].strip().split()
+                    if len(parts) >= 3:
+                        room = parts[0]
+                        mode = parts[1]
+                        maxp = self.evaluate_expression(parts[2])
+                        self.variables["GAME_MP_ROOM"] = room
+                        self.variables["GAME_MP_MODE"] = mode
+                        self.variables["GAME_MP_MAX"] = maxp
+                        self.variables["GAME_MP_STATUS"] = 1
+                    else:
+                        self.log_output("GAME:MPHOST requires room mode max_players")
+                        self.variables["GAME_MP_STATUS"] = 0
                     return "continue"
 
                 elif game_cmd.startswith("DEMO"):
@@ -1671,6 +1698,57 @@ class TimeWarpInterpreter:
                 # Return from GOSUB
                 if self.stack:
                     return f"jump:{self.stack.pop()}"
+                return "continue"
+
+            # --- ML convenience commands and Audio stubs ---
+            elif cmd == "LOADMODEL":
+                # LOADMODEL name type
+                if len(parts) >= 3:
+                    name = parts[1].upper()
+                    self.variables[f"MODEL_{name}_READY"] = 1
+                return "continue"
+            elif cmd == "CREATEDATA":
+                # CREATEDATA name generator
+                if len(parts) >= 3:
+                    name = parts[1].upper()
+                    self.variables[f"DATA_{name}_READY"] = 1
+                return "continue"
+            elif cmd == "TRAINMODEL":
+                # TRAINMODEL model_name data_name
+                if len(parts) >= 3:
+                    model = parts[1].upper()
+                    self.variables[f"MODEL_{model}_TRAINED"] = 1
+                return "continue"
+            elif cmd == "PREDICT":
+                # PREDICT model_name value
+                if len(parts) >= 3:
+                    try:
+                        value = self.evaluate_expression(parts[2])
+                    except Exception:
+                        value = 0
+                    self.variables["ML_PREDICTION"] = value
+                return "continue"
+
+            elif cmd == "LOADSOUND":
+                # LOADSOUND name path
+                if len(parts) >= 3:
+                    name = parts[1]
+                    path = parts[2]
+                    try:
+                        self.audio_mixer.register_sound(name, path)
+                        self.variables[f"AUDIO_{name.upper()}_LOADED"] = 1
+                    except Exception:
+                        self.variables[f"AUDIO_{name.upper()}_LOADED"] = 0
+                return "continue"
+            elif cmd == "PLAYSOUND":
+                # PLAYSOUND name
+                if len(parts) >= 2:
+                    name = parts[1]
+                    try:
+                        self.audio_mixer.play_sound(name)
+                        self.variables[f"AUDIO_{name.upper()}_PLAYING"] = 1
+                    except Exception:
+                        self.variables[f"AUDIO_{name.upper()}_PLAYING"] = 0
                 return "continue"
 
             elif cmd == "NEXT":
@@ -2781,14 +2859,14 @@ class TimeWarpInterpreter:
             elif cmd in ["LEFT", "LT"]:
                 if len(parts) > 1:
                     degrees = self.evaluate_expression(parts[1])
-                    self.turtle_heading += degrees
+                    self.turtle_heading -= degrees
                     self.log_output(f"Turtle turned left {degrees} degrees")
                     # Set variables for turtle state
                     self.variables["TURTLE_HEADING"] = int(self.turtle_heading)
             elif cmd in ["RIGHT", "RT"]:
                 if len(parts) > 1:
                     degrees = self.evaluate_expression(parts[1])
-                    self.turtle_heading -= degrees
+                    self.turtle_heading += degrees
                     self.log_output(f"Turtle turned right {degrees} degrees")
                     # Set variables for turtle state
                     self.variables["TURTLE_HEADING"] = int(self.turtle_heading)
