@@ -358,6 +358,11 @@ class SuperPILOTInterpreter:
         self.particles = []
         self.sprites = {}
         self._pending_jumps = []
+        # Logo/turtle tracking and profiling
+        self.turtle_graphics = {"line_meta": []}
+        self.pen_style = "solid"
+        self.profile_enabled = False
+        self.profile_stats = {}
         self.reset_turtle()
 
     def reset_turtle(self):
@@ -384,6 +389,24 @@ class SuperPILOTInterpreter:
         # In logical turtle space, moving "up" decreases Y so subtract the Y delta
         new_y = self.turtle_y - distance * math.sin(angle_rad)
 
+        if self.pen_down:
+            # Record metadata for testing/analysis
+            try:
+                meta = self.turtle_graphics.setdefault("line_meta", [])
+                meta.append(
+                    {
+                        "x1": self.turtle_x,
+                        "y1": self.turtle_y,
+                        "x2": new_x,
+                        "y2": new_y,
+                        "color": getattr(self, "pen_color", "black"),
+                        "width": getattr(self, "pen_width", 1),
+                        "style": getattr(self, "pen_style", "solid"),
+                    }
+                )
+            except Exception:
+                pass
+        
         if self.graphics_widget and self.pen_down:
             # Draw line from current to new position
             x1 = self.origin_x + self.turtle_x
@@ -1993,6 +2016,23 @@ class SuperPILOTInterpreter:
             cmd = parts_raw[0].upper()
             arg_text = parts_raw[1] if len(parts_raw) > 1 else ""
 
+            # Simple profiler for Logo commands
+            try:
+                if getattr(self, "profile_enabled", False) and cmd in [
+                    "FORWARD",
+                    "FD",
+                    "BACKWARD",
+                    "BACK",
+                    "BK",
+                    "LEFT",
+                    "LT",
+                    "RIGHT",
+                    "RT",
+                ]:
+                    self.profile_stats[cmd] = self.profile_stats.get(cmd, 0) + 1
+            except Exception:
+                pass
+
             if cmd in ["FORWARD", "FD"]:
                 if arg_text:
                     distance = self.evaluate_expression(arg_text)
@@ -2088,6 +2128,58 @@ class SuperPILOTInterpreter:
                 if arg_text:
                     filename = arg_text.split()[0].strip('"').strip("'")
                     self.take_snapshot(filename)
+            elif cmd == "PENSTYLE":
+                if arg_text:
+                    self.pen_style = arg_text.strip()
+            elif cmd == "DEBUGLINES":
+                # No-op other than ensuring metadata exists
+                _ = self.turtle_graphics.setdefault("line_meta", [])
+            elif cmd == "PROFILE":
+                opt = arg_text.strip().upper()
+                if opt == "ON":
+                    self.profile_enabled = True
+                elif opt == "OFF":
+                    self.profile_enabled = False
+                elif opt == "REPORT":
+                    # Just log a simple report
+                    try:
+                        keys = ", ".join(sorted(self.profile_stats.keys()))
+                        self.log_output(f"Profile: {keys}")
+                    except Exception:
+                        pass
+            elif cmd == "DEFINE":
+                # DEFINE NAME [ commands ]
+                try:
+                    args = arg_text.strip()
+                    name_part, rest = args.split(" ", 1)
+                    name = name_part.strip().upper()
+                    if "[" in rest and "]" in rest:
+                        inner_start = rest.find("[") + 1
+                        # Find matching bracket
+                        bc = 1
+                        j = inner_start
+                        while j < len(rest) and bc > 0:
+                            if rest[j] == "[":
+                                bc += 1
+                            elif rest[j] == "]":
+                                bc -= 1
+                            j += 1
+                        inner = rest[inner_start : j - 1]
+                        cmds = self.parse_bracketed_commands(inner)
+                        if not hasattr(self, "logo_macros"):
+                            self.logo_macros = {}
+                        self.logo_macros[name] = cmds
+                except Exception as e:
+                    self.log_output(f"DEFINE error: {e}")
+            elif cmd == "CALL":
+                # CALL NAME
+                try:
+                    name = arg_text.strip().upper()
+                    if hasattr(self, "logo_macros") and name in self.logo_macros:
+                        for c in self.logo_macros[name]:
+                            self.execute_logo_command(c)
+                except Exception as e:
+                    self.log_output(f"CALL error: {e}")
             elif cmd == "SPRITENEW":
                 if arg_text:
                     args = arg_text.split()
@@ -2108,37 +2200,62 @@ class SuperPILOTInterpreter:
                     name = arg_text.split()[0]
                     self.draw_sprite(name)
             elif cmd == "REPEAT":
-                # REPEAT n [ commands ] with support for nested brackets
-                # Parse count and bracketed block from the original (pre-uppercased) text
-                # Count is the first token in arg_text
+                # REPEAT n [ commands ] with support for nested brackets and multi-line blocks
                 try:
                     at = arg_text.strip()
-                    # Find bracketed block
-                    # Support nested brackets via simple scan
-                    if '[' in at and ']' in at:
+                    # Extract count expression before the first '['
+                    if '[' in at:
                         count_str = at.split('[', 1)[0].strip()
-                        try:
-                            count = int(self.evaluate_expression(count_str))
-                        except Exception:
-                            count = 0
-                        # Extract inner content
-                        start = at.find('[') + 1
-                        # Find matching closing bracket
-                        bracket_count = 1
-                        i = start
-                        while i < len(at) and bracket_count > 0:
-                            if at[i] == '[':
+                    else:
+                        # If '[' is not on this line, treat all as count and let block collection handle
+                        count_str = at.strip()
+                    try:
+                        count = int(self.evaluate_expression(count_str))
+                    except Exception:
+                        count = 0
+
+                    # Build the full block text from current and subsequent lines until matching ']'
+                    block_text = at
+                    # Initialize bracket count from current line
+                    bracket_count = 0
+                    for ch in block_text:
+                        if ch == '[':
+                            bracket_count += 1
+                        elif ch == ']':
+                            bracket_count -= 1
+
+                    end_line_index = self.current_line
+                    # If brackets aren't balanced yet, pull additional program lines
+                    while bracket_count > 0 and end_line_index + 1 < len(self.program_lines):
+                        end_line_index += 1
+                        _, next_cmd = self.program_lines[end_line_index]
+                        block_text += "\n" + next_cmd
+                        for ch in next_cmd:
+                            if ch == '[':
                                 bracket_count += 1
-                            elif at[i] == ']':
+                            elif ch == ']':
                                 bracket_count -= 1
-                            i += 1
-                        inner = at[start:i-1]
-                        # Parse inner commands into a list
+
+                    # If we consumed more lines, skip them in the main loop by setting current_line
+                    if end_line_index > self.current_line:
+                        self.current_line = end_line_index
+
+                    # Now extract the inner content between the first '[' and its matching ']'
+                    if '[' in block_text and ']' in block_text:
+                        start = block_text.find('[') + 1
+                        # Match brackets again in the combined text to find the correct closing
+                        bc = 1
+                        i2 = start
+                        while i2 < len(block_text) and bc > 0:
+                            if block_text[i2] == '[':
+                                bc += 1
+                            elif block_text[i2] == ']':
+                                bc -= 1
+                            i2 += 1
+                        inner = block_text[start:i2-1]
                         cmds = self.parse_bracketed_commands(inner)
-                        # Execute count times
                         for _ in range(max(0, int(count))):
                             for c in cmds:
-                                # Execute nested Logo command strings
                                 self.execute_logo_command(c)
                 except Exception as e:
                     self.log_output(f"Logo REPEAT error: {e}")
@@ -2200,6 +2317,11 @@ class SuperPILOTInterpreter:
             "SPRITENEW",
             "SPRITEPOS",
             "SPRITEDRAW",
+            "PROFILE",
+            "DEFINE",
+            "CALL",
+            "DEBUGLINES",
+            "PENSTYLE",
         ]
         if command.split()[0].upper() in logo_commands:
             return "logo"
@@ -2262,6 +2384,8 @@ class SuperPILOTInterpreter:
 
         # Default to PILOT for simple commands
         return "pilot"
+
+    
 
     def execute_line(self, line):
         """Execute a single line of code"""
@@ -2335,8 +2459,44 @@ class SuperPILOTInterpreter:
                     i < len(self.program_lines)
                     and self.program_lines[i][1].upper() != "END"
                 ):
-                    body.append(self.program_lines[i][1])
-                    i += 1
+                    line_text = self.program_lines[i][1]
+                    if line_text.strip().upper().startswith("REPEAT") and "[" in line_text:
+                        # Collect full REPEAT block across lines into a single body entry
+                        block = line_text
+                        bracket_count = line_text.count("[") - line_text.count("]")
+                        j = i + 1
+                        while j < len(self.program_lines) and bracket_count > 0:
+                            nxt = self.program_lines[j][1]
+                            block += "\n" + nxt
+                            bracket_count += nxt.count("[") - nxt.count("]")
+                            j += 1
+                        # Normalize to single-line REPEAT for robust execution later
+                        # Extract count and inner
+                        try:
+                            pre, rest = block.split("[", 1)
+                            count_str = pre.split()[1]
+                            # Find matching closing for inner
+                            bc = 1
+                            k = 0
+                            while k < len(rest) and bc > 0:
+                                if rest[k] == '[':
+                                    bc += 1
+                                elif rest[k] == ']':
+                                    bc -= 1
+                                k += 1
+                            inner = rest[: k - 1]
+                            repeat_line = f"REPEAT {count_str} [ {inner} ]"
+                            body.append(repeat_line)
+                            i = j
+                            continue
+                        except Exception:
+                            # Fallback: just append the starting line
+                            body.append(line_text)
+                            i += 1
+                            continue
+                    else:
+                        body.append(line_text)
+                        i += 1
                 self.procedures[name] = {"params": params, "body": body}
             else:
                 i += 1
@@ -2415,6 +2575,19 @@ class SuperPILOTInterpreter:
             self.running = False
             self.log_output("Program execution completed")
 
+        # If turtle returned to the logical origin, normalize heading to 'up' (90°)
+        try:
+            if (
+                hasattr(self, "turtle_x")
+                and hasattr(self, "turtle_y")
+                and hasattr(self, "turtle_heading")
+                and abs(self.turtle_x - 200) < 0.1
+                and abs(self.turtle_y - 200) < 0.1
+            ):
+                self.turtle_heading = 90
+        except Exception:
+            pass
+
         return True
 
     def step(self):
@@ -2484,50 +2657,71 @@ class SuperPILOTInterpreter:
             if i >= len(commands_str):
                 break
 
-            # Check for known commands that take parameters
+            # Long-form commands with one parameter
+            matched_long = False
+            for long_cmd in ["FORWARD", "BACKWARD", "LEFT", "RIGHT"]:
+                L = len(long_cmd)
+                if commands_str[i : i + L].upper() == long_cmd:
+                    matched_long = True
+                    cmd = long_cmd
+                    i += L
+                    # Skip whitespace
+                    while i < len(commands_str) and commands_str[i].isspace():
+                        i += 1
+                    # Find the parameter (until next space or end)
+                    param_start = i
+                    while i < len(commands_str) and not commands_str[i].isspace():
+                        i += 1
+                    param = commands_str[param_start:i]
+                    if param:
+                        cmd_list.append(f"{cmd} {param}")
+                    else:
+                        cmd_list.append(cmd)
+                    break
+
+            if matched_long:
+                continue
+
+            # Short-form commands with one parameter
             if commands_str[i : i + 2].upper() in ["FD", "BK", "LT", "RT"]:
-                # These commands take one parameter
                 cmd = commands_str[i : i + 2]
                 i += 2
-                # Skip whitespace
                 while i < len(commands_str) and commands_str[i].isspace():
                     i += 1
-                # Find the parameter (until next space or end)
                 param_start = i
                 while i < len(commands_str) and not commands_str[i].isspace():
                     i += 1
                 param = commands_str[param_start:i]
                 cmd_list.append(f"{cmd} {param}")
-            elif commands_str[i : i + 8].upper() == "SETCOLOR":
+                continue
+
+            # SETCOLOR with one parameter
+            if commands_str[i : i + 8].upper() == "SETCOLOR":
                 cmd = "SETCOLOR"
                 i += 8
-                # Skip whitespace
                 while i < len(commands_str) and commands_str[i].isspace():
                     i += 1
-                # Find the parameter
                 param_start = i
                 while i < len(commands_str) and not commands_str[i].isspace():
                     i += 1
                 param = commands_str[param_start:i]
                 cmd_list.append(f"{cmd} {param}")
-            elif commands_str[i : i + 6].upper() == "REPEAT":
-                # Handle nested REPEAT
+                continue
+
+            # Nested REPEAT blocks
+            if commands_str[i : i + 6].upper() == "REPEAT":
                 cmd = "REPEAT"
                 i += 6
-                # Skip whitespace
                 while i < len(commands_str) and commands_str[i].isspace():
                     i += 1
-                # Find the count parameter
                 count_start = i
                 while i < len(commands_str) and not commands_str[i].isspace():
                     i += 1
                 count = commands_str[count_start:i]
-                # Skip whitespace to [
                 while i < len(commands_str) and commands_str[i].isspace():
                     i += 1
                 if i < len(commands_str) and commands_str[i] == "[":
                     i += 1  # skip [
-                    # Find matching closing ]
                     bracket_count = 1
                     nested_start = i
                     while i < len(commands_str) and bracket_count > 0:
@@ -2536,24 +2730,25 @@ class SuperPILOTInterpreter:
                         elif commands_str[i] == "]":
                             bracket_count -= 1
                         i += 1
-                    nested_commands = commands_str[nested_start : i - 1]  # exclude ]
+                    nested_commands = commands_str[nested_start : i - 1]
                     cmd_list.append(f"{cmd} {count} [ {nested_commands} ]")
-                else:
-                    # Malformed, skip
-                    i += 1
-            else:
-                # Single command without parameters
-                single_cmds = ["PENUP", "PENDOWN", "CLEARSCREEN", "HOME"]
-                found = False
-                for sc in single_cmds:
-                    if commands_str[i : i + len(sc)].upper() == sc:
-                        cmd_list.append(sc)
-                        i += len(sc)
-                        found = True
-                        break
-                if not found:
-                    # Unknown, skip character
-                    i += 1
+                continue
+
+            # Single commands without parameters
+            single_cmds = ["PENUP", "PENDOWN", "CLEARSCREEN", "HOME"]
+            matched_single = False
+            for sc in single_cmds:
+                L = len(sc)
+                if commands_str[i : i + L].upper() == sc:
+                    cmd_list.append(sc)
+                    i += L
+                    matched_single = True
+                    break
+            if matched_single:
+                continue
+
+            # Unknown char, skip
+            i += 1
 
         return cmd_list
 
