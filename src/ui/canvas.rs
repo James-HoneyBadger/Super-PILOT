@@ -1,7 +1,9 @@
 use eframe::egui;
 use crate::app::TimeWarpApp;
 
-/// Render the turtle graphics canvas with pan/zoom interaction
+/// Legacy canvas render function - DEPRECATED
+/// Use crate::ui::screen::render() for unified screen rendering instead
+#[allow(dead_code)]
 pub fn render_canvas(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
     ui.horizontal(|ui| {
         ui.heading("Turtle Graphics");

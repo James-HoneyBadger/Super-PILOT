@@ -82,6 +82,9 @@ pub struct Interpreter {
     pub current_line: usize,
     pub labels: HashMap<String, usize>,
     
+    // Line number mapping for BASIC (line_number -> program_lines index)
+    pub line_number_map: HashMap<usize, usize>,
+    
     // Control flow stacks
     pub gosub_stack: Vec<usize>,
     pub for_stack: Vec<ForContext>,
@@ -149,6 +152,7 @@ impl Interpreter {
             program_lines: Vec::new(),
             current_line: 0,
             labels: HashMap::new(),
+            line_number_map: HashMap::new(),
             
             gosub_stack: Vec::new(),
             for_stack: Vec::new(),
@@ -178,10 +182,16 @@ impl Interpreter {
         
         let lines: Vec<&str> = program_text.lines().collect();
         self.program_lines.clear();
+        self.line_number_map.clear();
         
         for (idx, line) in lines.iter().enumerate() {
             let (line_num, command_str) = self.parse_line(line);
             let command_owned = command_str.to_string();
+            
+            // Build line number mapping for BASIC GOTO/GOSUB
+            if let Some(num) = line_num {
+                self.line_number_map.insert(num, idx);
+            }
             
             // Collect PILOT labels before pushing
             if command_owned.starts_with("L:") {
@@ -284,7 +294,15 @@ impl Interpreter {
             return Language::Pilot;
         }
         
-        // Logo keywords (expanded) or stored procedures
+        let first_word = cmd.split_whitespace().next().unwrap_or("");
+        let first_upper = first_word.to_uppercase();
+        
+        // Check Logo procedures first (user-defined takes precedence over BASIC keywords)
+        if self.logo_procedures.contains_key(&first_upper) {
+            return Language::Logo;
+        }
+        
+        // Logo keywords (expanded)
         let logo_keywords = [
             "FORWARD", "FD", "BACK", "BK", "LEFT", "LT", "RIGHT", "RT",
             "PENUP", "PU", "PENDOWN", "PD", "CLEARSCREEN", "CS", "HOME",
@@ -292,9 +310,7 @@ impl Interpreter {
             "SETCOLOR", "SETPENCOLOR", "PENWIDTH", "SETPENSIZE", "SETBGCOLOR",
             "HIDETURTLE", "HT", "SHOWTURTLE", "ST"
         ];
-        let first_word = cmd.split_whitespace().next().unwrap_or("");
-        let first_upper = first_word.to_uppercase();
-        if logo_keywords.contains(&first_upper.as_str()) || self.logo_procedures.contains_key(&first_upper) {
+        if logo_keywords.contains(&first_upper.as_str()) {
             return Language::Logo;
         }
         
@@ -302,9 +318,11 @@ impl Interpreter {
         let basic_keywords = ["LET", "PRINT", "INPUT", "GOTO", "IF", "THEN", "FOR", "NEXT",
                              "GOSUB", "RETURN", "REM", "DIM", "DATA", "READ", "LINE", "CIRCLE",
                              "SCREEN", "CLS", "LOCATE"];
-        if basic_keywords.contains(&first_word.to_uppercase().as_str()) {
+        if basic_keywords.contains(&first_upper.as_str()) {
             return Language::Basic;
-        }        // Default to PILOT
+        }
+        
+        // Default to PILOT
         Language::Pilot
     }
     

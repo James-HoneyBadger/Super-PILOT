@@ -326,12 +326,8 @@ fn execute_return(interp: &mut Interpreter) -> Result<ExecutionResult> {
 
 // Helper: Find the index of a program line by BASIC line number
 fn find_line_index(interp: &Interpreter, num: usize) -> Option<usize> {
-    for (idx, (ln, _)) in interp.program_lines.iter().enumerate() {
-        if ln.map(|n| n == num).unwrap_or(false) {
-            return Some(idx);
-        }
-    }
-    None
+    // Use line_number_map for O(1) lookup instead of O(n) scan
+    interp.line_number_map.get(&num).copied()
 }
 
 fn execute_line(interp: &mut Interpreter, args: &str, turtle: &mut TurtleState) -> Result<ExecutionResult> {
