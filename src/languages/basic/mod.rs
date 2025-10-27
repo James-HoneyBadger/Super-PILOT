@@ -25,6 +25,8 @@ pub fn execute(interp: &mut Interpreter, command: &str, _turtle: &mut TurtleStat
         "RETURN" => execute_return(interp),
         "REM" => Ok(ExecutionResult::Continue), // Comment
         "END" => Ok(ExecutionResult::End),
+        "LINE" => execute_line(interp, args, _turtle),
+        "CIRCLE" => execute_circle(interp, args, _turtle),
         _ => {
             interp.log_output(format!("Unknown BASIC command: {}", keyword));
             Ok(ExecutionResult::Continue)
@@ -252,3 +254,57 @@ fn find_line_index(interp: &Interpreter, num: usize) -> Option<usize> {
     }
     None
 }
+
+fn execute_line(interp: &mut Interpreter, args: &str, turtle: &mut TurtleState) -> Result<ExecutionResult> {
+    // LINE x1, y1, x2, y2
+    let parts: Vec<&str> = args.split(',').map(|s| s.trim()).collect();
+    if parts.len() >= 4 {
+        let x1 = interp.evaluate_expression(parts[0])? as f32;
+        let y1 = interp.evaluate_expression(parts[1])? as f32;
+        let x2 = interp.evaluate_expression(parts[2])? as f32;
+        let y2 = interp.evaluate_expression(parts[3])? as f32;
+        
+        // Draw line by moving turtle with pen down
+        let old_pen = turtle.pen_down;
+        turtle.pen_down = false;
+        turtle.goto(x1, y1);
+        turtle.pen_down = true;
+        turtle.goto(x2, y2);
+        turtle.pen_down = old_pen;
+    }
+    Ok(ExecutionResult::Continue)
+}
+
+fn execute_circle(interp: &mut Interpreter, args: &str, turtle: &mut TurtleState) -> Result<ExecutionResult> {
+    // CIRCLE x, y, radius
+    let parts: Vec<&str> = args.split(',').map(|s| s.trim()).collect();
+    if parts.len() >= 3 {
+        let cx = interp.evaluate_expression(parts[0])? as f32;
+        let cy = interp.evaluate_expression(parts[1])? as f32;
+        let r = interp.evaluate_expression(parts[2])? as f32;
+        
+        // Approximate circle with line segments
+        let old_pen = turtle.pen_down;
+        turtle.pen_down = false;
+        
+        let segments = 36;
+        let angle_step = 360.0 / segments as f32;
+        
+        // Start at top of circle
+        let start_x = cx;
+        let start_y = cy + r;
+        turtle.goto(start_x, start_y);
+        turtle.pen_down = true;
+        
+        for i in 1..=segments {
+            let angle = (i as f32 * angle_step).to_radians();
+            let x = cx + r * angle.sin();
+            let y = cy + r * angle.cos();
+            turtle.goto(x, y);
+        }
+        
+        turtle.pen_down = old_pen;
+    }
+    Ok(ExecutionResult::Continue)
+}
+

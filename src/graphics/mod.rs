@@ -151,10 +151,20 @@ fn draw_line_on_image(img: &mut image::ImageBuffer<image::Rgba<u8>, Vec<u8>>, li
     let mut x = x0;
     let mut y = y0;
     let color = image::Rgba([line.color.r(), line.color.g(), line.color.b(), 255]);
+    let radius: i32 = ((line.width.round() as i32).max(1)) / 2;
     
     loop {
         if x >= 0 && x < canvas_w as i32 && y >= 0 && y < canvas_h as i32 {
-            img.put_pixel(x as u32, y as u32, color);
+            // Draw a small square to approximate thickness
+            for ox in -radius..=radius {
+                for oy in -radius..=radius {
+                    let px = x + ox;
+                    let py = y + oy;
+                    if px >= 0 && px < canvas_w as i32 && py >= 0 && py < canvas_h as i32 {
+                        img.put_pixel(px as u32, py as u32, color);
+                    }
+                }
+            }
         }
         
         if x == x1 && y == y1 {

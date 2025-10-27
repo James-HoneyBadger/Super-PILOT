@@ -43,6 +43,7 @@ use regex::Regex;
 
 use crate::graphics::TurtleState;
 use crate::languages::{Language, pilot, basic, logo};
+use crate::languages::logo::LogoProcedure;
 use crate::utils::ExpressionEvaluator;
 
 // Lazy compiled regex for variable interpolation (5-10x performance boost)
@@ -88,7 +89,7 @@ pub struct Interpreter {
     pub last_input: String,
 
     // Logo procedures (name -> body lines)
-    pub logo_procedures: std::collections::HashMap<String, Vec<String>>,
+    pub logo_procedures: std::collections::HashMap<String, LogoProcedure>,
 }
 
 #[derive(Clone)]
@@ -255,7 +256,7 @@ impl Interpreter {
         
         // BASIC keywords
         let basic_keywords = ["LET", "PRINT", "INPUT", "GOTO", "IF", "THEN", "FOR", "NEXT",
-                             "GOSUB", "RETURN", "REM", "DIM", "DATA", "READ"];
+                             "GOSUB", "RETURN", "REM", "DIM", "DATA", "READ", "LINE", "CIRCLE"];
         if basic_keywords.contains(&first_word.to_uppercase().as_str()) {
             return Language::Basic;
         }

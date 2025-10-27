@@ -226,3 +226,125 @@ fn test_error_recovery() {
     assert!(output.len() >= 1);
     assert_eq!(output[0], "Before");
 }
+
+#[test]
+fn test_logo_procedures() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::new();
+    
+    let code = r#"
+TO SQUARE
+FORWARD 50
+RIGHT 90
+FORWARD 50
+RIGHT 90
+FORWARD 50
+RIGHT 90
+FORWARD 50
+RIGHT 90
+END
+SQUARE
+"#;
+    
+    interp.load_program(code).unwrap();
+    let _output = interp.execute(&mut turtle).unwrap();
+    
+    // Check that procedure was stored
+    assert!(interp.logo_procedures.contains_key("SQUARE"));
+    
+    // Verify lines were drawn (should be 4 lines for square)
+    assert_eq!(turtle.lines.len(), 4);
+}
+
+#[test]
+fn test_logo_named_colors() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::new();
+    
+    let code = r#"
+SETCOLOR RED
+FORWARD 10
+SETCOLOR BLUE
+FORWARD 10
+"#;
+    
+    interp.load_program(code).unwrap();
+    let _output = interp.execute(&mut turtle).unwrap();
+    
+    // Verify colors changed (first line red, second blue)
+    assert_eq!(turtle.lines.len(), 2);
+    use eframe::egui;
+    assert_eq!(turtle.lines[0].color, egui::Color32::from_rgb(255, 0, 0)); // RED
+    assert_eq!(turtle.lines[1].color, egui::Color32::from_rgb(0, 0, 255)); // BLUE
+}
+
+#[test]
+fn test_logo_hex_colors() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::new();
+    
+    let code = r#"
+SETCOLOR #FF0000
+FORWARD 10
+SETCOLOR #00F
+FORWARD 10
+"#;
+    
+    interp.load_program(code).unwrap();
+    let _output = interp.execute(&mut turtle).unwrap();
+    
+    // Verify hex colors parsed correctly
+    assert_eq!(turtle.lines.len(), 2);
+    use eframe::egui;
+    assert_eq!(turtle.lines[0].color, egui::Color32::from_rgb(255, 0, 0)); // #FF0000
+    assert_eq!(turtle.lines[1].color, egui::Color32::from_rgb(0, 0, 255)); // #00F -> #0000FF
+}
+
+#[test]
+fn test_basic_line_command() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::new();
+    
+    let code = r#"
+LINE 0, 0, 50, 50
+LINE 50, 50, 100, 0
+"#;
+    
+    interp.load_program(code).unwrap();
+    let _output = interp.execute(&mut turtle).unwrap();
+    
+    // Should have 2 lines drawn
+    assert_eq!(turtle.lines.len(), 2);
+}
+
+#[test]
+fn test_basic_circle_command() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::new();
+    
+    let code = r#"
+CIRCLE 0, 0, 50
+"#;
+    
+    interp.load_program(code).unwrap();
+    let _output = interp.execute(&mut turtle).unwrap();
+    
+    // Circle approximated with 36 segments
+    assert_eq!(turtle.lines.len(), 36);
+}
+
+#[test]
+fn test_logo_nested_repeat() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::new();
+    
+    let code = r#"
+REPEAT 2 [REPEAT 2 [FORWARD 10 RIGHT 90]]
+"#;
+    
+    interp.load_program(code).unwrap();
+    let _output = interp.execute(&mut turtle).unwrap();
+    
+    // 2 outer * 2 inner * 1 line each = 4 lines
+    assert_eq!(turtle.lines.len(), 4);
+}
