@@ -27,6 +27,7 @@ from superpilot.runtime.hardware import (
     SmartHomeSystem,
 )
 from superpilot.runtime.audio import AudioMixer
+from superpilot.ide.settings import Settings
 
 
 class ToolTip:
@@ -2749,7 +2750,13 @@ class SuperPILOTII:
     def __init__(self, root):
         self.root = root
         self.root.title("SuperPILOT IDE - Professional Edition")
-        self.root.geometry("1000x700")
+        
+        # Load settings
+        self.settings = Settings()
+        
+        # Apply saved window geometry
+        geometry = self.settings.get("window_geometry", "1000x700")
+        self.root.geometry(geometry)
         
         # Track current file
         self.current_file = 'Untitled'
@@ -2762,6 +2769,9 @@ class SuperPILOTII:
 
         self.create_widgets()
         self.create_menu()
+        
+        # Save settings on close
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def create_widgets(self):
         # Lightweight tooltip helper
@@ -2926,9 +2936,22 @@ class SuperPILOTII:
         self.editor_frame = ttk.Frame(self.editor_container)
         self.editor_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        # Text editor
+        # Text editor with line number gutter
         editor_frame = ttk.Frame(self.editor_frame)
         editor_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        # Breakpoint/line number gutter
+        self.gutter = tk.Canvas(
+            editor_frame,
+            width=50,
+            bg="#e8ecf0",
+            highlightthickness=0,
+            relief=tk.FLAT
+        )
+        self.gutter.pack(side=tk.LEFT, fill=tk.Y)
+        
+        # Bind click on gutter to toggle breakpoints
+        self.gutter.bind("<Button-1>", self._on_gutter_click)
 
         self.editor = tk.Text(
             editor_frame,
@@ -2968,20 +2991,38 @@ class SuperPILOTII:
         self.editor.bind("<<Modified>>", self._on_text_modified)
         self.editor.bind("<ButtonRelease-1>", self._update_status_bar)
         self.editor.bind("<KeyRelease>", lambda e: (self._on_text_change(e), self._update_status_bar()), add="+")
+        
+        # Update gutter on scroll and text changes
+        self.editor.bind("<Configure>", lambda e: self._update_gutter())
+        self.editor.bind("<KeyRelease>", lambda e: self._update_gutter(), add="+")
+        
+        # Initial gutter update
+        self.root.after(100, self._update_gutter)
 
         # Control buttons under editor
         button_frame = ttk.Frame(self.editor_frame)
         button_frame.pack(fill=tk.X, padx=5, pady=5)
 
-        ttk.Button(button_frame, text="Run", command=self.run_program).pack(
-            side=tk.LEFT, padx=2
-        )
-        ttk.Button(button_frame, text="Stop", command=self.stop_program).pack(
-            side=tk.LEFT, padx=2
-        )
-        ttk.Button(button_frame, text="Debug", command=self.debug_program).pack(
-            side=tk.LEFT, padx=2
-        )
+        # Save button references for enabling/disabling
+        self.btn_run = ttk.Button(button_frame, text="▶ Run", command=self.run_program)
+        self.btn_run.pack(side=tk.LEFT, padx=2)
+        
+        self.btn_stop = ttk.Button(button_frame, text="⬛ Stop", command=self.stop_program)
+        self.btn_stop.pack(side=tk.LEFT, padx=2)
+        self.btn_stop.state(["disabled"])
+        
+        self.btn_debug = ttk.Button(button_frame, text="🐛 Debug", command=self.debug_program)
+        self.btn_debug.pack(side=tk.LEFT, padx=2)
+        
+        self.btn_step = ttk.Button(button_frame, text="➡ Step", command=self.step_once)
+        self.btn_step.pack(side=tk.LEFT, padx=2)
+        
+        self.btn_continue = ttk.Button(button_frame, text="▶▶ Continue", command=self.continue_program)
+        self.btn_continue.pack(side=tk.LEFT, padx=2)
+        self.btn_continue.state(["disabled"])
+        
+        ttk.Separator(button_frame, orient=tk.VERTICAL).pack(side=tk.LEFT, padx=5, fill=tk.Y)
+        
         ttk.Button(button_frame, text="Load Demo", command=self.load_demo).pack(
             side=tk.LEFT, padx=2
         )
@@ -3016,12 +3057,33 @@ class SuperPILOTII:
         # Variables tab on the right notebook
         self.variables_frame = ttk.Frame(self.right_notebook)
         self.right_notebook.add(self.variables_frame, text="Variables")
+        
+        # Variables toolbar
+        var_toolbar = ttk.Frame(self.variables_frame)
+        var_toolbar.pack(fill=tk.X, padx=5, pady=5)
+        
+        ttk.Label(var_toolbar, text="Variables:").pack(side=tk.LEFT, padx=5)
+        ttk.Button(
+            var_toolbar, 
+            text="Refresh", 
+            command=self.update_variables_display,
+            width=10
+        ).pack(side=tk.LEFT, padx=2)
+        ttk.Button(
+            var_toolbar, 
+            text="Clear All", 
+            command=self._clear_variables,
+            width=10
+        ).pack(side=tk.LEFT, padx=2)
 
         self.variables_tree = ttk.Treeview(
-            self.variables_frame, columns=("Value",), show="tree headings"
+            self.variables_frame, columns=("Value", "Type"), show="tree headings"
         )
         self.variables_tree.heading("#0", text="Variable")
         self.variables_tree.heading("Value", text="Value")
+        self.variables_tree.heading("Type", text="Type")
+        self.variables_tree.column("Value", width=200)
+        self.variables_tree.column("Type", width=80)
         self.variables_tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
         # Help tab on the right notebook
@@ -3090,6 +3152,13 @@ class SuperPILOTII:
         file_menu.add_command(label="Open", command=self.open_file, accelerator="Ctrl+O")
         file_menu.add_command(label="Save", command=self.save_file, accelerator="Ctrl+S")
         file_menu.add_separator()
+        
+        # Recent files submenu
+        self.recent_menu = tk.Menu(file_menu, tearoff=0)
+        file_menu.add_cascade(label="Recent Files", menu=self.recent_menu)
+        self._update_recent_files_menu()
+        
+        file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.root.quit, accelerator="Ctrl+Q")
 
         # Run menu
@@ -3111,6 +3180,8 @@ class SuperPILOTII:
         view_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="View", menu=view_menu)
         view_menu.add_command(label="Dark Mode", command=self.toggle_dark_mode)
+        view_menu.add_separator()
+        view_menu.add_command(label="Settings...", command=self.show_settings_dialog)
         
         # Bind keyboard shortcuts
         self.root.bind("<Control-n>", lambda e: self.new_file())
@@ -3335,6 +3406,10 @@ END
         self.interpreter.set_debug_mode(True)
         self.run_program()
 
+    def continue_program(self):
+        """Continue execution (alias for continue_execution)"""
+        self.continue_execution()
+
     def step_once(self):
         """Execute a single interpreter line and update UI."""
         try:
@@ -3395,9 +3470,30 @@ END
         for item in self.variables_tree.get_children():
             self.variables_tree.delete(item)
 
-        # Add variables
-        for var_name, var_value in self.interpreter.variables.items():
-            self.variables_tree.insert("", "end", text=var_name, values=(var_value,))
+        # Add variables with type information
+        for var_name, var_value in sorted(self.interpreter.variables.items()):
+            # Determine type
+            var_type = type(var_value).__name__
+            
+            # Format value for display
+            if isinstance(var_value, str):
+                display_value = f'"{var_value}"' if len(var_value) < 50 else f'"{var_value[:47]}..."'
+            elif isinstance(var_value, (int, float)):
+                display_value = str(var_value)
+            else:
+                display_value = str(var_value)[:50]
+            
+            self.variables_tree.insert(
+                "", "end", 
+                text=var_name, 
+                values=(display_value, var_type)
+            )
+
+    def _clear_variables(self):
+        """Clear all variables in the interpreter"""
+        if messagebox.askyesno("Clear Variables", "Clear all variables?"):
+            self.interpreter.variables.clear()
+            self.update_variables_display()
 
     def _on_text_change(self, event=None):
         """Handle text change event for syntax highlighting"""
@@ -3431,6 +3527,79 @@ END
             status_text = f"{filename} | Line: {line} | Column: {column}"
             self.status_label.config(text=status_text)
         except Exception:
+            pass
+
+    def _update_gutter(self):
+        """Update the line number and breakpoint gutter"""
+        try:
+            self.gutter.delete("all")
+            
+            # Get visible line range
+            first_visible = self.editor.index("@0,0")
+            last_visible = self.editor.index(f"@0,{self.editor.winfo_height()}")
+            
+            first_line = int(first_visible.split(".")[0])
+            last_line = int(last_visible.split(".")[0])
+            
+            # Get total lines
+            total_lines = int(self.editor.index("end-1c").split(".")[0])
+            
+            # Draw line numbers and breakpoint indicators
+            for line_num in range(first_line, min(last_line + 2, total_lines + 1)):
+                # Get y position for this line
+                dlineinfo = self.editor.dlineinfo(f"{line_num}.0")
+                if dlineinfo is None:
+                    continue
+                    
+                y = dlineinfo[1] - int(self.editor.yview()[0] * self.editor.winfo_height())
+                
+                # Check if this line has a breakpoint
+                has_breakpoint = (line_num - 1) in self.interpreter.breakpoints
+                
+                if has_breakpoint:
+                    # Draw red circle for breakpoint
+                    self.gutter.create_oval(
+                        5, y + 2, 15, y + 12,
+                        fill="#CC0000", outline="#990000", tags=f"bp_{line_num}"
+                    )
+                
+                # Draw line number
+                self.gutter.create_text(
+                    45, y + 6,
+                    text=str(line_num),
+                    anchor=tk.E,
+                    font=("Consolas", 9),
+                    fill="#666666" if not has_breakpoint else "#CC0000",
+                    tags=f"line_{line_num}"
+                )
+                
+        except Exception as e:
+            # Don't let gutter errors break the editor
+            pass
+
+    def _on_gutter_click(self, event):
+        """Handle click on gutter to toggle breakpoint"""
+        try:
+            # Calculate which line was clicked
+            y = event.y
+            # Approximate line from y position
+            line_height = 16  # Approximate height per line
+            first_visible = self.editor.index("@0,0")
+            first_line = int(first_visible.split(".")[0])
+            
+            clicked_line = first_line + (y // line_height)
+            
+            # Toggle breakpoint (0-indexed)
+            line_idx = clicked_line - 1
+            if line_idx in self.interpreter.breakpoints:
+                self.interpreter.breakpoints.remove(line_idx)
+            else:
+                self.interpreter.breakpoints.add(line_idx)
+            
+            # Update gutter display
+            self._update_gutter()
+            
+        except Exception as e:
             pass
 
     def _apply_syntax_highlighting(self):
@@ -3614,7 +3783,56 @@ END
                 self.editor.delete(1.0, tk.END)
                 self.editor.insert(1.0, content)
                 self.current_file = file_path
+                self.settings.add_recent_file(file_path)
+                self._update_recent_files_menu()
                 self._update_status_bar()
+
+    def _update_recent_files_menu(self):
+        """Update the recent files menu"""
+        try:
+            # Clear existing menu items
+            self.recent_menu.delete(0, tk.END)
+            
+            recent_files = self.settings.get_recent_files()
+            
+            if not recent_files:
+                self.recent_menu.add_command(label="(No recent files)", state=tk.DISABLED)
+            else:
+                for filepath in recent_files:
+                    # Show just filename in menu
+                    import os
+                    filename = os.path.basename(filepath)
+                    self.recent_menu.add_command(
+                        label=filename,
+                        command=lambda fp=filepath: self._open_recent_file(fp)
+                    )
+                
+                self.recent_menu.add_separator()
+                self.recent_menu.add_command(
+                    label="Clear Recent Files",
+                    command=self._clear_recent_files
+                )
+        except Exception:
+            pass
+
+    def _open_recent_file(self, filepath):
+        """Open a file from recent files list"""
+        try:
+            with open(filepath, "r") as file:
+                content = file.read()
+                self.editor.delete(1.0, tk.END)
+                self.editor.insert(1.0, content)
+                self.current_file = filepath
+                self.settings.add_recent_file(filepath)
+                self._update_recent_files_menu()
+                self._update_status_bar()
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not open file:\n{e}")
+
+    def _clear_recent_files(self):
+        """Clear recent files list"""
+        self.settings.clear_recent_files()
+        self._update_recent_files_menu()
 
     def save_file(self):
         from tkinter import filedialog
@@ -3632,6 +3850,8 @@ END
             with open(file_path, "w") as file:
                 file.write(content)
             self.current_file = file_path
+            self.settings.add_recent_file(file_path)
+            self._update_recent_files_menu()
             self._update_status_bar()
             messagebox.showinfo("Save", "File saved successfully!")
 
@@ -3698,6 +3918,85 @@ T:Keep practicing!
 END"""
         self.editor.delete(1.0, tk.END)
         self.editor.insert(1.0, program)
+
+    def on_closing(self):
+        """Handle window close event - save settings"""
+        try:
+            # Save window geometry
+            self.settings.set("window_geometry", self.root.geometry())
+            
+            # Save theme preference
+            current_bg = self.editor.cget("bg")
+            is_dark = current_bg in ["#0b1220", "#1a1a1a"]
+            self.settings.set("theme", "dark" if is_dark else "light")
+            
+            # Save settings
+            self.settings.save()
+        except Exception:
+            pass
+        
+        # Close the window
+        self.root.destroy()
+
+    def show_settings_dialog(self):
+        """Show settings configuration dialog"""
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Settings")
+        dialog.geometry("400x300")
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        # Theme setting
+        theme_frame = ttk.LabelFrame(dialog, text="Appearance", padding=10)
+        theme_frame.pack(fill=tk.X, padx=10, pady=5)
+        
+        current_theme = self.settings.get("theme", "light")
+        theme_var = tk.StringVar(value=current_theme)
+        
+        ttk.Radiobutton(
+            theme_frame, text="Light Theme", 
+            variable=theme_var, value="light"
+        ).pack(anchor=tk.W)
+        ttk.Radiobutton(
+            theme_frame, text="Dark Theme", 
+            variable=theme_var, value="dark"
+        ).pack(anchor=tk.W)
+        
+        # Font settings
+        font_frame = ttk.LabelFrame(dialog, text="Editor Font", padding=10)
+        font_frame.pack(fill=tk.X, padx=10, pady=5)
+        
+        font_size_var = tk.IntVar(value=self.settings.get("font_size", 13))
+        
+        ttk.Label(font_frame, text="Font Size:").pack(side=tk.LEFT, padx=5)
+        ttk.Spinbox(
+            font_frame, from_=8, to=24, 
+            textvariable=font_size_var, width=10
+        ).pack(side=tk.LEFT, padx=5)
+        
+        # Button frame
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
+        
+        def apply_settings():
+            self.settings.set("theme", theme_var.get())
+            self.settings.set("font_size", font_size_var.get())
+            self.settings.save()
+            
+            # Apply theme
+            if theme_var.get() == "dark":
+                self.apply_dark_mode()
+            else:
+                self.apply_light_mode()
+            
+            # Apply font size
+            self.editor.config(font=("Consolas", font_size_var.get()))
+            
+            messagebox.showinfo("Settings", "Settings applied successfully!")
+            dialog.destroy()
+        
+        ttk.Button(btn_frame, text="Apply", command=apply_settings).pack(side=tk.RIGHT, padx=5)
+        ttk.Button(btn_frame, text="Cancel", command=dialog.destroy).pack(side=tk.RIGHT)
 
 
 def main():
