@@ -1,0 +1,37 @@
+; SuperPILOT Modern UI Demo
+; This program demonstrates the new modern UI features
+
+T:Welcome to SuperPILOT's Modern Interface! 🎨
+T:
+T:Try the following features:
+T:1. Switch themes using the dropdown in the toolbar
+T:2. Toggle dark mode with the moon button 🌙
+T:3. Open settings with the gear button ⚙️
+T:4. Watch the status bar show real-time information
+T:5. Notice the modern buttons and styling
+T:
+
+; Test some interactive features
+T:What's your name?
+A:NAME
+T:Hello *NAME*! Enjoy the modern SuperPILOT experience!
+T:
+
+; Demo some graphics with modern canvas
+FORWARD 100
+RIGHT 90
+FORWARD 100
+RIGHT 90
+FORWARD 100
+RIGHT 90
+FORWARD 100
+
+T:
+T:🎉 Modern UI Demo Complete!
+T:The interface now features:
+T:• Contemporary color themes (6 premium options)
+T:• Dark/Light mode toggle
+T:• Real-time status indicators
+T:• Modern notifications and dialogs
+T:• Enhanced typography and spacing
+T:• Smooth animations and transitions

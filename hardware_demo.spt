@@ -1,0 +1,110 @@
+# SuperPILOT Hardware Integration Demo
+# This program demonstrates robot control, sensor reading, and game controller input
+
+T:🤖 SuperPILOT Hardware Demo Starting...
+
+# Initialize systems
+R: CONTROLLER UPDATE
+T:Game controller initialized
+
+# Robot obstacle avoidance demo
+L:ROBOT_DEMO
+T:Starting robot obstacle avoidance...
+U:STEPS=0
+
+L:MOVE_FORWARD
+ROBOTFORWARD 50
+READSENSOR DISTANCE DIST
+T:Distance sensor reading: *DIST* cm
+U:STEPS=*STEPS*+1
+
+# Check for obstacles
+J(*DIST* < 20):OBSTACLE_DETECTED
+J(*STEPS* > 10):DEMO_COMPLETE
+
+# Continue forward
+J:MOVE_FORWARD
+
+L:OBSTACLE_DETECTED
+T:⚠️ Obstacle detected at *DIST* cm! Turning left...
+ROBOTSTOP
+ROBOTLEFT 45
+ROBOTFORWARD 30
+T:Obstacle avoided, continuing...
+J:MOVE_FORWARD
+
+L:DEMO_COMPLETE
+ROBOTSTOP
+T:✅ Robot demo complete!
+
+# Game controller demo
+L:CONTROLLER_DEMO
+T:🎮 Testing game controller (press buttons)...
+U:TESTS=0
+
+L:CONTROLLER_LOOP
+R: CONTROLLER UPDATE
+READBUTTON 0 BTN_A
+READBUTTON 1 BTN_B
+READAXIS 0 STICK_X
+READAXIS 1 STICK_Y
+
+J(*BTN_A* = 1):BUTTON_A_PRESSED
+J(*BTN_B* = 1):BUTTON_B_PRESSED
+
+U:TESTS=*TESTS*+1
+J(*TESTS* > 5):SENSOR_DEMO
+J:CONTROLLER_LOOP
+
+L:BUTTON_A_PRESSED
+T:🔴 Button A pressed! Stick X: *STICK_X*, Y: *STICK_Y*
+J:CONTROLLER_LOOP
+
+L:BUTTON_B_PRESSED  
+T:🔵 Button B pressed! Stick X: *STICK_X*, Y: *STICK_Y*
+J:CONTROLLER_LOOP
+
+# Sensor visualization demo
+L:SENSOR_DEMO
+T:📊 Creating sensor data visualization...
+
+# Generate some sample sensor data
+U:I=0
+L:DATA_LOOP
+R: SENSOR ADD Temperature *I*+20
+R: SENSOR ADD Humidity *I*+50
+R: SENSOR ADD Light *I*+100
+U:I=*I*+5
+J(*I* < 50):DATA_LOOP
+
+# Draw the chart
+SENSORCHART 50 50 400 200
+T:📈 Sensor chart created!
+
+# Home automation demo
+L:HOME_DEMO
+T:🏠 Home automation demo...
+R: HOME LIGHT livingroom ON
+R: HOME LIGHT bedroom OFF
+R: HOME TEMP kitchen 22.5
+T:Home automation: Living room light ON, bedroom light OFF
+T:Kitchen temperature set to 22.5°C
+
+# Arduino simulation (if connected)
+L:ARDUINO_DEMO
+T:🔌 Testing Arduino connection...
+R: ARDUINO CONNECT /dev/ttyUSB0 9600
+R: ARDUINO SEND LED_ON
+R: ARDUINO READ SENSOR_VALUE
+T:Arduino command sent: LED_ON
+T:Arduino sensor reading: *SENSOR_VALUE*
+
+T:🎉 Hardware integration demo complete!
+T:SuperPILOT now supports:
+T:  • Robot control and sensor reading
+T:  • Game controller input
+T:  • Sensor data visualization  
+T:  • Arduino/Raspberry Pi communication
+T:  • Home automation simulation
+
+END

@@ -1,0 +1,9 @@
+T:Enter your age:
+A:AGE
+J(AGE >= 18):ADULT
+T:You are a minor
+J:END
+L:ADULT
+T:You are an adult
+L:END
+E:

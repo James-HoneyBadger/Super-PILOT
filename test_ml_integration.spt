@@ -1,0 +1,17 @@
+L:TEST_ML
+T:Testing SuperPILOT AI/ML Integration
+T:
+
+T:Step 1: Quick ML Demo
+ML:DEMO linear
+T:
+
+T:Step 2: Manual ML Workflow
+ML:DATA test_data linear
+ML:LOAD test_model linear_regression
+ML:TRAIN test_model test_data
+ML:PREDICT test_model 6.0 RESULT
+T:Prediction for input 6.0: *RESULT*
+
+T:🎉 ML Integration Test Complete!
+END
