@@ -95,6 +95,42 @@ Notes:
 
 ## Example Programs
 
+### How to run PILOT examples
+
+1. Open any `.pilot` file from the `examples/` folder (e.g., `pilot_quiz.pilot`).
+2. Click Run (▶️). Output appears on the unified screen (text mode).
+3. When you see the 📝 prompt (A:), type your answer and press Enter.
+
+Tips:
+
+- Accept input with `A:NAME` and print it with `T:Hello *NAME*!` (use `*VAR*` for interpolation).
+- Use labels `L:START` and jumps `J:START` for simple control flow.
+- You can issue `SCREEN mode` (BASIC-style) to switch screen modes; Logo will follow the selected mode.
+
+### How to run BASIC examples
+
+1. Open any `.bas` file from the `examples/` folder (e.g., `basic_guess.bas`).
+2. Click Run (▶️). Text/graphics appear on the unified screen.
+3. For `INPUT`, the 📝 prompt appears—type a value and press Enter.
+
+Tips:
+
+- Real-time keys: `INKEY$` (e.g., `LET K$ = INKEY$` or `PRINT INKEY$`).
+- Screen control: `SCREEN mode[, w, h]`, `CLS`, and `LOCATE row, col`.
+- Graphics: LINE/CIRCLE (where supported) draw on the same canvas; use View → “Save Canvas as PNG…”.
+
+### How to run Logo examples
+
+1. Open any `.logo` file from the `examples/` folder (e.g., `logo_star.logo`).
+2. Click Run (▶️). The turtle will draw on the unified graphics canvas.
+3. To save your art, use View → “Save Canvas as PNG…”.
+
+Tips:
+
+- Colors: `SETCOLOR RED`, `SETCOLOR 255 128 0`, or `SETCOLOR #FF8000` all work.
+- Procedures: Define with `TO NAME ... END`, then call like `NAME 100 45`.
+- Clear and center: `CLEARSCREEN` resets drawings and returns the turtle HOME.
+
 ### Hello World (PILOT)
 
 ```pilot

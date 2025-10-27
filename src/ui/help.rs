@@ -59,7 +59,11 @@ pub fn render(_app: &TimeWarpApp, ui: &mut egui::Ui) {
         ui.add_space(10.0);
         
         ui.heading("Example Programs");
-        ui.label("See the examples/ directory for sample programs in each language.");
+        ui.label("See the examples/ directory for 32 sample programs in each language.");
+        ui.label("PILOT: pilot_quiz.pilot, pilot_adventure.pilot, pilot_dragon_adventure.pilot, ...");
+        ui.label("BASIC: basic_guess.bas, basic_hangman.bas, basic_inkey_demo.bas, basic_screen_modes.bas, ...");
+        ui.label("Logo: logo_star.logo, logo_flower.logo, logo_snowman.logo, logo_koch_snowflake.logo, ...");
         ui.label("Graphics can be saved via View → Save Canvas as PNG…");
+        ui.label("For detailed guidance, see USER_GUIDE.md → 'How to run [language] examples'.");
     });
 }
