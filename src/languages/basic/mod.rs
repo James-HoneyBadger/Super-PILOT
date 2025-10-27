@@ -29,6 +29,8 @@ pub fn execute(interp: &mut Interpreter, command: &str, turtle: &mut TurtleState
         "LINE" => execute_line(interp, args, turtle),
         "CIRCLE" => execute_circle(interp, args, turtle),
         "SCREEN" => execute_screen(interp, args, turtle),
+        "CLS" => execute_cls(interp),
+        "LOCATE" => execute_locate(interp, args),
         _ => {
             // Allow PILOT to issue SCREEN lines by passing through to BASIC executor when keyword matches
             if keyword.eq_ignore_ascii_case("SCREEN") {
@@ -385,3 +387,25 @@ fn execute_circle(interp: &mut Interpreter, args: &str, turtle: &mut TurtleState
     Ok(ExecutionResult::Continue)
 }
 
+fn execute_cls(interp: &mut Interpreter) -> Result<ExecutionResult> {
+    // Clear screen: reset text buffer and cursor position
+    interp.text_lines.clear();
+    interp.cursor_row = 0;
+    interp.cursor_col = 0;
+    // Also log empty line to output for consistency
+    interp.output.push("🎨 Screen cleared".to_string());
+    Ok(ExecutionResult::Continue)
+}
+
+fn execute_locate(interp: &mut Interpreter, args: &str) -> Result<ExecutionResult> {
+    // LOCATE row, col - set cursor position (1-based)
+    let parts: Vec<&str> = args.split(',').map(|s| s.trim()).collect();
+    if parts.len() >= 2 {
+        let row = interp.evaluate_expression(parts[0]).unwrap_or(1.0) as u32;
+        let col = interp.evaluate_expression(parts[1]).unwrap_or(1.0) as u32;
+        // Convert to 0-based
+        interp.cursor_row = row.saturating_sub(1);
+        interp.cursor_col = col.saturating_sub(1);
+    }
+    Ok(ExecutionResult::Continue)
+}

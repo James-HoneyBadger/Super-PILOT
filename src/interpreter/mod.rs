@@ -115,6 +115,10 @@ pub struct Interpreter {
 
     // Text buffer for Text screen mode (render target for unified screen)
     pub text_lines: Vec<String>,
+    
+    // Text cursor position (row, col) for text mode output
+    pub cursor_row: u32,
+    pub cursor_col: u32,
 }
 
 #[derive(Clone)]
@@ -164,6 +168,8 @@ impl Interpreter {
             last_key_pressed: None,
             screen_mode: ScreenMode::Graphics { width: 800, height: 600 },
             text_lines: Vec::new(),
+            cursor_row: 0,
+            cursor_col: 0,
         }
     }
     
@@ -293,14 +299,12 @@ impl Interpreter {
         }
         
         // BASIC keywords
-    let basic_keywords = ["LET", "PRINT", "INPUT", "GOTO", "IF", "THEN", "FOR", "NEXT",
-                 "GOSUB", "RETURN", "REM", "DIM", "DATA", "READ", "LINE", "CIRCLE",
-                 "SCREEN"];
+        let basic_keywords = ["LET", "PRINT", "INPUT", "GOTO", "IF", "THEN", "FOR", "NEXT",
+                             "GOSUB", "RETURN", "REM", "DIM", "DATA", "READ", "LINE", "CIRCLE",
+                             "SCREEN", "CLS", "LOCATE"];
         if basic_keywords.contains(&first_word.to_uppercase().as_str()) {
             return Language::Basic;
-        }
-        
-        // Default to PILOT
+        }        // Default to PILOT
         Language::Pilot
     }
     
@@ -379,6 +383,8 @@ impl Interpreter {
         self.logo_procedures.clear();
         self.pending_input = None;
         self.pending_resume_line = None;
+        self.cursor_row = 0;
+        self.cursor_col = 0;
     }
     
     // Stack operations for GOSUB/RETURN

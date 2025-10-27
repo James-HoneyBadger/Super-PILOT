@@ -24,13 +24,17 @@ pub fn render(_app: &TimeWarpApp, ui: &mut egui::Ui) {
         ui.label("J:label - Jump to label");
         ui.label("L:label - Define label");
         ui.label("E: - End program");
+        ui.label("SCREEN mode[, w, h] - Set screen (BASIC-style command; Logo follows selected mode)");
         ui.add_space(10.0);
         
         ui.heading("BASIC Language");
-    ui.label("PRINT \"text\" - Display text");
+        ui.label("PRINT \"text\" - Display text");
         ui.label("INPUT var - Get user input (blocking)");
         ui.label("LET var$ = INKEY$ - Get key press (non-blocking)");
-    ui.label("SCREEN mode[, w, h] - Set text/graphics screen (0=text, 1=640x480, 2=1024x768)");
+        ui.label("PRINT INKEY$ - Print last key pressed if any");
+        ui.label("SCREEN mode[, w, h] - Set text/graphics screen (0=text, 1=640x480, 2=1024x768)");
+        ui.label("CLS - Clear text screen and reset cursor");
+        ui.label("LOCATE row, col - Move text cursor (1-based)");
         ui.label("LET var = value - Set variable");
         ui.label("GOTO line - Jump to line number");
         ui.label("IF condition THEN command - Conditional");

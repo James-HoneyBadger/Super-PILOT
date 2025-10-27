@@ -94,7 +94,8 @@ Notes:
 ## Example Programs
 
 ### Hello World (PILOT)
-```
+
+```pilot
 L:START
 T:Hello, World!
 T:This is Time Warp!
@@ -102,7 +103,8 @@ END
 ```
 
 ### Math Demo (Mixed Languages)
-```
+
+```basic
 REM This is a BASIC comment
 LET A = 15
 LET B = 25
@@ -115,17 +117,13 @@ END
 ```
 
 ### Simple Drawing (Logo)
-```
+
+```logo
 CLEARSCREEN
 PENDOWN
 FORWARD 50
 RIGHT 90
 FORWARD 50
-RIGHT 90
-FORWARD 50
-RIGHT 90
-FORWARD 50
-HOME
 ```
 
 ## Keyboard Shortcuts
@@ -140,6 +138,7 @@ HOME
 ## File Formats
 
 Time Warp IDE supports:
+
 - `.spt` - Time Warp program files
 - `.txt` - Plain text files
 - `.pil` - PILOT program files
