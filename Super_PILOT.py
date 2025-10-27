@@ -69,6 +69,8 @@ class AudioMixer:
 
     def play_sound(self, name):
         """Play a registered sound"""
+        import os
+
         path = self.registry.get(name)
         if not path:
             return
@@ -1970,27 +1972,42 @@ class SuperPILOTInterpreter:
     def execute_logo_command(self, command):
         """Execute Logo-like commands"""
         try:
-            parts = command.upper().split()
-            if not parts:
+            if not isinstance(command, str):
                 return "continue"
 
-            cmd = parts[0]
+            # Support Logo-style variable params like :SIZE by substituting from variables
+            def _subst_logo_params(text: str) -> str:
+                def repl(m):
+                    name = m.group(1)
+                    # Support both exact and upper keys
+                    return str(self.variables.get(name, self.variables.get(name.upper(), 0)))
+                return re.sub(r":([A-Za-z_]\w*)", repl, text)
+
+            # Interpolate *VAR* tokens first, then substitute :PARAM tokens
+            work = _subst_logo_params(self.interpolate_text(command))
+
+            # Extract command keyword and remainder as arguments text (preserve case for expression eval)
+            parts_raw = work.strip().split(maxsplit=1)
+            if not parts_raw:
+                return "continue"
+            cmd = parts_raw[0].upper()
+            arg_text = parts_raw[1] if len(parts_raw) > 1 else ""
 
             if cmd in ["FORWARD", "FD"]:
-                if len(parts) > 1:
-                    distance = self.evaluate_expression(parts[1])
+                if arg_text:
+                    distance = self.evaluate_expression(arg_text)
                     self.move_turtle(distance)
-            elif cmd in ["BACK", "BK"]:
-                if len(parts) > 1:
-                    distance = self.evaluate_expression(parts[1])
+            elif cmd in ["BACKWARD", "BACK", "BK"]:
+                if arg_text:
+                    distance = self.evaluate_expression(arg_text)
                     self.move_turtle(-distance)
             elif cmd in ["LEFT", "LT"]:
-                if len(parts) > 1:
-                    degrees = self.evaluate_expression(parts[1])
+                if arg_text:
+                    degrees = self.evaluate_expression(arg_text)
                     self.turtle_heading += degrees
             elif cmd in ["RIGHT", "RT"]:
-                if len(parts) > 1:
-                    degrees = self.evaluate_expression(parts[1])
+                if arg_text:
+                    degrees = self.evaluate_expression(arg_text)
                     self.turtle_heading -= degrees
             elif cmd in ["PENUP", "PU"]:
                 self.pen_down = False
@@ -2003,31 +2020,33 @@ class SuperPILOTInterpreter:
             elif cmd == "HOME":
                 self.reset_turtle()
             elif cmd == "SETXY":
-                if len(parts) > 2:
-                    x = self.evaluate_expression(parts[1])
-                    y = self.evaluate_expression(parts[2])
-                    self.turtle_x = x
-                    self.turtle_y = y
+                if arg_text:
+                    args = arg_text.split()
+                    if len(args) >= 2:
+                        x = self.evaluate_expression(args[0])
+                        y = self.evaluate_expression(args[1])
+                        self.turtle_x = x
+                        self.turtle_y = y
 
             elif cmd == "SETX":
-                if len(parts) > 1:
-                    x = self.evaluate_expression(parts[1])
+                if arg_text:
+                    x = self.evaluate_expression(arg_text)
                     self.turtle_x = x
             elif cmd == "SETY":
-                if len(parts) > 1:
-                    y = self.evaluate_expression(parts[1])
+                if arg_text:
+                    y = self.evaluate_expression(arg_text)
                     self.turtle_y = y
             elif cmd in ["PENCOLOR", "PC"]:
-                if len(parts) > 1:
-                    color_arg = parts[1]
+                if arg_text:
+                    color_arg = arg_text.strip()
                     if color_arg.isdigit():
                         index = int(color_arg) % len(self.colors)
                         self.pen_color = self.colors[index]
                     else:
                         self.pen_color = color_arg
             elif cmd == "PENSIZE":
-                if len(parts) > 1:
-                    size = self.evaluate_expression(parts[1])
+                if arg_text:
+                    size = self.evaluate_expression(arg_text)
                     self.pen_width = max(1, int(size))
             elif cmd in ["HIDETURTLE", "HT"]:
                 # Turtle visibility - for now just log since we don't draw turtle cursor
@@ -2036,60 +2055,100 @@ class SuperPILOTInterpreter:
                 # Turtle visibility - for now just log since we don't draw turtle cursor
                 self.log_output("Turtle shown")
             elif cmd in ["SETHEADING", "SETH"]:
-                if len(parts) > 1:
-                    heading = self.evaluate_expression(parts[1])
+                if arg_text:
+                    heading = self.evaluate_expression(arg_text)
                     self.turtle_heading = heading
             elif cmd == "CIRCLE":
-                if len(parts) > 1:
-                    radius = self.evaluate_expression(parts[1])
-                    extent = (
-                        self.evaluate_expression(parts[2]) if len(parts) > 2 else 360
-                    )
+                if arg_text:
+                    args = arg_text.split()
+                    radius = self.evaluate_expression(args[0])
+                    extent = (self.evaluate_expression(args[1]) if len(args) > 1 else 360)
                     self.draw_circle(radius, extent)
             elif cmd == "RECT":
-                if len(parts) > 2:
-                    width = self.evaluate_expression(parts[1])
-                    height = self.evaluate_expression(parts[2])
+                if arg_text:
+                    args = arg_text.split()
+                    if len(args) >= 2:
+                        width = self.evaluate_expression(args[0])
+                        height = self.evaluate_expression(args[1])
                     self.draw_rectangle(width, height)
             elif cmd == "DOT":
-                if len(parts) > 1:
-                    size = self.evaluate_expression(parts[1])
+                if arg_text:
+                    size = self.evaluate_expression(arg_text)
                     self.draw_dot(size)
             elif cmd == "IMAGE":
-                if len(parts) > 1:
-                    path = parts[1].strip('"').strip("'")
-                    width = (
-                        self.evaluate_expression(parts[2]) if len(parts) > 2 else None
-                    )
-                    height = (
-                        self.evaluate_expression(parts[3]) if len(parts) > 3 else None
-                    )
+                if arg_text:
+                    args = arg_text.split()
+                    path = args[0].strip('"').strip("'")
+                    width = (self.evaluate_expression(args[1]) if len(args) > 1 else None)
+                    height = (self.evaluate_expression(args[2]) if len(args) > 2 else None)
                     self.draw_image(path, width, height)
             elif cmd == "HUD":
                 self.toggle_hud()
             elif cmd == "SNAPSHOT":
-                if len(parts) > 1:
-                    filename = parts[1].strip('"').strip("'")
+                if arg_text:
+                    filename = arg_text.split()[0].strip('"').strip("'")
                     self.take_snapshot(filename)
             elif cmd == "SPRITENEW":
-                if len(parts) > 2:
-                    name = parts[1]
-                    path = parts[2].strip('"').strip("'")
+                if arg_text:
+                    args = arg_text.split()
+                    if len(args) >= 2:
+                        name = args[0]
+                        path = args[1].strip('"').strip("'")
                     self.create_sprite(name, path)
             elif cmd == "SPRITEPOS":
-                if len(parts) > 3:
-                    name = parts[1]
-                    x = self.evaluate_expression(parts[2])
-                    y = self.evaluate_expression(parts[3])
+                if arg_text:
+                    args = arg_text.split()
+                    if len(args) >= 3:
+                        name = args[0]
+                        x = self.evaluate_expression(args[1])
+                        y = self.evaluate_expression(args[2])
                     self.set_sprite_position(name, x, y)
             elif cmd == "SPRITEDRAW":
-                if len(parts) > 1:
-                    name = parts[1]
+                if arg_text:
+                    name = arg_text.split()[0]
                     self.draw_sprite(name)
+            elif cmd == "REPEAT":
+                # REPEAT n [ commands ] with support for nested brackets
+                # Parse count and bracketed block from the original (pre-uppercased) text
+                # Count is the first token in arg_text
+                try:
+                    at = arg_text.strip()
+                    # Find bracketed block
+                    # Support nested brackets via simple scan
+                    if '[' in at and ']' in at:
+                        count_str = at.split('[', 1)[0].strip()
+                        try:
+                            count = int(self.evaluate_expression(count_str))
+                        except Exception:
+                            count = 0
+                        # Extract inner content
+                        start = at.find('[') + 1
+                        # Find matching closing bracket
+                        bracket_count = 1
+                        i = start
+                        while i < len(at) and bracket_count > 0:
+                            if at[i] == '[':
+                                bracket_count += 1
+                            elif at[i] == ']':
+                                bracket_count -= 1
+                            i += 1
+                        inner = at[start:i-1]
+                        # Parse inner commands into a list
+                        cmds = self.parse_bracketed_commands(inner)
+                        # Execute count times
+                        for _ in range(max(0, int(count))):
+                            for c in cmds:
+                                # Execute nested Logo command strings
+                                self.execute_logo_command(c)
+                except Exception as e:
+                    self.log_output(f"Logo REPEAT error: {e}")
 
         except Exception as e:
             self.log_output(f"Logo command error: {e}")
             return "continue"
+
+        # Default continuation after processing a Logo command
+        return "continue"
 
     def determine_command_type(self, command):
         """Determine which language the command belongs to"""
