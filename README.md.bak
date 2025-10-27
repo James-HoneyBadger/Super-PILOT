@@ -48,30 +48,17 @@ T:Hello *NAME*!
 30 IF A > 3 THEN PRINT "Greater"
 ```
 
-**23 example programs** organized by difficulty in `examples/`:
+More examples are available in `examples/`:
 
-- **Beginner**: `pilot_quiz.pilot`, `basic_guess.bas`, `logo_star.logo`
-- **Intermediate**: `basic_rock_paper_scissors.bas`, `logo_flower.logo`
-- **Advanced**: `pilot_dragon_adventure.pilot`, `logo_koch_snowflake.logo`
+- `pilot_quiz.pilot` — input and matching
+- `basic_guess.bas` — guess-the-number game
+- `basic_graphics.bas` — lines and circles
+- `logo_spirograph.logo`, `logo_house.logo`, `logo_starburst.logo` — graphics demos
+- `pilot_adventure.pilot` — mini text adventure framework
 
-PNG export: use View → "Save Canvas as PNG…" in the UI.
+PNG export: use View → “Save Canvas as PNG…” in the UI.
 
-## Learning Resources
-
-**Getting Started**:
-- [Getting Started Guide](docs/GETTING_STARTED.md) — Your first 5 minutes with Time Warp
-- [Quick Reference](docs/QUICK_REFERENCE.md) — Complete command reference for all languages
-- [Student Guide](docs/STUDENT_GUIDE.md) — Language cheatsheets and challenges
-
-**For Teachers**:
-- [Lesson Plans](docs/LESSON_PLANS.md) — Complete 8-week curriculum for middle school
-- [Teacher Guide](docs/TEACHER_GUIDE.md) — Session outlines and assessment ideas
-- [Programming Challenges](docs/PROGRAMMING_CHALLENGES.md) — 12 challenges with solutions
-
-**For Developers**:
-- [Developer Reference](docs/DEVELOPER_REFERENCE.md) — API documentation and extension guide
-
-**See also**: [Examples README](examples/README.md) for learning paths and all 23 programs.
+Guides: see `docs/STUDENT_GUIDE.md`, `docs/TEACHER_GUIDE.md`, and `docs/DEVELOPER_REFERENCE.md`.
 
 ## Testing
 
