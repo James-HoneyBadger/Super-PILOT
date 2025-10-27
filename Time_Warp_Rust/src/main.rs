@@ -11,8 +11,11 @@ use interpreter::{Language, TimeWarpInterpreter};
 pub struct TimeWarpApp {
     code: String,
     output: Vec<String>,
-    active_tab: usize, // 0 = Editor, 1 = Output & Graphics, 2 = Variables, 3 = Help
+    active_tab: usize, // 0 = Editor, 1 = Output & Graphics, 2 = Variables, 3 = Help, 4 = Explorer
     last_file_path: Option<String>,
+    open_files: Vec<String>,   // List of open files for tabbed editing
+    current_file_index: usize, // Index of currently active file
+    file_tree: Vec<String>,    // Stub: List of files in project (to be replaced with real tree)
     interpreter: TimeWarpInterpreter,
     show_find_replace: bool,
     find_text: String,
@@ -44,6 +47,9 @@ impl Default for TimeWarpApp {
             max_undo_steps: 100,
             syntax_highlighting_enabled: true,
             current_language: Language::Pilot,
+            open_files: vec!["untitled.tw".to_string()],
+            current_file_index: 0,
+            file_tree: vec!["untitled.tw".to_string()],
         }
     }
 }
@@ -501,13 +507,46 @@ impl eframe::App for TimeWarpApp {
                     {
                         self.active_tab = 3;
                     }
+                    if ui
+                        .selectable_label(self.active_tab == 4, "🗂️ Explorer")
+                        .clicked()
+                    {
+                        self.active_tab = 4;
+                    }
                 });
                 ui.separator();
 
                 match self.active_tab {
                     0 => {
-                        // Code Editor Tab
+                        // Code Editor Tab with tabbed editing
                         ui.vertical(|ui| {
+                            // Tab bar for open files
+                            ui.horizontal(|ui| {
+                                for (i, file) in self.open_files.iter().enumerate() {
+                                    if ui
+                                        .selectable_label(self.current_file_index == i, file)
+                                        .clicked()
+                                    {
+                                        self.current_file_index = i;
+                                        self.code = fs::read_to_string(file).unwrap_or_default();
+                                    }
+                                    if ui.button("×").on_hover_text("Close file").clicked() {
+                                        self.open_files.remove(i);
+                                        if self.open_files.is_empty() {
+                                            self.open_files.push("untitled.tw".to_string());
+                                            self.current_file_index = 0;
+                                            self.code.clear();
+                                        } else if self.current_file_index >= self.open_files.len() {
+                                            self.current_file_index = self.open_files.len() - 1;
+                                            self.code = fs::read_to_string(
+                                                &self.open_files[self.current_file_index],
+                                            )
+                                            .unwrap_or_default();
+                                        }
+                                        break;
+                                    }
+                                }
+                            });
                             ui.horizontal(|ui| {
                                 ui.checkbox(
                                     &mut self.syntax_highlighting_enabled,
@@ -518,7 +557,6 @@ impl eframe::App for TimeWarpApp {
                                     self.show_find_replace = !self.show_find_replace;
                                 }
                             });
-
                             if self.show_find_replace {
                                 ui.horizontal(|ui| {
                                     ui.label("Find:");
@@ -533,7 +571,6 @@ impl eframe::App for TimeWarpApp {
                                 });
                                 ui.separator();
                             }
-
                             egui::ScrollArea::vertical().show(ui, |ui| {
                                 let mut code_clone = self.code.clone();
                                 let response = ui.add(
@@ -542,10 +579,71 @@ impl eframe::App for TimeWarpApp {
                                         .desired_width(f32::INFINITY)
                                         .desired_rows(20),
                                 );
-
                                 if response.changed() && code_clone != self.code {
                                     self.code = code_clone;
                                     self.save_undo_state();
+                                }
+                            });
+                        });
+                    }
+                    4 => {
+                        // Explorer Tab
+                        ui.vertical(|ui| {
+                            ui.label("Project Explorer:");
+                            let file_list: Vec<String> = self.file_tree.clone();
+                            egui::ScrollArea::vertical().show(ui, |ui| {
+                                for file in file_list {
+                                    ui.horizontal(|ui| {
+                                        ui.label(&file);
+                                        if ui.button("Open").clicked() {
+                                            if !self.open_files.contains(&file) {
+                                                self.open_files.push(file.clone());
+                                            }
+                                            self.current_file_index = self
+                                                .open_files
+                                                .iter()
+                                                .position(|f| f == &file)
+                                                .unwrap_or(0);
+                                            self.code =
+                                                fs::read_to_string(&file).unwrap_or_default();
+                                            self.active_tab = 0;
+                                        }
+                                        if ui.button("Delete").clicked() {
+                                            // Stub: delete file from tree
+                                            // In real implementation, delete from disk
+                                            self.file_tree.retain(|f| f != &file);
+                                            self.open_files.retain(|f| f != &file);
+                                            if self.open_files.is_empty() {
+                                                self.open_files.push("untitled.tw".to_string());
+                                                self.current_file_index = 0;
+                                                self.code.clear();
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                            ui.horizontal(|ui| {
+                                if ui.button("New File").clicked() {
+                                    let new_name =
+                                        format!("untitled_{}.tw", self.file_tree.len() + 1);
+                                    self.file_tree.push(new_name.clone());
+                                    self.open_files.push(new_name.clone());
+                                    self.current_file_index = self.open_files.len() - 1;
+                                    self.code.clear();
+                                    self.active_tab = 0;
+                                }
+                                if ui.button("Rename File").clicked() {
+                                    // Stub: rename current file
+                                    if let Some(file) = self.open_files.get(self.current_file_index)
+                                    {
+                                        let renamed = format!("{}_renamed.tw", file);
+                                        if let Some(tree_idx) =
+                                            self.file_tree.iter().position(|f| f == file)
+                                        {
+                                            self.file_tree[tree_idx] = renamed.clone();
+                                        }
+                                        self.open_files[self.current_file_index] = renamed;
+                                    }
                                 }
                             });
                         });
