@@ -4,6 +4,7 @@ pub mod statusbar;
 pub mod editor;
 pub mod output;
 pub mod canvas;
+pub mod screen;
 pub mod debugger;
 pub mod explorer;
 pub mod help;

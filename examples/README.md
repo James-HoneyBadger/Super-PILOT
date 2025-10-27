@@ -29,6 +29,7 @@ A curated set of sample programs to explore Time Warp IDE features.
 - `basic_rock_paper_scissors.bas` — Play rock-paper-scissors against computer
 - `basic_inkey_demo.bas` — Real-time keyboard detection with INKEY$
 - `basic_arrow_keys.bas` — Interactive movement using arrow keys and INKEY$
+- `basic_screen_modes.bas` — Demonstrates SCREEN text/graphics modes and drawing
 
 ## Logo
 

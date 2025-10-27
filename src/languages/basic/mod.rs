@@ -1,8 +1,9 @@
 use anyhow::Result;
 use crate::interpreter::{Interpreter, ExecutionResult};
 use crate::graphics::TurtleState;
+use crate::interpreter::ScreenMode;
 
-pub fn execute(interp: &mut Interpreter, command: &str, _turtle: &mut TurtleState) -> Result<ExecutionResult> {
+pub fn execute(interp: &mut Interpreter, command: &str, turtle: &mut TurtleState) -> Result<ExecutionResult> {
     let trimmed = command.trim();
     if trimmed.is_empty() {
         return Ok(ExecutionResult::Continue);
@@ -18,20 +19,76 @@ pub fn execute(interp: &mut Interpreter, command: &str, _turtle: &mut TurtleStat
         "LET" => execute_let(interp, args),
         "INPUT" => execute_input(interp, args),
         "GOTO" => execute_goto(interp, args),
-        "IF" => execute_if(interp, args, _turtle),
+        "IF" => execute_if(interp, args, turtle),
         "FOR" => execute_for(interp, args),
         "NEXT" => execute_next(interp, args),
         "GOSUB" => execute_gosub(interp, args),
         "RETURN" => execute_return(interp),
         "REM" => Ok(ExecutionResult::Continue), // Comment
         "END" => Ok(ExecutionResult::End),
-        "LINE" => execute_line(interp, args, _turtle),
-        "CIRCLE" => execute_circle(interp, args, _turtle),
+        "LINE" => execute_line(interp, args, turtle),
+        "CIRCLE" => execute_circle(interp, args, turtle),
+        "SCREEN" => execute_screen(interp, args, turtle),
         _ => {
             interp.log_output(format!("Unknown BASIC command: {}", keyword));
             Ok(ExecutionResult::Continue)
         }
     }
+}
+
+fn execute_screen(interp: &mut Interpreter, args: &str, turtle: &mut TurtleState) -> Result<ExecutionResult> {
+    // SCREEN mode[, w, h]
+    let mut parts: Vec<&str> = args.split(',').map(|s| s.trim()).collect();
+    if parts.is_empty() || parts[0].is_empty() {
+        interp.log_output("❌ SCREEN: Missing mode".to_string());
+        return Ok(ExecutionResult::Continue);
+    }
+    let mode_val = interp.evaluate_expression(parts[0]).unwrap_or(0.0) as i32;
+    let mut made_change = false;
+    match mode_val {
+        0 => {
+            // Text mode
+            let cols = if parts.len() > 1 { interp.evaluate_expression(parts[1]).unwrap_or(80.0) as u32 } else { 80 };
+            let rows = if parts.len() > 2 { interp.evaluate_expression(parts[2]).unwrap_or(25.0) as u32 } else { 25 };
+            interp.screen_mode = ScreenMode::Text { cols, rows };
+            // Map text grid to pixel canvas for consistency
+            let char_w = 10.0f32; // approximate monospace width
+            let char_h = 18.0f32; // approximate line height
+            turtle.canvas_width = (cols as f32 * char_w).max(200.0);
+            turtle.canvas_height = (rows as f32 * char_h).max(150.0);
+            made_change = true;
+        }
+        1 => {
+            // Graphics default 640x480 unless overridden
+            let mut w = 640u32;
+            let mut h = 480u32;
+            if parts.len() > 1 { w = interp.evaluate_expression(parts[1]).unwrap_or(w as f64) as u32; }
+            if parts.len() > 2 { h = interp.evaluate_expression(parts[2]).unwrap_or(h as f64) as u32; }
+            interp.screen_mode = ScreenMode::Graphics { width: w, height: h };
+            turtle.canvas_width = w as f32;
+            turtle.canvas_height = h as f32;
+            made_change = true;
+        }
+        2 => {
+            // Graphics default 1024x768 unless overridden
+            let mut w = 1024u32;
+            let mut h = 768u32;
+            if parts.len() > 1 { w = interp.evaluate_expression(parts[1]).unwrap_or(w as f64) as u32; }
+            if parts.len() > 2 { h = interp.evaluate_expression(parts[2]).unwrap_or(h as f64) as u32; }
+            interp.screen_mode = ScreenMode::Graphics { width: w, height: h };
+            turtle.canvas_width = w as f32;
+            turtle.canvas_height = h as f32;
+            made_change = true;
+        }
+        _ => {
+            interp.log_output(format!("❌ SCREEN: Unsupported mode {}", mode_val));
+        }
+    }
+
+    if made_change {
+        interp.log_output(format!("🎨 SCREEN set: {:?}", interp.screen_mode));
+    }
+    Ok(ExecutionResult::Continue)
 }
 
 fn execute_print(interp: &mut Interpreter, args: &str) -> Result<ExecutionResult> {

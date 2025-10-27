@@ -22,7 +22,7 @@ Pick one IDE:
 
 1. Open or create files from File → Open or File → New.
 2. Edit code in the Editor tab. Multiple files can be open in tabs.
-3. Run the program (▶️) to view output and graphics in the Output tab.
+3. Run the program (▶️) to view output and graphics in the unified Screen.
 4. When prompted for input (📝), type your response and press Enter.
 5. Save often via File → Save or Ctrl+S. Unsaved files show a modified indicator.
 
@@ -53,6 +53,7 @@ Notes:
 - `PRINT expr` - Output expression or string
 - `INPUT var` - Get user input (blocking, waits for Enter)
 - `LET var$ = INKEY$` - Get key press (non-blocking, for game loops)
+- `SCREEN mode[, w, h]` - Switch between text/graphics modes (0=text, 1=640x480, 2=1024x768)
 - `GOTO line` - Jump to line number
 - `IF condition THEN command` - Conditional execution
 - `FOR var = start TO end [STEP step]` - Loop construct

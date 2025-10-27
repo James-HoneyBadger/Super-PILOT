@@ -61,6 +61,15 @@ pub enum ExecutionResult {
     WaitForInput,
 }
 
+/// Unified screen modes akin to GW-BASIC
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum ScreenMode {
+    /// Text mode with columns and rows (e.g., 80x25)
+    Text { cols: u32, rows: u32 },
+    /// Graphics mode with pixel dimensions
+    Graphics { width: u32, height: u32 },
+}
+
 /// Main interpreter managing program state and language dispatch
 pub struct Interpreter {
     // Core state
@@ -100,6 +109,9 @@ pub struct Interpreter {
     // Keyboard state for INKEY$ (callback for tests, direct field for UI)
     pub inkey_callback: Option<Box<dyn Fn() -> Option<String>>>,
     pub last_key_pressed: Option<String>,
+    
+    // Unified screen state
+    pub screen_mode: ScreenMode,
 }
 
 #[derive(Clone)]
@@ -147,6 +159,7 @@ impl Interpreter {
             pending_resume_line: None,
             inkey_callback: None,
             last_key_pressed: None,
+            screen_mode: ScreenMode::Graphics { width: 800, height: 600 },
         }
     }
     
@@ -276,8 +289,9 @@ impl Interpreter {
         }
         
         // BASIC keywords
-        let basic_keywords = ["LET", "PRINT", "INPUT", "GOTO", "IF", "THEN", "FOR", "NEXT",
-                             "GOSUB", "RETURN", "REM", "DIM", "DATA", "READ", "LINE", "CIRCLE"];
+    let basic_keywords = ["LET", "PRINT", "INPUT", "GOTO", "IF", "THEN", "FOR", "NEXT",
+                 "GOSUB", "RETURN", "REM", "DIM", "DATA", "READ", "LINE", "CIRCLE",
+                 "SCREEN"];
         if basic_keywords.contains(&first_word.to_uppercase().as_str()) {
             return Language::Basic;
         }

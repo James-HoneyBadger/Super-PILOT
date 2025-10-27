@@ -28,6 +28,7 @@ cargo build --release
 - Expression caching (10-50x speedup)
 - Security limits and timeouts
 - Modern egui UI with 8 themes
+- Unified Screen: single canvas for text and graphics output (text/graphics modes)
 - Input prompts: interactive 📝 dialog for BASIC INPUT and PILOT A:
 - Real-time keyboard detection: INKEY$ for game loops and interactive programs
 

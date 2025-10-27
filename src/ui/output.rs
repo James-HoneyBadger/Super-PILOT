@@ -2,29 +2,12 @@ use eframe::egui;
 use crate::app::TimeWarpApp;
 
 pub fn render(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
-    ui.horizontal(|ui| {
-        // Output panel
-        ui.vertical(|ui| {
-            ui.heading("Output");
-            ui.separator();
-            
-            egui::ScrollArea::vertical()
-                .max_height(300.0)
-                .show(ui, |ui| {
-                    for line in &app.interpreter.output {
-                        ui.label(line);
-                    }
-                });
-        });
-        
+    // Unified output screen (text + graphics)
+    ui.vertical(|ui| {
+        ui.heading("Unified Screen");
         ui.separator();
-        
-        // Turtle graphics panel (rendered below to allow &mut access)
+        crate::ui::screen::render(app, ui);
     });
-    
-    // Render canvas in separate full-width row
-    ui.add_space(8.0);
-    crate::ui::canvas::render_canvas(app, ui);
 
     // If interpreter is waiting for input, show a prompt overlay
     if let Some(req) = app.interpreter.pending_input.clone() {
