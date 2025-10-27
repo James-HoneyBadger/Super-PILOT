@@ -2,7 +2,7 @@
 
 Welcome to Time Warp IDE, a retromodern learning environment supporting PILOT, BASIC, and Logo with turtle graphics. This guide covers daily use across the Python and Rust IDEs.
 
-For help: james@honey-badger.org
+For help: <james@honey-badger.org>
 
 ---
 
@@ -20,12 +20,14 @@ Pick one IDE:
 
 ## Core Workflow
 
-1. Open or create files from the file explorer (left).
-2. Edit code in tabs (center). Multiple files can be open at once.
-3. Run the program to view output and graphics.
-4. Save often. Unsaved tabs show a modified indicator.
+1. Open or create files from File → Open or File → New.
+2. Edit code in the Editor tab. Multiple files can be open in tabs.
+3. Run the program (▶️) to view output and graphics in the Output tab.
+4. When prompted for input (📝), type your response and press Enter.
+5. Save often via File → Save or Ctrl+S. Unsaved files show a modified indicator.
 
 Notes:
+
 - Examples are in `examples/` and top-level `*.spt`, `*.pilot`, `*.logo`.
 - Turtle graphics render on the canvas (Python IDE) or unified canvas (Rust IDE).
 
@@ -148,8 +150,9 @@ Common issues:
 3. Rust IDE build fails: run `rustup update` and `cargo clean && cargo build`.
 
 Getting help:
+
 - See examples and `docs/`
-- Contact support: james@honey-badger.org
+- Contact support: <james@honey-badger.org>
 
 ## System Requirements
 

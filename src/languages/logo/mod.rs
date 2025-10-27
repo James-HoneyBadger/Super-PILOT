@@ -314,23 +314,44 @@ fn execute_procedure(interp: &mut Interpreter, name: &str, arg_str: &str, turtle
     if let Some(proc_def) = interp.logo_procedures.get(name).cloned() {
         // Bind parameters
         let args: Vec<&str> = if arg_str.trim().is_empty() { Vec::new() } else { arg_str.trim().split_whitespace().collect() };
-        let mut old_vars: HashMap<String, Option<f64>> = HashMap::new();
+        let mut old_num: HashMap<String, Option<f64>> = HashMap::new();
+        let mut old_str: HashMap<String, Option<String>> = HashMap::new();
         for (i, p) in proc_def.params.iter().enumerate() {
-            // Save old
-            old_vars.insert(p.clone(), interp.variables.get(p).copied());
-            // Evaluate arg if provided
-            let val = if let Some(arg) = args.get(i) {
-                eval_logo_expr(interp, arg)?
-            } else { 0.0 };
-            interp.variables.insert(p.clone(), val);
+            // Save old values
+            old_num.insert(p.clone(), interp.variables.get(p).copied());
+            old_str.insert(p.clone(), interp.string_variables.get(p).cloned());
+            // Bind argument
+            if let Some(arg) = args.get(i) {
+                let tok = arg.trim();
+                if tok.len() >= 2 && tok.starts_with('"') && tok.ends_with('"') {
+                    // Quoted string
+                    interp.string_variables.insert(p.clone(), tok[1..tok.len()-1].to_string());
+                    interp.variables.remove(p);
+                } else if let Ok(val) = eval_logo_expr(interp, tok) {
+                    // Numeric
+                    interp.variables.insert(p.clone(), val);
+                    interp.string_variables.remove(p);
+                } else {
+                    // Fallback: raw token as string
+                    interp.string_variables.insert(p.clone(), tok.to_string());
+                    interp.variables.remove(p);
+                }
+            } else {
+                // Default 0 for numeric, remove string
+                interp.variables.insert(p.clone(), 0.0);
+                interp.string_variables.remove(p);
+            }
         }
         // Execute body
         for line in proc_def.body {
             execute(interp, &line, turtle)?;
         }
         // Restore old vars
-        for (k, v) in old_vars.into_iter() {
-            if let Some(val) = v { interp.variables.insert(k, val); } else { interp.variables.remove(&k); }
+        for (k, v) in old_num.into_iter() {
+            if let Some(val) = v { interp.variables.insert(k.clone(), val); } else { interp.variables.remove(&k); }
+        }
+        for (k, v) in old_str.into_iter() {
+            if let Some(val) = v { interp.string_variables.insert(k.clone(), val); } else { interp.string_variables.remove(&k); }
         }
         Ok(ExecutionResult::Continue)
     } else {

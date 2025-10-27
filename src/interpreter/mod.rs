@@ -57,6 +57,8 @@ pub enum ExecutionResult {
     Continue,
     End,
     Jump(usize),
+    /// Pause execution to wait for user input
+    WaitForInput,
 }
 
 /// Main interpreter managing program state and language dispatch
@@ -90,6 +92,10 @@ pub struct Interpreter {
 
     // Logo procedures (name -> body lines)
     pub logo_procedures: std::collections::HashMap<String, LogoProcedure>,
+
+    // Pending input request (when running in UI without callback)
+    pub pending_input: Option<InputRequest>,
+    pub pending_resume_line: Option<usize>,
 }
 
 #[derive(Clone)]
@@ -133,6 +139,8 @@ impl Interpreter {
             input_callback: None,
             last_input: String::new(),
             logo_procedures: HashMap::new(),
+            pending_input: None,
+            pending_resume_line: None,
         }
     }
     
@@ -174,14 +182,17 @@ impl Interpreter {
     /// - Max iterations: 100,000 (prevents infinite loops)
     /// - Max execution time: 10 seconds (prevents DoS)
     pub fn execute(&mut self, turtle: &mut TurtleState) -> Result<Vec<String>> {
-        self.output.clear();
-        self.current_line = 0;
+        // Only reset output at the start of a fresh run. When resuming after input,
+        // preserve previous output and current_line set by provide_input().
+        if self.current_line == 0 {
+            self.output.clear();
+        }
         
         let max_iterations = 100000;
         let mut iterations = 0;
         let start_time = Instant::now();
         
-        while self.current_line < self.program_lines.len() && iterations < max_iterations {
+    while self.current_line < self.program_lines.len() && iterations < max_iterations {
             // Security check: Timeout protection
             if start_time.elapsed() > MAX_EXECUTION_TIME {
                 self.log_output("❌ Error: Execution timeout (10 seconds exceeded)".to_string());
@@ -211,6 +222,10 @@ impl Interpreter {
                 ExecutionResult::Continue => self.current_line += 1,
                 ExecutionResult::End => break,
                 ExecutionResult::Jump(line) => self.current_line = line,
+                ExecutionResult::WaitForInput => {
+                    // Pause execution; UI should collect input and call provide_input()
+                    break;
+                }
             }
         }
         
@@ -328,6 +343,8 @@ impl Interpreter {
         self.last_match_set = false;
         self.stored_condition = None;
         self.logo_procedures.clear();
+        self.pending_input = None;
+        self.pending_resume_line = None;
     }
     
     // Stack operations for GOSUB/RETURN
@@ -376,4 +393,53 @@ impl Interpreter {
             String::new()
         }
     }
+
+    /// Initiate a pending input request to be fulfilled by the UI.
+    /// Stores the prompt and target variable, and marks current line for resume.
+    pub fn start_input_request(&mut self, prompt: &str, var_name: &str, prefer_numeric: bool) {
+        // Only create if one isn't already pending
+        if self.pending_input.is_none() {
+            self.pending_input = Some(InputRequest {
+                prompt: prompt.to_string(),
+                var_name: var_name.to_string(),
+                prefer_numeric,
+            });
+            self.pending_resume_line = Some(self.current_line);
+        }
+    }
+
+    /// Provide the user input value to satisfy a pending request; assigns variable and advances.
+    pub fn provide_input(&mut self, value: &str) {
+        if let Some(req) = self.pending_input.take() {
+            self.last_input = value.to_string();
+            if req.prefer_numeric {
+                if let Ok(num) = value.trim().parse::<f64>() {
+                    self.variables.insert(req.var_name.clone(), num);
+                } else {
+                    self.string_variables.insert(req.var_name.clone(), value.to_string());
+                }
+            } else {
+                // String-first
+                if value.trim().is_empty() {
+                    self.string_variables.insert(req.var_name.clone(), String::new());
+                } else if let Ok(num) = value.trim().parse::<f64>() {
+                    self.variables.insert(req.var_name.clone(), num);
+                } else {
+                    self.string_variables.insert(req.var_name.clone(), value.to_string());
+                }
+            }
+            if let Some(line) = self.pending_resume_line.take() {
+                // Advance to next line after the INPUT command
+                self.current_line = line + 1;
+            }
+        }
+    }
+}
+
+/// Describes a pending input request awaiting UI entry
+#[derive(Debug, Clone)]
+pub struct InputRequest {
+    pub prompt: String,
+    pub var_name: String,
+    pub prefer_numeric: bool,
 }

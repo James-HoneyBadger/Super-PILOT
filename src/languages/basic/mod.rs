@@ -64,8 +64,15 @@ fn execute_print(interp: &mut Interpreter, args: &str) -> Result<ExecutionResult
             match interp.evaluate_expression(item_trim) {
                 Ok(v) => out_items.push(format!("{}", v)),
                 Err(_) => {
-                    // Fallback: interpolate *VAR* style
-                    out_items.push(interp.interpolate_text(item_trim));
+                    // Try variable lookup (string or numeric) before interpolation
+                    if let Some(s) = interp.string_variables.get(item_trim) {
+                        out_items.push(s.clone());
+                    } else if let Some(n) = interp.variables.get(item_trim) {
+                        out_items.push(format!("{}", n));
+                    } else {
+                        // Fallback: interpolate *VAR* style
+                        out_items.push(interp.interpolate_text(item_trim));
+                    }
                 }
             }
         }
@@ -100,22 +107,21 @@ fn execute_let(interp: &mut Interpreter, assignment: &str) -> Result<ExecutionRe
 
 fn execute_input(interp: &mut Interpreter, var: &str) -> Result<ExecutionResult> {
     let var_name = var.trim().to_string();
-    
-    // Request input with variable name as prompt
     let prompt = format!("{}? ", var_name);
-    let input_value = interp.request_input(&prompt);
-    
-    // Try parsing as number first, fallback to string
-    match input_value.trim().parse::<f64>() {
-        Ok(num) => {
-            interp.variables.insert(var_name.clone(), num);
+
+    // If an input callback is wired (tests or headless), use it synchronously
+    if interp.input_callback.is_some() {
+        let input_value = interp.request_input(&prompt);
+        match input_value.trim().parse::<f64>() {
+            Ok(num) => { interp.variables.insert(var_name.clone(), num); }
+            Err(_) => { interp.string_variables.insert(var_name.clone(), input_value); }
         }
-        Err(_) => {
-            interp.string_variables.insert(var_name.clone(), input_value);
-        }
+        return Ok(ExecutionResult::Continue);
     }
-    
-    Ok(ExecutionResult::Continue)
+
+    // Otherwise, initiate a pending UI input and pause execution
+    interp.start_input_request(&prompt, &var_name, true);
+    Ok(ExecutionResult::WaitForInput)
 }
 
 fn execute_goto(interp: &mut Interpreter, line_num: &str) -> Result<ExecutionResult> {

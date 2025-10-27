@@ -41,6 +41,9 @@ pub struct TimeWarpApp {
     #[allow(dead_code)]
     pub turtle_pan: egui::Vec2,
     
+    // Input prompt state
+    pub input_buffer: String,
+    
     // Debug state (future features)
     #[allow(dead_code)]
     pub debug_mode: bool,
@@ -77,6 +80,8 @@ impl TimeWarpApp {
             turtle_state: TurtleState::new(),
             turtle_zoom: 1.0,
             turtle_pan: egui::Vec2::ZERO,
+            
+            input_buffer: String::new(),
             
             debug_mode: false,
             breakpoints: HashMap::new(),

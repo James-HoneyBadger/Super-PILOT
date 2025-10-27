@@ -9,6 +9,10 @@ pub fn render(_app: &TimeWarpApp, ui: &mut egui::Ui) {
         ui.heading("Quick Start");
         ui.label("Time Warp supports three educational programming languages:");
         ui.add_space(10.0);
+        ui.heading("User Input");
+        ui.label("When a program requests input (BASIC INPUT or PILOT A:), the IDE shows an 📝 prompt in the Output tab.");
+        ui.label("Type your response and press Enter or click Submit to resume execution. The value is stored as a number if possible, otherwise as text.");
+        ui.add_space(10.0);
         
         ui.heading("PILOT Language");
         ui.label("T:text - Display text");
@@ -50,5 +54,6 @@ pub fn render(_app: &TimeWarpApp, ui: &mut egui::Ui) {
         
         ui.heading("Example Programs");
         ui.label("See the examples/ directory for sample programs in each language.");
+        ui.label("Graphics can be saved via View → Save Canvas as PNG…");
     });
 }

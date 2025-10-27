@@ -47,21 +47,21 @@ fn execute_text(interp: &mut Interpreter, text: &str) -> Result<ExecutionResult>
 
 fn execute_accept(interp: &mut Interpreter, var: &str) -> Result<ExecutionResult> {
     let var_name = var.trim();
-    
-    // Request input from user
-    let input = interp.request_input(var_name);
-    
-    // Try parsing as number first, fallback to string
-    match input.trim().parse::<f64>() {
-        Ok(num) => {
-            interp.variables.insert(var_name.to_string(), num);
+
+    // If an input callback is wired, use it synchronously
+    if interp.input_callback.is_some() {
+        let input = interp.request_input(var_name);
+        match input.trim().parse::<f64>() {
+            Ok(num) => { interp.variables.insert(var_name.to_string(), num); }
+            Err(_) => { interp.string_variables.insert(var_name.to_string(), input); }
         }
-        Err(_) => {
-            interp.string_variables.insert(var_name.to_string(), input);
-        }
+        return Ok(ExecutionResult::Continue);
     }
-    
-    Ok(ExecutionResult::Continue)
+
+    // Otherwise, start pending input request and pause
+    let prompt = format!("{} ", var_name);
+    interp.start_input_request(&prompt, var_name, true);
+    Ok(ExecutionResult::WaitForInput)
 }
 
 fn execute_use(interp: &mut Interpreter, assignment: &str) -> Result<ExecutionResult> {

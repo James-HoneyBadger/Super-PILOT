@@ -1,4 +1,7 @@
 use eframe::egui;
+use image::{ImageBuffer, Rgba};
+use imageproc::drawing::draw_antialiased_line_segment_mut;
+// use imageproc::pixelops::interpolate;
 
 #[derive(Debug, Clone)]
 pub struct TurtleLine {
@@ -108,13 +111,11 @@ impl TurtleState {
     
     /// Save canvas as PNG image
     pub fn save_png(&self, path: &str) -> anyhow::Result<()> {
-        use image::{ImageBuffer, Rgba};
-        
         let width = self.canvas_width as u32;
         let height = self.canvas_height as u32;
         
         // Create image buffer
-        let mut img = ImageBuffer::new(width, height);
+        let mut img: ImageBuffer<Rgba<u8>, Vec<u8>> = ImageBuffer::new(width, height);
         
         // Fill background
         for pixel in img.pixels_mut() {
@@ -123,7 +124,7 @@ impl TurtleState {
         
         // Draw lines (simple rasterization)
         for line in &self.lines {
-            draw_line_on_image(&mut img, line, width as f32, height as f32);
+            draw_line_aa_with_width(&mut img, line, width as f32, height as f32);
         }
         
         // Save to file
@@ -132,7 +133,7 @@ impl TurtleState {
     }
 }
 
-fn draw_line_on_image(img: &mut image::ImageBuffer<image::Rgba<u8>, Vec<u8>>, line: &TurtleLine, canvas_w: f32, canvas_h: f32) {
+fn draw_line_aa_with_width(img: &mut ImageBuffer<Rgba<u8>, Vec<u8>>, line: &TurtleLine, canvas_w: f32, canvas_h: f32) {
     // Transform turtle coordinates (centered origin) to image coordinates (top-left origin)
     let cx = canvas_w / 2.0;
     let cy = canvas_h / 2.0;
@@ -140,48 +141,34 @@ fn draw_line_on_image(img: &mut image::ImageBuffer<image::Rgba<u8>, Vec<u8>>, li
     let y0 = (cy - line.start.y) as i32;
     let x1 = (line.end.x + cx) as i32;
     let y1 = (cy - line.end.y) as i32;
-    
-    // Bresenham's line algorithm
-    let dx = (x1 - x0).abs();
-    let dy = -(y1 - y0).abs();
-    let sx = if x0 < x1 { 1 } else { -1 };
-    let sy = if y0 < y1 { 1 } else { -1 };
-    let mut err = dx + dy;
-    
-    let mut x = x0;
-    let mut y = y0;
-    let color = image::Rgba([line.color.r(), line.color.g(), line.color.b(), 255]);
-    let radius: i32 = ((line.width.round() as i32).max(1)) / 2;
-    
-    loop {
-        if x >= 0 && x < canvas_w as i32 && y >= 0 && y < canvas_h as i32 {
-            // Draw a small square to approximate thickness
-            for ox in -radius..=radius {
-                for oy in -radius..=radius {
-                    let px = x + ox;
-                    let py = y + oy;
-                    if px >= 0 && px < canvas_w as i32 && py >= 0 && py < canvas_h as i32 {
-                        img.put_pixel(px as u32, py as u32, color);
-                    }
-                }
+    let base_color = Rgba([line.color.r(), line.color.g(), line.color.b(), 255]);
+    // Compute normal for thickness approximation
+    let dx = (x1 - x0) as f32;
+    let dy = (y1 - y0) as f32;
+    let len = (dx*dx + dy*dy).sqrt().max(1.0);
+    let nx = -dy / len; // unit normal x
+    let ny = dx / len;  // unit normal y
+    let strokes = line.width.max(1.0).round() as i32;
+    let half = (strokes as f32 - 1.0) / 2.0;
+    for i in 0..strokes {
+        let offset = (i as f32 - half) * 0.9; // spacing factor
+        let ox = (nx * offset).round() as i32;
+        let oy = (ny * offset).round() as i32;
+        draw_antialiased_line_segment_mut(
+            img,
+            (x0 + ox, y0 + oy),
+            (x1 + ox, y1 + oy),
+            base_color,
+            |dst, color, c| {
+                // Alpha blend with coverage c (0..1)
+                let alpha = (c * (color[3] as f32 / 255.0)).clamp(0.0, 1.0);
+                let inv = 1.0 - alpha;
+                let nr = (color[0] as f32 * alpha + dst[0] as f32 * inv).round() as u8;
+                let ng = (color[1] as f32 * alpha + dst[1] as f32 * inv).round() as u8;
+                let nb = (color[2] as f32 * alpha + dst[2] as f32 * inv).round() as u8;
+                Rgba([nr, ng, nb, 255])
             }
-        }
-        
-        if x == x1 && y == y1 {
-            break;
-        }
-        
-        let e2 = 2 * err;
-        if e2 >= dy {
-            if x == x1 { break; }
-            err += dy;
-            x += sx;
-        }
-        if e2 <= dx {
-            if y == y1 { break; }
-            err += dx;
-            y += sy;
-        }
+        );
     }
 }
 

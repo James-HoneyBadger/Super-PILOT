@@ -177,8 +177,13 @@ fn run_program(app: &mut TimeWarpApp) {
             app.error_message = Some(format!("Execution error: {}", e));
         }
     }
-    
-    app.is_executing = false;
+
+    // If execution is waiting for input, keep executing flag set so UI can resume
+    if app.interpreter.pending_input.is_none() {
+        app.is_executing = false;
+    } else {
+        app.active_tab = 1;
+    }
 }
 
 fn step_program(_app: &mut TimeWarpApp) {
