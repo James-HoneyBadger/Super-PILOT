@@ -8,148 +8,25 @@ import random
 import math
 import re
 import time
+import threading
 from datetime import datetime
 
-# Templecode/runtime timing constants
-# Keep delta time sane even on very fast loops to ensure systems advance.
-MIN_DELTA_TIME_MS = 1
-MAX_DELTA_TIME_MS = 100
-
-
-class ArduinoController:
-    """Arduino hardware controller with simulation support"""
-
-    def __init__(self, simulation_mode=True):
-        self.simulation_mode = simulation_mode
-        self.connected = False
-
-
-class RPiController:
-    """Raspberry Pi hardware controller with simulation support"""
-
-    def __init__(self, simulation_mode=True):
-        self.simulation_mode = simulation_mode
-        self.gpio_available = False
-        self.connected = False
-
-
-class IoTDeviceManager:
-    def __init__(self):
-        self.devices = []
-        self.simulation_mode = True
-
-
-class SmartHomeSystem:
-    def __init__(self):
-        self.automation_rules = []
-        self.devices = {}
-        self.simulation_mode = True
-
-
-class AudioMixer:
-    """Audio mixer for playing sounds with play/aplay support"""
-
-    def __init__(self):
-        self.registry = {}  # name -> path
-        self.has_play = self._has_exe("play")
-        self.has_aplay = self._has_exe("aplay")
-
-    def _has_exe(self, name: str) -> bool:
-        import os
-
-        for p in os.environ.get("PATH", "").split(os.pathsep):
-            f = os.path.join(p, name)
-            if os.path.isfile(f) and os.access(f, os.X_OK):
-                return True
-        return False
-
-    def register_sound(self, name, path):
-        """Register a sound file with a name"""
-        self.registry[name] = path
-
-    def play_sound(self, name):
-        """Play a registered sound"""
-        import os
-
-        path = self.registry.get(name)
-        if not path:
-            return
-        if self.has_play:
-            os.system(f"play -q {path}")
-        elif self.has_aplay and path.lower().endswith(".wav"):
-            os.system(f"aplay -q {path}")
-        else:
-            # Fallback: system bell
-            print("\a", end="", flush=True)
-
-
-# Easing functions for animations
-EASE_FUNCTIONS = {
-    "linear": lambda t: t,
-    "quadOut": lambda t: 1 - (1 - t) * (1 - t),
-    "quadIn": lambda t: t * t,
-    "smooth": lambda t: t * t * (3 - 2 * t),
-}
-
-
-class Tween:
-    """Animation tween for smoothly changing values over time"""
-
-    def __init__(
-        self,
-        store: dict,
-        key: str,
-        start_val: float,
-        end_val: float,
-        duration_ms: int,
-        ease: str = "linear",
-    ):
-        self.store = store
-        self.key = key
-        self.start_val = float(start_val)
-        self.end_val = float(end_val)
-        self.duration = max(1, int(duration_ms))
-        self.ease = EASE_FUNCTIONS.get(ease, EASE_FUNCTIONS["linear"])
-        self.elapsed = 0
-        self.done = False
-
-    def step(self, dt_ms):
-        if self.done:
-            return
-        self.elapsed += dt_ms
-        t = min(1.0, self.elapsed / self.duration)
-        k = self.ease(t)
-        self.store[self.key] = self.start_val + (self.end_val - self.start_val) * k
-        if self.elapsed >= self.duration:
-            self.store[self.key] = self.end_val
-            self.done = True
-
-
-class Timer:
-    """Delayed action timer"""
-
-    def __init__(self, delay_ms: int, label: str):
-        self.delay = max(0, int(delay_ms))
-        self.label = label
-
-
-class Particle:
-    """Particle for visual effects"""
-
-    def __init__(self, x, y, vx, vy, life_ms, color="#ffaa33", size=3):
-        self.x = x
-        self.y = y
-        self.vx = vx
-        self.vy = vy
-        self.life = life_ms
-        self.color = color
-        self.size = size
-
-    def step(self, dt_ms):
-        self.x += self.vx * (dt_ms / 1000.0)
-        self.y += self.vy * (dt_ms / 1000.0)
-        self.vy -= 30 * (dt_ms / 1000.0)  # gravity
-        self.life -= dt_ms
+# Import modularized components
+from superpilot.runtime.templecode import (
+    Tween,
+    Timer,
+    Particle,
+    EASE_FUNCTIONS,
+    MIN_DELTA_TIME_MS,
+    MAX_DELTA_TIME_MS,
+)
+from superpilot.runtime.hardware import (
+    ArduinoController,
+    RPiController,
+    IoTDeviceManager,
+    SmartHomeSystem,
+)
+from superpilot.runtime.audio import AudioMixer
 
 
 class ToolTip:
@@ -209,7 +86,17 @@ class ToolTip:
 
 class SuperPILOTInterpreter:
     def __init__(self, output_widget=None):
+        # Event callbacks (observer pattern for decoupling from UI)
+        self.on_output = []  # List of callbacks(text: str)
+        self.on_variable_changed = []  # List of callbacks(name: str, value)
+        self.on_line_executed = []  # List of callbacks(line_num: int)
+        self.on_program_started = []  # List of callbacks()
+        self.on_program_finished = []  # List of callbacks(success: bool)
+        self.on_breakpoint_hit = []  # List of callbacks(line_num: int)
+        
+        # Legacy widget support for backward compatibility
         self.output_widget = output_widget
+        
         self.variables = {}
         self.labels = {}
         self.procedures = {}
@@ -718,7 +605,15 @@ class SuperPILOTInterpreter:
         # In a full implementation, sprites would be drawn independently
 
     def log_output(self, text):
-        """Log output to widget or console"""
+        """Log output to widget or console (event-driven with backward compat)"""
+        # Fire event callbacks
+        for callback in self.on_output:
+            try:
+                callback(str(text))
+            except Exception as e:
+                print(f"Error in output callback: {e}")
+        
+        # Legacy widget support for backward compatibility
         if self.output_widget:
             try:
                 self.output_widget.insert(tk.END, str(text) + "\n")
@@ -726,8 +621,18 @@ class SuperPILOTInterpreter:
             except tk.TclError:
                 # Widget has been destroyed, fall back to console
                 print(text)
-        else:
+        elif not self.on_output:  # Only print if no callbacks registered
             print(text)
+
+    def set_variable(self, name, value):
+        """Set a variable and fire change event"""
+        self.variables[name] = value
+        # Fire variable changed event
+        for callback in self.on_variable_changed:
+            try:
+                callback(name, value)
+            except Exception as e:
+                print(f"Error in variable_changed callback: {e}")
 
     def parse_line(self, line):
         """Parse a program line for line number and command"""
@@ -2509,9 +2414,17 @@ class SuperPILOTInterpreter:
             self.log_output("Error loading program")
             return False
 
+        # Fire program started event
+        for callback in self.on_program_started:
+            try:
+                callback()
+            except Exception as e:
+                print(f"Error in program_started callback: {e}")
+
         self.running = True
         self.current_line = 0
         iterations = 0
+        success = True
 
         try:
             while (
@@ -2523,6 +2436,12 @@ class SuperPILOTInterpreter:
 
                 if self.debug_mode and self.current_line in self.breakpoints:
                     self.log_output(f"Breakpoint hit at line {self.current_line}")
+                    # Fire breakpoint event
+                    for callback in self.on_breakpoint_hit:
+                        try:
+                            callback(self.current_line)
+                        except Exception as e:
+                            print(f"Error in breakpoint callback: {e}")
                     # In a real debugger, this would pause execution
 
                 line_num, command = self.program_lines[self.current_line]
@@ -2531,6 +2450,13 @@ class SuperPILOTInterpreter:
                 if not command.strip():
                     self.current_line += 1
                     continue
+
+                # Fire line executed event
+                for callback in self.on_line_executed:
+                    try:
+                        callback(self.current_line)
+                    except Exception as e:
+                        print(f"Error in line_executed callback: {e}")
 
                 # Execute one logical line
                 result = self.execute_line(command)
@@ -2546,6 +2472,7 @@ class SuperPILOTInterpreter:
                         self.log_output(f"Error parsing jump target: {e}")
                 elif result == "error":
                     self.log_output("Program terminated due to error")
+                    success = False
                     break
 
                 # Update runtime systems and process any scheduled timer jumps
@@ -2567,13 +2494,21 @@ class SuperPILOTInterpreter:
 
             if iterations >= self.max_iterations:
                 self.log_output("Program stopped: Maximum iterations reached")
-                return False
+                success = False
 
         except Exception as e:
             self.log_output(f"Runtime error: {e}")
+            success = False
         finally:
             self.running = False
             self.log_output("Program execution completed")
+            
+            # Fire program finished event
+            for callback in self.on_program_finished:
+                try:
+                    callback(success)
+                except Exception as e:
+                    print(f"Error in program_finished callback: {e}")
 
         # If turtle returned to the logical origin, normalize heading to 'up' (90°)
         try:
@@ -2588,7 +2523,7 @@ class SuperPILOTInterpreter:
         except Exception:
             pass
 
-        return True
+        return success
 
     def step(self):
         """Execute a single line and pause (for debugger stepping)."""
@@ -3315,14 +3250,33 @@ END
             self.right_notebook.select(self.graphics_frame)
             # Clear the canvas for a fresh start
             self.canvas.delete("all")
-        # Update UI state
+        
+        # Update UI state - disable Run, enable Stop
         try:
             self.btn_run.state(["disabled"])
             self.btn_stop.state(["!disabled"])
             self.btn_continue.state(["disabled"])
         except Exception:
             pass
-        self.interpreter.run_program(program_text)
+        
+        # Define callback to re-enable UI after execution
+        def on_program_done(success):
+            # Schedule UI update on main thread
+            self.root.after(0, self._finish_program_execution)
+        
+        # Register callback if not already registered
+        if on_program_done not in self.interpreter.on_program_finished:
+            self.interpreter.on_program_finished.append(on_program_done)
+        
+        # Run interpreter in background thread
+        def run_in_thread():
+            self.interpreter.run_program(program_text)
+        
+        self.program_thread = threading.Thread(target=run_in_thread, daemon=True)
+        self.program_thread.start()
+
+    def _finish_program_execution(self):
+        """Called after program finishes to update UI (runs on main thread)"""
         try:
             self.btn_run.state(["!disabled"])
             self.btn_stop.state(["disabled"])
