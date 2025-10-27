@@ -57,15 +57,19 @@ fn test_basic_line_number_if_then_goto() {
     // Test IF...THEN with line number jump
     let program = r#"
 10 LET X = 5
-20 IF X > 3 THEN 50
-30 PRINT "X is small"
-40 GOTO 60
-50 PRINT "X is big"
-60 PRINT "Done"
+20 PRINT X
+30 IF X > 3 THEN 60
+40 PRINT "X is small"
+50 GOTO 70
+60 PRINT "X is big"
+70 PRINT "Done"
 "#;
     
     interp.load_program(program).unwrap();
     let output = interp.execute(&mut turtle).unwrap();
+    
+    println!("Output: {:?}", output);
+    println!("X variable: {:?}", interp.variables.get("X"));
     
     assert!(output.iter().any(|s| s.contains("X is big")));
     assert!(!output.iter().any(|s| s.contains("X is small")));

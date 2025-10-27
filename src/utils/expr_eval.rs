@@ -46,6 +46,7 @@ enum Token {
     Variable(String),
     Function(String),
     Operator(char),
+    Comparison(String), // >, <, >=, <=, ==, !=
     LeftParen,
     RightParen,
     Comma,
@@ -222,6 +223,25 @@ impl ExpressionEvaluator {
                     tokens.push(Token::Operator(ch));
                     chars.next();
                 }
+                '>' | '<' | '=' | '!' => {
+                    // Handle comparison operators: >, <, >=, <=, ==, !=
+                    let mut comp = ch.to_string();
+                    chars.next();
+                    
+                    if let Some(&next_ch) = chars.peek() {
+                        if (ch == '>' || ch == '<' || ch == '=' || ch == '!') && next_ch == '=' {
+                            comp.push(next_ch);
+                            chars.next();
+                        }
+                    }
+                    
+                    // Single '=' is assignment in BASIC, but for IF conditions treat as comparison
+                    if comp == "=" {
+                        comp = "==".to_string();
+                    }
+                    
+                    tokens.push(Token::Comparison(comp));
+                }
                 '(' => {
                     tokens.push(Token::LeftParen);
                     chars.next();
@@ -249,6 +269,17 @@ impl ExpressionEvaluator {
             match token {
                 Token::Number(_) | Token::Variable(_) => output.push(token),
                 Token::Function(_) => operator_stack.push(token),
+                Token::Comparison(_) => {
+                    // Comparisons have lowest precedence
+                    while let Some(top) = operator_stack.last() {
+                        if matches!(top, Token::Operator(_) | Token::Comparison(_)) {
+                            output.push(operator_stack.pop().unwrap());
+                        } else {
+                            break;
+                        }
+                    }
+                    operator_stack.push(token);
+                }
                 Token::Operator(op) => {
                     // Security check: Prevent stack overflow from deeply nested expressions
                     if operator_stack.len() >= MAX_DEPTH {
@@ -338,6 +369,22 @@ impl ExpressionEvaluator {
                         '^' => a.powf(b),
                         '%' => a % b,
                         _ => return Err(anyhow!("Unknown operator: {}", op)),
+                    };
+                    
+                    stack.push(result);
+                }
+                Token::Comparison(comp) => {
+                    let b = stack.pop().ok_or_else(|| anyhow!("Stack underflow"))?;
+                    let a = stack.pop().ok_or_else(|| anyhow!("Stack underflow"))?;
+                    
+                    let result = match comp.as_str() {
+                        ">" => if a > b { 1.0 } else { 0.0 },
+                        "<" => if a < b { 1.0 } else { 0.0 },
+                        ">=" => if a >= b { 1.0 } else { 0.0 },
+                        "<=" => if a <= b { 1.0 } else { 0.0 },
+                        "==" => if (a - b).abs() < f64::EPSILON { 1.0 } else { 0.0 },
+                        "!=" => if (a - b).abs() >= f64::EPSILON { 1.0 } else { 0.0 },
+                        _ => return Err(anyhow!("Unknown comparison: {}", comp)),
                     };
                     
                     stack.push(result);
