@@ -55,6 +55,8 @@ Notes:
 - `INPUT var` - Get user input (blocking, waits for Enter)
 - `LET var$ = INKEY$` - Get key press (non-blocking, for game loops)
 - `SCREEN mode[, w, h]` - Switch between text/graphics modes (0=text, 1=640x480, 2=1024x768)
+- `CLS` - Clear text screen and reset cursor
+- `LOCATE row, col` - Move text cursor (1-based)
 - `GOTO line` - Jump to line number
 - `IF condition THEN command` - Conditional execution
 - `FOR var = start TO end [STEP step]` - Loop construct

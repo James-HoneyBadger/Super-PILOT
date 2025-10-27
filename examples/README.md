@@ -39,20 +39,28 @@ A curated set of sample programs to explore Time Warp IDE features.
 
 ## Logo
 
-### Beginner
+### Beginner (Logo)
 
 - `logo_star.logo` — Draw a five-pointed star
 - `logo_house.logo` — Draw a house with a roof and door
 - `logo_starburst.logo` — Radial starburst lines
+- `logo_square.logo` — Simple square using REPEAT
 
-### Intermediate
+### Intermediate (Logo)
 
 - `logo_flower.logo` — Flower pattern using polygon procedure
 - `logo_spirograph.logo` — Nested repeats for spirograph-like pattern
 - `logo_rainbow_spiral.logo` — Colorful spiral using procedural colors
 - `logo_polygonal_rose.logo` — Polygonal rose pattern
+- `logo_polygons.logo` — Draw triangles to hexagons with a POLY procedure
+- `logo_spiral_walk.logo` — Spiral-like walk using a turn of 91°
+- `logo_petal_rosette.logo` — Petal rosette built from a small repeat pattern
 
-### Advanced
+### Fun Scene
+
+- `logo_snowman.logo` — Snowman drawn from approximate circles
+
+### Advanced (Logo)
 
 - `logo_fractal_tree.logo` — Recursive fractal tree
 - `logo_recursive_spiral.logo` — Recursive spiral with growing size

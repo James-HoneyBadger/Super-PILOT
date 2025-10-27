@@ -29,6 +29,7 @@ cargo build --release
 - Security limits and timeouts
 - Modern egui UI with 8 themes
 - Unified Screen: single canvas for text and graphics output (text/graphics modes)
+- Text screen controls: CLS, LOCATE; GW-BASIC–style SCREEN command
 - Input prompts: interactive 📝 dialog for BASIC INPUT and PILOT A:
 - Real-time keyboard detection: INKEY$ for game loops and interactive programs
 
@@ -50,7 +51,7 @@ T:Hello *NAME*!
 30 IF A > 3 THEN PRINT "Greater"
 ```
 
-**23 example programs** organized by difficulty in `examples/`:
+**32 example programs** organized by difficulty in `examples/`:
 
 - **Beginner**: `pilot_quiz.pilot`, `basic_guess.bas`, `logo_star.logo`
 - **Intermediate**: `basic_rock_paper_scissors.bas`, `logo_flower.logo`
@@ -61,16 +62,19 @@ PNG export: use View → "Save Canvas as PNG…" in the UI.
 ## Learning Resources
 
 **Getting Started**:
+
 - [Getting Started Guide](docs/GETTING_STARTED.md) — Your first 5 minutes with Time Warp
 - [Quick Reference](docs/QUICK_REFERENCE.md) — Complete command reference for all languages
 - [Student Guide](docs/STUDENT_GUIDE.md) — Language cheatsheets and challenges
 
 **For Teachers**:
+
 - [Lesson Plans](docs/LESSON_PLANS.md) — Complete 8-week curriculum for middle school
 - [Teacher Guide](docs/TEACHER_GUIDE.md) — Session outlines and assessment ideas
 - [Programming Challenges](docs/PROGRAMMING_CHALLENGES.md) — 12 challenges with solutions
 
 **For Developers**:
+
 - [Developer Reference](docs/DEVELOPER_REFERENCE.md) — API documentation and extension guide
 
 **See also**: [Examples README](examples/README.md) for learning paths and all 23 programs.
