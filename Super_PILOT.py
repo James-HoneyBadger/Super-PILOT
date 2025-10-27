@@ -2162,6 +2162,7 @@ class SuperPILOTInterpreter:
         logo_commands = [
             "FORWARD",
             "FD",
+            "BACKWARD",
             "BACK",
             "BK",
             "LEFT",
@@ -2175,6 +2176,7 @@ class SuperPILOTInterpreter:
             "CLEARSCREEN",
             "CS",
             "HOME",
+            "REPEAT",
             "SETXY",
             "SETX",
             "SETY",
@@ -2190,6 +2192,14 @@ class SuperPILOTInterpreter:
             "ST",
             "CLEARTEXT",
             "CT",
+            "HUD",
+            "SNAPSHOT",
+            "IMAGE",
+            "RECT",
+            "DOT",
+            "SPRITENEW",
+            "SPRITEPOS",
+            "SPRITEDRAW",
         ]
         if command.split()[0].upper() in logo_commands:
             return "logo"
@@ -2318,7 +2328,7 @@ class SuperPILOTInterpreter:
             if command.upper().startswith("TO "):
                 parts = command.split()
                 name = parts[1].upper()
-                params = parts[2:] if len(parts) > 2 else []
+                params = [p.lstrip(":") for p in (parts[2:] if len(parts) > 2 else [])]
                 body = []
                 i += 1
                 while (
