@@ -1,0 +1,146 @@
+use anyhow::Result;
+use eframe::egui;
+use std::collections::HashMap;
+
+use crate::interpreter::Interpreter;
+use crate::graphics::TurtleState;
+use crate::ui::themes::Theme;
+
+pub struct TimeWarpApp {
+    // File management
+    file_buffers: HashMap<String, String>,
+    file_modified: HashMap<String, bool>,
+    open_files: Vec<String>,
+    current_file_index: usize,
+    last_file_path: Option<String>,
+    file_tree: Vec<String>,
+
+    // UI state
+    active_tab: usize, // 0 = Editor, 1 = Output & Graphics, 2 = Debug, 3 = Explorer, 4 = Help
+    show_find_replace: bool,
+    find_text: String,
+    replace_text: String,
+    current_theme: Theme,
+    
+    // Execution state
+    interpreter: Interpreter,
+    is_executing: bool,
+    error_message: Option<String>,
+    
+    // Edit history
+    undo_history: Vec<String>,
+    undo_position: usize,
+    max_undo_steps: usize,
+    
+    // Graphics
+    turtle_state: TurtleState,
+    turtle_zoom: f32,
+    turtle_pan: egui::Vec2,
+    
+    // Debug state
+    debug_mode: bool,
+    breakpoints: HashMap<String, Vec<usize>>,
+    current_debug_line: Option<usize>,
+}
+
+impl TimeWarpApp {
+    pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
+        Self {
+            file_buffers: HashMap::new(),
+            file_modified: HashMap::new(),
+            open_files: vec!["untitled.pilot".to_string()],
+            current_file_index: 0,
+            last_file_path: None,
+            file_tree: Vec::new(),
+            
+            active_tab: 0,
+            show_find_replace: false,
+            find_text: String::new(),
+            replace_text: String::new(),
+            current_theme: Theme::default(),
+            
+            interpreter: Interpreter::new(),
+            is_executing: false,
+            error_message: None,
+            
+            undo_history: Vec::new(),
+            undo_position: 0,
+            max_undo_steps: 100,
+            
+            turtle_state: TurtleState::new(),
+            turtle_zoom: 1.0,
+            turtle_pan: egui::Vec2::ZERO,
+            
+            debug_mode: false,
+            breakpoints: HashMap::new(),
+            current_debug_line: None,
+        }
+    }
+    
+    pub fn current_file(&self) -> Option<&String> {
+        self.open_files.get(self.current_file_index)
+    }
+    
+    pub fn current_code(&self) -> String {
+        self.current_file()
+            .and_then(|f| self.file_buffers.get(f))
+            .cloned()
+            .unwrap_or_default()
+    }
+    
+    pub fn set_current_code(&mut self, code: String) {
+        if let Some(file) = self.current_file().cloned() {
+            self.file_buffers.insert(file.clone(), code);
+            self.file_modified.insert(file, true);
+        }
+    }
+}
+
+impl eframe::App for TimeWarpApp {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Apply theme
+        self.current_theme.apply(ctx);
+        
+        // Top menu bar
+        crate::ui::menubar::render(self, ctx);
+        
+        // Main content area
+        egui::CentralPanel::default().show(ctx, |ui| {
+            // Tab bar
+            crate::ui::editor::render_tab_bar(self, ui);
+            
+            ui.separator();
+            
+            // Content based on active tab
+            match self.active_tab {
+                0 => crate::ui::editor::render(self, ui),
+                1 => crate::ui::output::render(self, ui),
+                2 => crate::ui::debugger::render(self, ui),
+                3 => crate::ui::explorer::render(self, ui),
+                4 => crate::ui::help::render(self, ui),
+                _ => {}
+            }
+        });
+        
+        // Status bar
+        crate::ui::statusbar::render(self, ctx);
+        
+        // Find/replace dialog
+        if self.show_find_replace {
+            crate::ui::editor::render_find_replace(self, ctx);
+        }
+        
+        // Error notification
+        if let Some(ref msg) = self.error_message.clone() {
+            egui::Window::new("Error")
+                .collapsible(false)
+                .resizable(false)
+                .show(ctx, |ui| {
+                    ui.colored_label(egui::Color32::RED, msg);
+                    if ui.button("OK").clicked() {
+                        self.error_message = None;
+                    }
+                });
+        }
+    }
+}
