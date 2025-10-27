@@ -1,10 +1,20 @@
 # Time Warp Unified - Implementation Status
 
-**Last Updated:** December 2024  
-**Build Status:** ✅ Compiles successfully with 0 errors, 21 warnings (unused code)  
-**Test Status:** ✅ 18/18 tests passing
+**Last Updated:** January 2025  
+**Build Status:** ✅ Compiles successfully with 0 errors, 0 warnings  
+**Test Status:** ✅ 18/18 tests passing  
+**Project State:** 100% Rust implementation (Python removed)
 
-## Completed Features (5/12)
+## Project Restructuring
+
+**Major Changes (January 2025):**
+- Removed all Python implementations (Time_Warp.py, Time_Warp_IDE.py, 11 .py files)
+- Removed legacy implementations (Time_Warp_II, Time_Warp_Rust subdirectories)
+- Flattened time_warp_unified/ to project root
+- Updated README.md for Rust-only focus
+- Implemented missing features: BASIC FOR/NEXT, Logo REPEAT, input handling, PILOT M:
+
+## Completed Features (7/12)
 
 ### ✅ 1. Safe Expression Evaluator
 - **Lines of Code:** 400+
@@ -43,29 +53,75 @@
 - **Tests:** 2 unit tests (mixer creation, music string)
 - **Status:** Complete with conditional compilation support
 
-### ✅ 4. PILOT Language Implementation
+### ✅ 4. PILOT Language Implementation (95% Complete)
 - **Lines of Code:** 800+
 - **Location:** `src/languages/pilot/mod.rs`
 - **Features:**
   - Full PILOT command set:
-    - T: (Text output with conditional display)
-    - A: (Accept input)
-    - Y: (Yes - if last condition true)
-    - N: (No - if last condition false)
-    - J: (Jump to label)
-    - M: (Match/pattern matching)
-    - R: (Remark/comment)
-    - C: (Compute - store condition)
-    - L: (Label definition)
-    - U: (Use - variable assignment)
-    - E: (End program)
+    - T: (Text output with conditional display) ✅
+    - A: (Accept input with callback) ✅ **NEW**
+    - Y: (Yes - if last condition true) ✅
+    - N: (No - if last condition false) ✅
+    - J: (Jump to label) ✅
+    - M: (Match/pattern matching) ✅ **NEW**
+    - R: (Remark/comment) ✅
+    - C: (Compute - store condition) ✅
+    - L: (Label definition) ✅
+    - U: (Use - variable assignment) ✅
+    - E: (End program) ✅
   - Conditional operators: =, >, <, >=, <=, <>
   - Variable interpolation with *VAR* syntax
   - Match flag and stored condition support
+  - Case-insensitive substring matching for M:
 - **Tests:** 6 unit tests covering all command types
 - **Status:** Full implementation, all tests passing
+- **Recent:** Added input handling (A:) and pattern matching (M:)
 
-### ✅ 5. Comprehensive Test Suite
+### ✅ 5. BASIC Language Implementation (85% Complete)
+- **Lines of Code:** 600+
+- **Location:** `src/languages/basic/mod.rs`
+- **Implemented Commands:**
+  - PRINT (with comma-separated values, string literals, expressions) ✅
+  - LET (numeric and string assignments) ✅
+  - INPUT (with request_input callback) ✅ **NEW**
+  - GOTO (line number jumps) ✅
+  - IF/THEN (conditional branching) ✅
+  - FOR/NEXT (loop with STEP support) ✅ **NEW**
+  - GOSUB/RETURN (subroutine calls) ✅
+  - REM (comments) ✅
+  - END ✅
+- **Pending Commands:**
+  - DATA, READ, RESTORE (data storage)
+  - DIM (array declarations)
+  - Arrays and string functions
+  - ON GOTO/GOSUB
+- **Estimated:** 1000+ lines when complete
+- **Dependencies:** Safe expression evaluator (complete), ForContext stack
+- **Status:** Core functionality complete, advanced features pending
+
+### ✅ 6. Logo Language Implementation (75% Complete)
+- **Lines of Code:** 400+
+- **Location:** `src/languages/logo/mod.rs`
+- **Implemented Commands:**
+  - FORWARD/FD, BACK/BK (with expression evaluation) ✅
+  - LEFT/LT, RIGHT/RT (angle rotation) ✅
+  - PENUP/PU, PENDOWN/PD ✅
+  - CLEARSCREEN/CS, HOME ✅
+  - SETXY (absolute positioning) ✅
+  - SETHEADING/SETH ✅
+  - HIDETURTLE/HT, SHOWTURTLE/ST ✅
+  - REPEAT (inline expansion for simple loops) ✅ **NEW**
+- **Pending Commands:**
+  - TO/END (procedure definitions)
+  - MAKE (variable assignment)
+  - IF/IFELSE (conditionals)
+  - Nested REPEAT with stack
+  - OUTPUT (return values)
+- **Estimated:** 800+ lines when complete
+- **Dependencies:** TurtleState integration (complete)
+- **Status:** Turtle graphics complete, procedures/conditionals pending
+
+### ✅ 7. Comprehensive Test Suite
 - **Location:** `src/lib.rs` (tests module)
 - **Test Coverage:**
   - Expression Evaluator: 5 tests (basic, precedence, functions, variables, complex)
@@ -80,24 +136,7 @@
 
 _No features currently in progress_
 
-## Pending Features (7/12)
-
-### ❌ 6. BASIC Language Implementation
-- **Location:** `src/languages/basic/mod.rs` (stub exists)
-- **Required Commands:**
-  - PRINT, INPUT, LET
-  - GOTO, GOSUB, RETURN
-  - IF/THEN, FOR/NEXT
-  - DATA, READ, RESTORE
-  - Arrays and string functions
-  - Line number parsing
-- **Estimated:** 1000+ lines
-- **Dependencies:** Safe expression evaluator (complete), interpreter integration
-
-### ❌ 7. Logo Language Implementation
-- **Location:** `src/languages/logo/mod.rs` (stub exists)
-- **Required Commands:**
-  - FORWARD, BACK, LEFT, RIGHT
+## Pending Features (5/12)
   - PENUP, PENDOWN, SETCOLOR
   - Procedures (TO/END)
   - REPEAT loops
