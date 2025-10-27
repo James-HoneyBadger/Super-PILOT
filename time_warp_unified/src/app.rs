@@ -12,6 +12,7 @@ pub struct TimeWarpApp {
     pub open_files: Vec<String>,
     pub current_file_index: usize,
     pub last_file_path: Option<String>,
+    #[allow(dead_code)]
     pub file_tree: Vec<String>,
 
     // UI state
@@ -26,19 +27,26 @@ pub struct TimeWarpApp {
     pub is_executing: bool,
     pub error_message: Option<String>,
     
-    // Edit history
+    // Edit history (future features)
+    #[allow(dead_code)]
     pub undo_history: Vec<String>,
+    #[allow(dead_code)]
     pub undo_position: usize,
+    #[allow(dead_code)]
     pub max_undo_steps: usize,
     
     // Graphics
     pub turtle_state: TurtleState,
     pub turtle_zoom: f32,
+    #[allow(dead_code)]
     pub turtle_pan: egui::Vec2,
     
-    // Debug state
+    // Debug state (future features)
+    #[allow(dead_code)]
     pub debug_mode: bool,
+    #[allow(dead_code)]
     pub breakpoints: HashMap<String, Vec<usize>>,
+    #[allow(dead_code)]
     pub current_debug_line: Option<usize>,
 }
 

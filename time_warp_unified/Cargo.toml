@@ -65,7 +65,7 @@ dashmap = "6.0"
 [features]
 default = []
 audio = ["rodio"]
-# ml = ["linfa", "linfa-clustering", "linfa-linear", "ndarray"]
+ml = []  # Placeholder for future ML features
 plugins = ["libloading"]
 # full = ["audio", "ml", "plugins"]
 
