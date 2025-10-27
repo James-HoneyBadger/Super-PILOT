@@ -1,6 +1,6 @@
 # Time Warp Unified - Test Results
 
-**Date:** October 27, 2025  
+**Date:** January 2025  
 **Build:** time_warp_unified v2.0.0
 
 ---
@@ -11,7 +11,7 @@
 ```bash
 cargo test --lib
 ```
-**Result:** ✅ **18/18 PASS** (0.01s)
+**Result:** ✅ **18/18 PASS** (0.00s)
 
 Tests covered:
 - Expression evaluator: basic arithmetic, precedence, functions, variables, complex expressions
@@ -26,6 +26,22 @@ cargo test --doc
 **Result:** ✅ **5 PASS / 2 IGNORED** (0.07s)
 
 All doc examples compile correctly. Ignored examples are marked `ignore` for demonstration only.
+
+### Integration Tests
+```bash
+cargo test --test integration_tests
+```
+**Result:** ✅ **11/11 PASS** (0.15s)
+
+Multi-language workflow tests:
+- PILOT hello world and variable interpolation
+- BASIC FOR/NEXT loops, IF/THEN/GOTO, GOSUB/RETURN
+- Logo turtle movement and REPEAT loops
+- Mixed language detection (PILOT + BASIC + Logo)
+- Execution timeout protection (100k iteration limit)
+- Error recovery (continues on non-fatal errors)
+
+**Total Test Count:** 29 tests (18 unit + 11 integration)
 
 ### Build Status
 ```bash

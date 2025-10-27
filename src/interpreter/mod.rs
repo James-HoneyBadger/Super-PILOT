@@ -86,6 +86,9 @@ pub struct Interpreter {
     // I/O handling
     pub input_callback: Option<Box<dyn FnMut(&str) -> String>>,
     pub last_input: String,
+
+    // Logo procedures (name -> body lines)
+    pub logo_procedures: std::collections::HashMap<String, Vec<String>>,
 }
 
 #[derive(Clone)]
@@ -128,6 +131,7 @@ impl Interpreter {
             
             input_callback: None,
             last_input: String::new(),
+            logo_procedures: HashMap::new(),
         }
     }
     
@@ -235,12 +239,17 @@ impl Interpreter {
             return Language::Pilot;
         }
         
-        // Logo keywords
-        let logo_keywords = ["FORWARD", "FD", "BACK", "BK", "LEFT", "LT", "RIGHT", "RT",
-                            "PENUP", "PU", "PENDOWN", "PD", "CLEARSCREEN", "CS", "HOME",
-                            "SETXY", "REPEAT", "TO", "END"];
+        // Logo keywords (expanded) or stored procedures
+        let logo_keywords = [
+            "FORWARD", "FD", "BACK", "BK", "LEFT", "LT", "RIGHT", "RT",
+            "PENUP", "PU", "PENDOWN", "PD", "CLEARSCREEN", "CS", "HOME",
+            "SETXY", "REPEAT", "TO", "END", "SETHEADING", "SETH",
+            "SETCOLOR", "SETPENCOLOR", "PENWIDTH", "SETPENSIZE", "SETBGCOLOR",
+            "HIDETURTLE", "HT", "SHOWTURTLE", "ST"
+        ];
         let first_word = cmd.split_whitespace().next().unwrap_or("");
-        if logo_keywords.contains(&first_word.to_uppercase().as_str()) {
+        let first_upper = first_word.to_uppercase();
+        if logo_keywords.contains(&first_upper.as_str()) || self.logo_procedures.contains_key(&first_upper) {
             return Language::Logo;
         }
         
@@ -317,6 +326,7 @@ impl Interpreter {
         self.match_flag = false;
         self.last_match_set = false;
         self.stored_condition = None;
+        self.logo_procedures.clear();
     }
     
     // Stack operations for GOSUB/RETURN

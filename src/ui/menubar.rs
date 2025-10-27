@@ -77,6 +77,10 @@ pub fn render(app: &mut TimeWarpApp, ctx: &egui::Context) {
                     app.turtle_state.clear();
                     ui.close_menu();
                 }
+                if ui.button("💾 Save Canvas as PNG...").clicked() {
+                    save_canvas_as_png(app);
+                    ui.close_menu();
+                }
             });
             
             // Help menu
@@ -188,3 +192,21 @@ fn stop_program(app: &mut TimeWarpApp) {
 fn show_about(_app: &mut TimeWarpApp) {
     // TODO: Show about dialog
 }
+
+fn save_canvas_as_png(app: &mut TimeWarpApp) {
+    if let Some(path) = rfd::FileDialog::new()
+        .add_filter("PNG Image", &["png"])
+        .set_file_name("turtle_canvas.png")
+        .save_file()
+    {
+        match app.turtle_state.save_png(&path.to_string_lossy()) {
+            Ok(_) => {
+                app.error_message = Some(format!("Canvas saved to {}", path.display()));
+            }
+            Err(e) => {
+                app.error_message = Some(format!("Failed to save PNG: {}", e));
+            }
+        }
+    }
+}
+
