@@ -8,39 +8,39 @@ use crate::ui::themes::Theme;
 
 pub struct TimeWarpApp {
     // File management
-    file_buffers: HashMap<String, String>,
-    file_modified: HashMap<String, bool>,
-    open_files: Vec<String>,
-    current_file_index: usize,
-    last_file_path: Option<String>,
-    file_tree: Vec<String>,
+    pub file_buffers: HashMap<String, String>,
+    pub file_modified: HashMap<String, bool>,
+    pub open_files: Vec<String>,
+    pub current_file_index: usize,
+    pub last_file_path: Option<String>,
+    pub file_tree: Vec<String>,
 
     // UI state
-    active_tab: usize, // 0 = Editor, 1 = Output & Graphics, 2 = Debug, 3 = Explorer, 4 = Help
-    show_find_replace: bool,
-    find_text: String,
-    replace_text: String,
-    current_theme: Theme,
+    pub active_tab: usize, // 0 = Editor, 1 = Output & Graphics, 2 = Debug, 3 = Explorer, 4 = Help
+    pub show_find_replace: bool,
+    pub find_text: String,
+    pub replace_text: String,
+    pub current_theme: Theme,
     
     // Execution state
-    interpreter: Interpreter,
-    is_executing: bool,
-    error_message: Option<String>,
+    pub interpreter: Interpreter,
+    pub is_executing: bool,
+    pub error_message: Option<String>,
     
     // Edit history
-    undo_history: Vec<String>,
-    undo_position: usize,
-    max_undo_steps: usize,
+    pub undo_history: Vec<String>,
+    pub undo_position: usize,
+    pub max_undo_steps: usize,
     
     // Graphics
-    turtle_state: TurtleState,
-    turtle_zoom: f32,
-    turtle_pan: egui::Vec2,
+    pub turtle_state: TurtleState,
+    pub turtle_zoom: f32,
+    pub turtle_pan: egui::Vec2,
     
     // Debug state
-    debug_mode: bool,
-    breakpoints: HashMap<String, Vec<usize>>,
-    current_debug_line: Option<usize>,
+    pub debug_mode: bool,
+    pub breakpoints: HashMap<String, Vec<usize>>,
+    pub current_debug_line: Option<usize>,
 }
 
 impl TimeWarpApp {

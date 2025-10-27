@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 use crate::graphics::TurtleState;
 use crate::languages::{Language, pilot, basic, logo};
+use crate::utils::ExpressionEvaluator;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ExecutionResult {
@@ -18,32 +19,32 @@ pub struct Interpreter {
     pub output: Vec<String>,
     
     // Program state
-    program_lines: Vec<(Option<usize>, String)>,
-    current_line: usize,
-    labels: HashMap<String, usize>,
+    pub program_lines: Vec<(Option<usize>, String)>,
+    pub current_line: usize,
+    pub labels: HashMap<String, usize>,
     
     // Control flow stacks
-    gosub_stack: Vec<usize>,
-    for_stack: Vec<ForContext>,
+    pub gosub_stack: Vec<usize>,
+    pub for_stack: Vec<ForContext>,
     
     // PILOT-specific
-    match_flag: bool,
-    last_match_set: bool,
-    stored_condition: Option<bool>,
+    pub match_flag: bool,
+    pub last_match_set: bool,
+    pub stored_condition: Option<bool>,
     
     // Language detection
-    current_language: Language,
+    pub current_language: Language,
     
     // I/O
-    input_callback: Option<Box<dyn FnMut(&str) -> String>>,
+    pub input_callback: Option<Box<dyn FnMut(&str) -> String>>,
 }
 
 #[derive(Clone)]
-struct ForContext {
-    var_name: String,
-    end_value: f64,
-    step: f64,
-    for_line: usize,
+pub struct ForContext {
+    pub var_name: String,
+    pub end_value: f64,
+    pub step: f64,
+    pub for_line: usize,
 }
 
 impl Interpreter {
@@ -77,14 +78,16 @@ impl Interpreter {
         self.program_lines.clear();
         
         for (idx, line) in lines.iter().enumerate() {
-            let (line_num, command) = self.parse_line(line);
-            self.program_lines.push((line_num, command.to_string()));
+            let (line_num, command_str) = self.parse_line(line);
+            let command_owned = command_str.to_string();
             
-            // Collect PILOT labels
-            if command.starts_with("L:") {
-                let label = command[2..].trim();
+            // Collect PILOT labels before pushing
+            if command_owned.starts_with("L:") {
+                let label = command_owned[2..].trim();
                 self.labels.insert(label.to_string(), idx);
             }
+            
+            self.program_lines.push((line_num, command_owned));
         }
         
         Ok(())
@@ -162,7 +165,7 @@ impl Interpreter {
         Language::Pilot
     }
     
-    fn parse_line(&self, line: &str) -> (Option<usize>, &str) {
+    fn parse_line<'a>(&self, line: &'a str) -> (Option<usize>, &'a str) {
         let line = line.trim();
         
         // Check for line number at start
@@ -183,16 +186,9 @@ impl Interpreter {
     }
     
     pub fn evaluate_expression(&self, expr: &str) -> Result<f64> {
-        // Simple expression evaluator for now
-        // TODO: Implement full expression parser with variables
-        expr.trim()
-            .parse::<f64>()
-            .or_else(|_| {
-                self.variables
-                    .get(expr.trim())
-                    .copied()
-                    .ok_or_else(|| anyhow::anyhow!("Unknown variable: {}", expr))
-            })
+        // Use safe expression evaluator
+        let eval = ExpressionEvaluator::with_variables(self.variables.clone());
+        eval.evaluate(expr)
     }
     
     pub fn interpolate_text(&self, text: &str) -> String {

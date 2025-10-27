@@ -42,6 +42,12 @@ libloading = { version = "0.8", optional = true }
 # Regex for parsing
 regex = "1.10"
 
+# Random number generation
+rand = "0.8"
+
+# Async runtime
+tokio = { version = "1.42", features = ["rt", "time", "sync"] }
+
 # Date/Time
 chrono = "0.4"
 
