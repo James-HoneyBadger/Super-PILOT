@@ -1,3 +1,0 @@
-[console_scripts]
-time-warp = Time_Warp:main
-timewarp = Time_Warp:main

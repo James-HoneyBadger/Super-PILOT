@@ -1,102 +1,58 @@
 # Time Warp IDE
 
-[![Rust CI](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/ci.yml)
-[![Python CI](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/python-tests.yml/badge.svg?branch=main)](https://github.com/James-HoneyBadger/Time_Warp/actions/workflows/python-tests.yml)
-[![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+**A modern educational programming environment written in Rust**
 
-Retromodern educational IDE with multi-language support (PILOT, BASIC, Logo) and turtle graphics. Includes both a modern Python IDE and an egui-based Rust IDE.
+Time Warp IDE is a unified implementation supporting PILOT, BASIC, and Logo languages with integrated turtle graphics, safe expression evaluation, and modern UI powered by egui.
 
-## 🚀 Quick Start
-
-Choose your preferred IDE flavor.
-
-### Python IDE (Modern, PySide6)
+## Quick Start
 
 ```bash
-python Time_Warp_IDE.py
-```
-
-### Python IDE (Classic, Tkinter)
-
-```bash
-python Time_Warp.py
-```
-
-### Rust IDE (Retromodern, egui)
-
-```bash
-cd Time_Warp_Rust
+# Build and run
 cargo run
+
+# Run tests
+cargo test
+
+# Build release
+cargo build --release
+./target/release/time-warp
 ```
 
-## ✨ Features
+## Features
 
-- Project explorer and tabbed multi-file editing
-- Turtle graphics and educational language executors (PILOT, BASIC, Logo)
-- Retromodern UI themes (green/amber/white phosphor)
-- Cross-platform file I/O and examples library
-- Python and Rust implementations side-by-side
+- **PILOT**: Full implementation (text, variables, conditionals, jumps)
+- **BASIC**: Core commands (PRINT, LET, IF...THEN, GOTO, GOSUB, RETURN)
+- **Logo**: Turtle graphics (in progress)
+- Safe expression evaluator (no eval())
+- Async execution with tokio
+- Expression caching (10-50x speedup)
+- Security limits and timeouts
+- Modern egui UI with 8 themes
 
-Roadmap (in progress): variable inspector, debugger, command palette, integrated terminal.
+## Example Programs
 
-## 📦 Install
-
-Python 3.11+ recommended. Optional Rust toolchain for the Rust IDE.
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -U pip
-pip install -r requirements-dev.txt
+**PILOT:**
+```pilot
+T:What is your name?
+A:NAME
+T:Hello *NAME*!
 ```
 
-## 🧪 Tests
-
-Run the Python test suite:
-
-```bash
-pytest -q
+**BASIC:**
+```basic
+10 LET A = 5
+20 PRINT "Value:", A
+30 IF A > 3 THEN PRINT "Greater"
 ```
 
-Rust build and tests:
+## Testing
 
-```bash
-cd Time_Warp_Rust
-cargo build && cargo test
-```
+- 18 unit tests (100% pass)
+- 5 doc tests
+- Zero warnings
 
-## 📚 Documentation
+See [TEST_RESULTS.md](TEST_RESULTS.md) for details.
 
-See `USER_GUIDE.md` for usage and `DEVELOPMENT.md` for contributing and local setup. Sphinx docs live in `docs/`.
+## License
 
-## 🤝 Contributing
-
-See `CONTRIBUTING.md` and our `CODE_OF_CONDUCT.md`.
-
-## 🔐 Security
-
-Please report vulnerabilities privately. See `SECURITY.md`.
-
-## 📝 License
-
-MIT — see `LICENSE`.
-
-## 🔧 Troubleshooting
-
-### "Illegal instruction" or "Illegal instruction (core dumped)" Error
-
-Some environments (older VMs) may lack CPU instructions PySide6/Qt expects (SSSE3/SSE4.*/POPCNT).
-
-Solutions:
-1. Run on physical hardware or a newer VM
-2. Try a different Linux distro or updated QEMU/KVM
-3. Use a cloud instance with a modern CPU
-
-Verify CPU flags:
-
-```bash
-cat /proc/cpuinfo | grep -E "(flags|model name)" | head -5
-```
-
-Required: `ssse3`, `sse4_1`, `sse4_2`, `popcnt`.
+See [LICENSE](LICENSE) file for details.

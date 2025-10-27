@@ -1,4 +1,0 @@
-core
-plugins
-tests
-tools
