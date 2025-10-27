@@ -4590,6 +4590,10 @@ class TimeWarpIDE:
         # Initialize plugin system
         self.plugin_manager = PluginManager(self)
 
+        # Set up attributes required by PluginAPI
+        self.ui = self  # Main IDE instance for plugin UI access
+        self.config = {}  # Simple config dictionary for plugins
+
         self.create_widgets()
         self.create_menu()
 
