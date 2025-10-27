@@ -1,152 +1,208 @@
-<<<<<<< HEAD
-# Time Warp IDE Copilot Instructions
+# Time Warp IDE - AI Coding Agent Instructions
 
-Time Warp IDE is an educational programming IDE supporting multiple languages with turtle graphics, built in Python using tkinter.
+**Project:** Time Warp IDE - Educational multi-language programming environment  
+**Maintainer:** James Temple <james@honey-badger.org>  
+**Last Updated:** October 27, 2025
 
-## Architecture Overview
+---
 
-### Core Structure
-- **Main Application**: `Time_Warp.py` - Entry point with comprehensive UI and component integration
-- **Core Interpreter**: `core/interpreter.py` - Central execution engine for all languages
-- **Language Executors**: `core/languages/` - Individual language implementations (PILOT, BASIC, Logo, etc.)
-- **Theme System**: `tools/theme.py` - Persistent theme management with 8 built-in themes
-- **Plugin System**: `plugins/` - Extensible architecture for custom functionality
+## Project Overview
 
-### Multi-Language Support
-Each language has dedicated executor classes in `core/languages/`:
-- **PILOT**: Educational language with turtle graphics (`T:`, `A:`, `J:`, `Y:`, `N:` commands)
-- **BASIC**: Classic line-numbered programming (`PRINT`, `INPUT`, `LET`, `GOTO`, `IF...THEN`)
-- **Logo**: Turtle graphics programming (`FORWARD`, `BACK`, `LEFT`, `RIGHT`)
-- **Python/JavaScript/Perl**: Modern scripting language support
+Time Warp IDE is an educational programming environment supporting PILOT, BASIC, Logo, and modern languages (Python/JS/Perl) with integrated turtle graphics, IoT/robotics capabilities, and game development features.
 
-### Key Components
-- **Time_WarpInterpreter**: Central execution engine that dispatches to language-specific executors
-- **ThemeManager**: JSON-based configuration with 8 themes (4 dark: Dracula, Monokai, Solarized Dark, Ocean; 4 light: Spring, Sunset, Candy, Forest)
-- **Plugin System**: `PluginManager` with sample plugin architecture in `plugins/sample_plugin/`
-- **Game Engine**: Complete 2D game framework in `games/engine/` with physics, rendering, and object management
+**Current State:** Triple implementation (Python PySide6 = primary, Python tkinter = archived, Rust = experimental)
 
-## Development Patterns
+## Architecture: The Big Picture
 
-### File Naming Conventions
-- **Test files**: `test_*.py` for unit tests, `*_test.py` for integration tests
-- **Language demos**: `*.pilot`, `*.bas`, `*.logo` for example programs
-- **Compiled output**: `*_compiled` files for interpreter execution results
+### Three Parallel Implementations
 
-### Configuration Management
-- User settings stored in `~/.Time_Warp/config.json`
-- Theme preferences persist between sessions
-- Virtual environment auto-created in `.Time_Warp/`
+1. **`Time_Warp_IDE.py`** (PySide6) - **PRIMARY/OFFICIAL VERSION**
+   - Modern Qt-based UI, runs on systems with CPU instruction support (SSSE3, SSE4.1, SSE4.2, POPCNT)
+   - Entry point: `Time_Warp_IDE.py` → UI factory: `ui/qt_ui.py` → Core: `core/interpreter.py`
+   
+2. **`Time_Warp.py`** (tkinter) - **ARCHIVED** (reference only, ~4700 lines monolithic)
+   - Legacy implementation, all-in-one file with embedded UI logic
 
-### Error Handling Patterns
+3. **Rust versions** (`src/main.rs`, `Time_Warp_Rust/`, `Time_Warp_II/`) - **EXPERIMENTAL**
+   - Not yet feature-complete; exploring egui-based rewrite
+
+### Core Component Flow
+
+```
+Time_Warp_IDE.py (559 lines)
+  ↓ checks PySide6 compatibility via subprocess
+  ↓ imports UI factory
+ui/qt_ui.py (QtUIFactory)
+  ↓ creates PySide6 widgets
+  ↓ connects to interpreter
+core/interpreter.py (TimeWarpInterpreter, 1521 lines)
+  ↓ dispatches to language-specific executors
+core/interpreters/{pilot.py, basic.py, logo.py}
+  ↓ each implements LanguageExecutor protocol
+  ↓ execute_command() returns string output
+```
+
+**Critical Design Decision:** Language executors are **stateless command processors** returning text output. All UI state (turtle canvas, output display, themes) lives in the main application, not the interpreter.
+
+## Language Executor Pattern
+
+Each language in `core/interpreters/` follows this protocol:
+
 ```python
-# Standard Time_Warp error pattern
-try:
-    result = self._execute_language_specific_command(command)
-    return result
-except Exception as e:
-    error_msg = f"❌ Error in {language}: {str(e)}"
-    self.interpreter.display_error(error_msg)
-    return None
+class LanguageExecutor:
+    def execute_command(self, command: str) -> str:
+        """Execute command and return output text"""
+        # Parse command
+        # Update internal state (variables, turtle position)
+        # Return formatted output string
 ```
 
-## Development Workflows
+**Key Pattern:** Executors return strings like `"🐢 Forward 100\n"` with emoji prefixes (❌ error, ℹ️ info, 🎨 theme, 🚀 run, 🐢 turtle).
 
-### Running Time_Warp
+## Critical Workflows
+
+### Running the IDE
+
 ```bash
-# Primary method - auto-creates venv if needed
-python Time_Warp.py
+# Primary method (auto-installs PySide6 if needed)
+python Time_Warp_IDE.py
 
-# Alternative with shell script
-./scripts/start.sh
+# System Requirements Check
+# IDE exits with clear error if CPU lacks SSSE3/SSE4.1/SSE4.2/POPCNT
+# Common on older VMs/QEMU instances - must run on physical hardware or modern cloud
 ```
 
-### Testing
+### Testing Strategy
+
 ```bash
-# Run comprehensive test suite
-python run_tests.py
+# Comprehensive suite with coverage
+python test_runner.py --comprehensive
 
-# Test specific components
-python test_interpreters.py
-python test_themes.py
+# Quick smoke tests
+python test_runner.py --basic
+
+# Component-specific
+pytest tests/test_core_interpreter.py -v
+pytest tests/test_logo_graphics.py -v
 ```
 
-### Adding New Languages
-1. Create executor class in `core/languages/new_language.py`
-2. Implement `execute_command()` method following existing patterns
-3. Register in `core/interpreter.py` import and language mapping
-4. Add syntax highlighting and file extensions to main UI
+**Test Organization:**
+- `test_*.py` = unit tests for components
+- `*_test.py` = integration/workflow tests  
+- `test_runner.py` = orchestrator with HTML reports → `test_reports/`
 
-### Theme Development
-Themes defined in `tools/theme.py` with color schemes applied uniformly across:
-- Main window backgrounds
-- Editor components
-- Menu systems
-- Button styles
-- Output panels
+### Adding a New Language
 
-### Plugin Development
-See `plugins/sample_plugin/` for complete plugin template including:
-- `__init__.py` with plugin metadata
-- Main plugin class with `initialize()` method
-- Integration hooks for UI and interpreter
+1. Create `core/interpreters/my_lang.py`:
+```python
+from . import LanguageExecutor
 
-## Critical Integration Points
+class MyLangExecutor(LanguageExecutor):
+    def __init__(self, interpreter):
+        self.interpreter = interpreter
+        self.variables = {}
+    
+    def execute_command(self, command: str) -> str:
+        # Parse and execute
+        return "✅ MyLang output\n"
+```
 
-### Interpreter-UI Communication
-- Commands executed through `Time_WarpInterpreter.execute()` method
-- Results displayed via `self.output_text.insert()` in main UI
-- Error handling centralized through interpreter's error display system
+2. Register in `core/interpreter.py`:
+```python
+from core.interpreters.my_lang import MyLangExecutor
+# In __init__: self.my_lang = MyLangExecutor(self)
+```
 
-### Turtle Graphics Integration
-- Each language executor can access `self.interpreter.turtle_canvas`
-- Graphics state managed in main application
-- Canvas clearing and setup handled automatically per execution
-=======
-<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file --># Time_Warp IDE Copilot Instructions
->>>>>>> 1407509ac281ab1d8fb01ccc3e7fef1aada6ff9c
+3. Add detection logic in `TimeWarpInterpreter.execute()`
+
+## Project-Specific Conventions
+
+### Emoji Prefixes (Universal Pattern)
+- `❌` = Errors/exceptions
+- `✅` = Success confirmations
+- `ℹ️` = Informational messages
+- `🎨` = Theme/UI changes
+- `🚀` = Execution/run events
+- `🐢` = Turtle graphics actions
+- `📝` = Input prompts
+
+### Safe Expression Evaluation
+**Never use `eval()` directly.** Use `core/safe_expression_evaluator.py::safe_eval()` for math expressions:
+```python
+from core.safe_expression_evaluator import safe_eval
+result = safe_eval("2 + 3 * X", {"X": 5})  # Returns 17
+```
+
+### Hardware/IoT Integration
+Simulation-first design in `core/interpreter.py`:
+```python
+self.arduino = ArduinoController(simulation_mode=True)
+self.rpi = RPiController(simulation_mode=True)
+```
+Real hardware requires `pyfirmata`/`RPi.GPIO` (optional deps).
+
+### Plugin System
+Plugins in `plugins/sample_plugin/`:
+```python
+# __init__.py metadata
+PLUGIN_NAME = "Sample Plugin"
+PLUGIN_VERSION = "1.0.0"
+
+# plugin.py
+class SamplePlugin:
+    def initialize(self, ide_instance):
+        """Hook into IDE after startup"""
+        self.ide = ide_instance
+```
+
+Load via `core/plugin_system.py::PluginManager.discover_plugins()`
+
+## Integration Points to Watch
+
+### Turtle Graphics State
+- Executors track position/angle internally (e.g., `LogoExecutor.turtle_x/y/angle`)
+- UI reads turtle state from executor for rendering: `self.logo_executor.turtle_x`
+- Canvas clearing happens in main UI, not executor
+
+### Async Support
+`core/async_support.py` provides `AsyncInterpreterRunner` for non-blocking execution:
+```python
+from core.async_support import get_async_runner
+runner = get_async_runner()
+runner.run_code(code_string, callback=on_complete)
+```
+
+### Theme System
+`tools/theme.py` defines 8 themes (Dracula, Monokai, Solarized Dark, Ocean, Spring, Sunset, Candy, Forest). Persisted to `~/.Time_Warp/config.json`. Apply via `QtUIFactory.apply_theme()`.
+
+## Common Pitfalls
+
+1. **Don't modify `Time_Warp.py`** - It's archived. Work in `Time_Warp_IDE.py` + `ui/` + `core/`.
+2. **PySide6 CPU requirements** - "Illegal instruction" errors = missing CPU features, not code bugs.
+3. **Executor statelessness** - Don't store UI refs in executors; return strings only.
+4. **Test isolation** - Use `conftest.py` fixtures for interpreter instances; don't share state.
+
+## File Structure at a Glance
+
+- `Time_Warp_IDE.py` - Primary entry point (PySide6)
+- `core/interpreter.py` - Central interpreter (1521 lines, dispatches to executors)
+- `core/interpreters/` - Language executors (pilot, basic, logo)
+- `ui/qt_ui.py` - PySide6 UI factory
+- `tools/theme.py` - Theme manager (8 themes)
+- `test_runner.py` - Test orchestration with reporting
+- `tests/` - Pytest suite (30+ test files)
+- `plugins/` - Plugin samples and docs
+- `examples/` - Demo programs in all languages
+
+## Dependencies
+
+Core: `pillow>=10.0.0`, `PySide6` (Qt6)  
+Dev: `pytest`, `pytest-cov`, `pytest-mock`, `black`, `mypy`  
+Optional: `pyfirmata` (Arduino), `RPi.GPIO` (Raspberry Pi), `scikit-learn` (ML demos)
 
 ---
 
-purpose: Workspace-specific instructions for Copilot in Time Warp IDE project
-
-last-updated: October 22, 2025
-
-contact: James-HoneyBadger
-
----
-
-Time Warp IDE is an educational programming IDE supporting multiple languages with turtle graphics, built in Python using tkinter.
-
-## Architecture Overview
-
-### Core Structure
-
-- **Main Application**: `src/main.rs` - Entry point with unified canvas interface and component integration
-- **Unified Canvas**: Integrated in `src/main.rs` - GW BASIC screen mode emulation with text/graphics rendering using egui
-- **Core Interpreter**: `src/main.rs` - Central execution engine for all languages (currently stubbed)
-- **Language Executors**: Planned in `src/main.rs` or separate modules - Individual language implementations (PILOT, BASIC, Logo, etc.)
-- **Theme System**: Integrated in `src/main.rs` - Theme management with egui theming
-- **Plugin System**: Not yet implemented - Extensible architecture for custom functionality
-
-### Unified Canvas Architecture
-
-The IDE uses egui for rendering:
-
-- **Unified Canvas**: egui-based canvas supporting text/graphics rendering
-- **Text Rendering**: Text input/output with egui widgets
-- **Graphics Rendering**: Pixel and vector graphics integrated with text display using egui painter
-- **Turtle Graphics**: Compatible with existing turtle graphics commands (implemented with zoom/pan)
-
-### Multi-Language Support
-
-Each language will have dedicated executor classes in `src/`:
-
-- **PILOT**: Educational language with turtle graphics (`T:`, `A:`, `J:`, `Y:`, `N:` commands)
-- **BASIC**: Classic line-numbered programming (`PRINT`, `INPUT`, `LET`, `GOTO`, `IF...THEN`)
-- **Logo**: Turtle graphics programming (`FORWARD`, `BACK`, `LEFT`, `RIGHT`)
-- **Python/JavaScript/Perl**: Modern scripting language support
-
-### Key Components
+**When in doubt:** Read `core/interpreter.py` (main dispatch logic) and check `test_runner.py --help` for test workflows.
 
 - **TimeWarpApp**: Main egui app struct containing all state and UI logic
 - **TurtleState**: Struct managing turtle graphics position, angle, and drawing state
