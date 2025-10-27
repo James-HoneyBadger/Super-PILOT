@@ -3,6 +3,8 @@ pub mod error;
 pub mod expr_eval;
 pub mod async_exec;
 
-pub use error::TimeWarpError;
+// Re-export commonly used types
 pub use expr_eval::ExpressionEvaluator;
-pub use async_exec::{AsyncExecutor, SharedExecutor, ExecutionEvent, ExecutionResult};
+
+// Async execution types available but not automatically exported to reduce warnings
+// Use: use crate::utils::async_exec::{AsyncExecutor, ExecutionEvent};

@@ -5,12 +5,23 @@ use tokio::sync::mpsc;
 use std::sync::Arc;
 use parking_lot::Mutex;
 
+// Note: These types are for future async execution features
+// Currently unused but will be needed for non-blocking program execution
+#[allow(dead_code)]
 pub struct AsyncExecutor {
     runtime: tokio::runtime::Runtime,
 }
 
+impl Default for AsyncExecutor {
+    fn default() -> Self {
+        Self::new().expect("Failed to create async executor runtime")
+    }
+}
+
 impl AsyncExecutor {
+    #[allow(dead_code)]
     pub fn new() -> Result<Self> {
+        // Use current_thread runtime - tasks run cooperatively on this thread
         let runtime = tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()?;
@@ -18,13 +29,16 @@ impl AsyncExecutor {
         Ok(Self { runtime })
     }
     
+    #[allow(dead_code)]
     pub fn execute_async<F>(&self, code: String, mut callback: F) -> Result<()>
     where
         F: FnMut(ExecutionEvent) + Send + 'static,
     {
         let (tx, mut rx) = mpsc::channel(100);
         
-        self.runtime.spawn(async move {
+        // Spawn task using runtime handle
+        let handle = self.runtime.handle().clone();
+        handle.spawn(async move {
             let _ = tx.send(ExecutionEvent::Started).await;
             
             for (line_num, line) in code.lines().enumerate() {
@@ -39,7 +53,7 @@ impl AsyncExecutor {
             let _ = tx.send(ExecutionEvent::Completed).await;
         });
         
-        self.runtime.spawn(async move {
+        handle.spawn(async move {
             while let Some(event) = rx.recv().await {
                 callback(event);
             }
@@ -48,6 +62,7 @@ impl AsyncExecutor {
         Ok(())
     }
     
+    #[allow(dead_code)]
     pub fn execute_with_timeout(
         &self,
         code: String,
@@ -66,6 +81,7 @@ impl AsyncExecutor {
         })
     }
     
+    #[allow(dead_code)]
     async fn execute_code_internal(code: String) -> Result<ExecutionResult> {
         Ok(ExecutionResult {
             output: vec![format!("Executed {} lines", code.lines().count())],
@@ -75,12 +91,7 @@ impl AsyncExecutor {
     }
 }
 
-impl Default for AsyncExecutor {
-    fn default() -> Self {
-        Self::new().expect("Failed to create async executor")
-    }
-}
-
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum ExecutionEvent {
     Started,
@@ -90,6 +101,7 @@ pub enum ExecutionEvent {
     Completed,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct ExecutionResult {
     pub output: Vec<String>,
@@ -97,27 +109,30 @@ pub struct ExecutionResult {
     pub execution_time_ms: u64,
 }
 
+#[allow(dead_code)]
 pub struct SharedExecutor {
     executor: Arc<Mutex<AsyncExecutor>>,
 }
 
+impl Default for SharedExecutor {
+    fn default() -> Self {
+        Self::new().expect("Failed to create shared executor")
+    }
+}
+
 impl SharedExecutor {
+    #[allow(dead_code)]
     pub fn new() -> Result<Self> {
         Ok(Self {
             executor: Arc::new(Mutex::new(AsyncExecutor::new()?)),
         })
     }
     
+    #[allow(dead_code)]
     pub fn execute<F>(&self, code: String, callback: F) -> Result<()>
     where
         F: FnMut(ExecutionEvent) + Send + 'static,
     {
         self.executor.lock().execute_async(code, callback)
-    }
-}
-
-impl Default for SharedExecutor {
-    fn default() -> Self {
-        Self::new().expect("Failed to create shared executor")
     }
 }

@@ -91,6 +91,7 @@ impl TurtleState {
         self.lines.clear();
     }
     
+    #[allow(dead_code)]
     pub fn reset(&mut self) {
         self.x = 0.0;
         self.y = 0.0;

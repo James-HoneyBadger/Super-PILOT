@@ -1,5 +1,8 @@
 use thiserror::Error;
 
+// Custom error types for Time Warp IDE
+// Currently using anyhow::Result in most places, but these are available for typed errors
+#[allow(dead_code)]
 #[derive(Error, Debug)]
 pub enum TimeWarpError {
     #[error("Parse error: {0}")]

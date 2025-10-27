@@ -1,4 +1,3 @@
-use anyhow::Result;
 use eframe::egui;
 use std::collections::HashMap;
 

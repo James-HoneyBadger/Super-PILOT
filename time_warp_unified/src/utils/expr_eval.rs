@@ -22,6 +22,12 @@ pub struct ExpressionEvaluator {
     variables: HashMap<String, f64>,
 }
 
+impl Default for ExpressionEvaluator {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ExpressionEvaluator {
     pub fn new() -> Self {
         Self {
@@ -33,15 +39,22 @@ impl ExpressionEvaluator {
         Self { variables: vars }
     }
     
+    /// Set a variable value (for dynamic variable updates)
+    #[allow(dead_code)]
     pub fn set_variable(&mut self, name: String, value: f64) {
         self.variables.insert(name, value);
     }
     
     /// Evaluate a mathematical expression safely
+    /// 
+    /// Returns detailed error messages with expression context for debugging.
     pub fn evaluate(&self, expr: &str) -> Result<f64> {
-        let tokens = self.tokenize(expr)?;
-        let rpn = self.to_rpn(tokens)?;
+        let tokens = self.tokenize(expr)
+            .map_err(|e| anyhow!("Failed to parse expression '{}': {}", expr, e))?;
+        let rpn = self.to_rpn(tokens)
+            .map_err(|e| anyhow!("Invalid expression '{}': {}", expr, e))?;
         self.evaluate_rpn(rpn)
+            .map_err(|e| anyhow!("Evaluation failed for '{}': {}", expr, e))
     }
     
     fn tokenize(&self, expr: &str) -> Result<Vec<Token>> {
