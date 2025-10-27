@@ -13,10 +13,11 @@ Pick one IDE:
 - Python (modern, PySide6): `python Time_Warp_IDE.py`
 - Python (classic, Tkinter): `python Time_Warp.py`
 - Rust (egui):
-	```bash
-	cd Time_Warp_Rust
-	cargo run
-	```
+
+```bash
+cd Time_Warp_Rust
+cargo run
+```
 
 ## Core Workflow
 

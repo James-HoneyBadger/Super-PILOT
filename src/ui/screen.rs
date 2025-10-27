@@ -49,22 +49,24 @@ pub fn render(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
                 let dir = egui::vec2(angle.sin(), -angle.cos()) * size * 1.5;
                 painter.line_segment([pos, pos + dir], egui::Stroke::new(2.0, app.current_theme.text()));
             }
-            // Overlay recent text output (last 10 lines)
-            let overlay_lines = 10usize;
-            let start = app.interpreter.output.len().saturating_sub(overlay_lines);
-            if start < app.interpreter.output.len() {
-                let margin = 8.0;
-                let mut y = response.rect.top() + margin;
-                for line in &app.interpreter.output[start..] {
-                    let pos = egui::pos2(response.rect.left() + margin, y);
-                    painter.text(
-                        pos,
-                        egui::Align2::LEFT_TOP,
-                        line,
-                        egui::TextStyle::Monospace.resolve(ui.style()),
-                        app.current_theme.text(),
-                    );
-                    y += ui.text_style_height(&egui::TextStyle::Monospace);
+            // Optional overlay recent text output (last 10 lines)
+            if app.show_overlay_text {
+                let overlay_lines = 10usize;
+                let start = app.interpreter.output.len().saturating_sub(overlay_lines);
+                if start < app.interpreter.output.len() {
+                    let margin = 8.0;
+                    let mut y = response.rect.top() + margin;
+                    for line in &app.interpreter.output[start..] {
+                        let pos = egui::pos2(response.rect.left() + margin, y);
+                        painter.text(
+                            pos,
+                            egui::Align2::LEFT_TOP,
+                            line,
+                            egui::TextStyle::Monospace.resolve(ui.style()),
+                            app.current_theme.text(),
+                        );
+                        y += ui.text_style_height(&egui::TextStyle::Monospace);
+                    }
                 }
             }
         }
@@ -72,7 +74,7 @@ pub fn render(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
             // Draw text buffer in a monospace grid
             let margin = 8.0;
             let mut y = response.rect.top() + margin;
-            for line in &app.interpreter.output {
+            for line in &app.interpreter.text_lines {
                 let pos = egui::pos2(response.rect.left() + margin, y);
                 painter.text(
                     pos,

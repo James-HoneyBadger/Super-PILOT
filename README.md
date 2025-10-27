@@ -1,6 +1,6 @@
 # Time Warp IDE
 
-**A modern educational programming environment written in Rust**
+A modern educational programming environment written in Rust.
 
 Time Warp IDE is a unified implementation supporting PILOT, BASIC, and Logo languages with integrated turtle graphics, safe expression evaluation, and modern UI powered by egui.
 

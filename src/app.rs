@@ -46,6 +46,9 @@ pub struct TimeWarpApp {
     
     // Keyboard state for INKEY$
     pub last_key_pressed: Option<String>,
+
+    // UI options
+    pub show_overlay_text: bool,
     
     // Debug state (future features)
     #[allow(dead_code)]
@@ -86,6 +89,8 @@ impl TimeWarpApp {
             
             input_buffer: String::new(),
             last_key_pressed: None,
+
+            show_overlay_text: true,
             
             debug_mode: false,
             breakpoints: HashMap::new(),

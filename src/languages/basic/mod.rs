@@ -30,6 +30,10 @@ pub fn execute(interp: &mut Interpreter, command: &str, turtle: &mut TurtleState
         "CIRCLE" => execute_circle(interp, args, turtle),
         "SCREEN" => execute_screen(interp, args, turtle),
         _ => {
+            // Allow PILOT to issue SCREEN lines by passing through to BASIC executor when keyword matches
+            if keyword.eq_ignore_ascii_case("SCREEN") {
+                return execute_screen(interp, args, turtle);
+            }
             interp.log_output(format!("Unknown BASIC command: {}", keyword));
             Ok(ExecutionResult::Continue)
         }
@@ -38,7 +42,7 @@ pub fn execute(interp: &mut Interpreter, command: &str, turtle: &mut TurtleState
 
 fn execute_screen(interp: &mut Interpreter, args: &str, turtle: &mut TurtleState) -> Result<ExecutionResult> {
     // SCREEN mode[, w, h]
-    let mut parts: Vec<&str> = args.split(',').map(|s| s.trim()).collect();
+    let parts: Vec<&str> = args.split(',').map(|s| s.trim()).collect();
     if parts.is_empty() || parts[0].is_empty() {
         interp.log_output("❌ SCREEN: Missing mode".to_string());
         return Ok(ExecutionResult::Continue);

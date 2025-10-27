@@ -5,6 +5,9 @@ pub fn render(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
     // Unified output screen (text + graphics)
     ui.vertical(|ui| {
         ui.heading("Unified Screen");
+        ui.horizontal(|ui| {
+            ui.checkbox(&mut app.show_overlay_text, "Overlay text in graphics");
+        });
         ui.separator();
         crate::ui::screen::render(app, ui);
     });

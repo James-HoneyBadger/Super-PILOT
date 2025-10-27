@@ -112,6 +112,9 @@ pub struct Interpreter {
     
     // Unified screen state
     pub screen_mode: ScreenMode,
+
+    // Text buffer for Text screen mode (render target for unified screen)
+    pub text_lines: Vec<String>,
 }
 
 #[derive(Clone)]
@@ -160,6 +163,7 @@ impl Interpreter {
             inkey_callback: None,
             last_key_pressed: None,
             screen_mode: ScreenMode::Graphics { width: 800, height: 600 },
+            text_lines: Vec::new(),
         }
     }
     
@@ -318,6 +322,15 @@ impl Interpreter {
     
     pub fn log_output(&mut self, text: String) {
         self.output.push(text);
+        // Also update text buffer for Text mode rendering
+        let max_rows = match self.screen_mode {
+            ScreenMode::Text { rows, .. } => rows as usize,
+            _ => 0,
+        };
+        if max_rows > 0 {
+            self.text_lines.push(self.output.last().cloned().unwrap_or_default());
+            while self.text_lines.len() > max_rows { self.text_lines.remove(0); }
+        }
     }
     
     pub fn evaluate_expression(&self, expr: &str) -> Result<f64> {
@@ -354,6 +367,7 @@ impl Interpreter {
         self.variables.clear();
         self.string_variables.clear();
         self.output.clear();
+        self.text_lines.clear();
         self.program_lines.clear();
         self.current_line = 0;
         self.labels.clear();
