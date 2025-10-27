@@ -1,44 +1,379 @@
 # SuperPILOT
 
-CI: ![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)
-
-Quick start
-
-Install dev requirements:
-
-```bash
-python -m pip install -r requirements-dev.txt
-```
-
-Run tests:
-
-```bash
-python -m pytest -q
-```
-
-Run the simple IDE:
-
-```bash
-python pilot.py
-```
-
-
 ![CI](https://github.com/James-HoneyBadger/SuperPILOT/actions/workflows/ci.yml/badge.svg?branch=main)
 
-## Recent changes and semantics
+**Multi-Language Educational Programming Environment**
 
-- Conditional jump semantics: `J:label` now behaves as a conditional jump when it immediately follows a `Y:` or `N:` command (it consumes the match sentinel).
+SuperPILOT is a comprehensive educational programming environment that integrates three classic programming languages: PILOT, BASIC, and Logo. Perfect for teaching programming fundamentals with visual feedback through turtle graphics.
 
-  Example:
+## 🚀 Quick Start
 
-  ```text
-  Y:*COUNT* > 5
-  J:END_LOOP
-  ```
+### Installation
 
-- `T:` and `MT:` interpolation consolidated into a helper for consistent evaluation of `*VAR*` and `*expr*` tokens.
+```bash
+# Clone repository
+git clone https://github.com/James-HoneyBadger/SuperPILOT.git
+cd SuperPILOT
 
-- `N:` currently acts as a conditional test that sets the match flag when its condition is TRUE (this aligns with demo programs). `Y:` and `N:` both set the `_last_match_set` sentinel which consumer commands may use.
+# Install dependencies
+python -m pip install -r requirements-dev.txt
+
+# Run the IDE
+python3 Super_PILOT.py
+```
+
+### Your First Program
+
+Try this in the editor:
+
+```pilot
+T:Hello, World!
+T:Let's draw a square...
+
+CS
+REPEAT 4 [
+  FORWARD 100
+  RIGHT 90
+]
+
+T:Done!
+```
+
+Press **F5** to run!
+
+## 📚 Documentation
+
+Comprehensive documentation for all users:
+
+- **[📖 Student Guide](docs/STUDENT_GUIDE.md)** - Learn programming from scratch with 16 progressive lessons
+- **[👩‍🏫 Teacher Guide](docs/TEACHER_GUIDE.md)** - 16-week curriculum, teaching strategies, and assessment tools
+- **[🔧 Technical Reference](docs/TECHNICAL_REFERENCE.md)** - Complete API documentation and language specifications
+- **[💻 Developer Handbook](docs/DEVELOPER_HANDBOOK.md)** - Contributing guidelines and architecture deep dive
+
+**[📑 Documentation Index](docs/README.md)** - Navigate all documentation
+
+## ✨ Features
+
+### Three Languages in One
+
+- **PILOT**: Simple text-based programming with easy input/output
+- **BASIC**: Classic programming with line numbers and mathematical operations
+- **Logo**: Visual turtle graphics for creative programming
+
+### Professional IDE
+
+- **Syntax Highlighting**: Color-coded commands for all three languages
+- **Advanced Debugger**: Breakpoints, step-through execution, variable inspection
+- **Integrated Graphics**: Real-time turtle graphics canvas
+- **Settings System**: Customizable themes, fonts, and preferences
+- **Recent Files**: Quick access to your projects
+
+### Educational Focus
+
+- Perfect for classroom use
+- Progressive difficulty
+- Immediate visual feedback
+- Error messages designed for beginners
+- Comprehensive teaching resources
+
+### Hardware Integration
+
+- Arduino support (with simulation mode)
+- Raspberry Pi GPIO integration
+- IoT device management
+- Sensors and actuators
+
+## 🎓 Learning Resources
+
+### For Students
+
+Start with the [Student Guide](docs/STUDENT_GUIDE.md) for step-by-step tutorials:
+
+1. **PILOT Language** (Lessons 1-5): Output, input, variables, conditionals, loops
+2. **BASIC Language** (Lessons 6-10): Math, IF statements, FOR loops, functions
+3. **Logo Graphics** (Lessons 11-16): Turtle drawing, patterns, procedures
+4. **Projects**: Mad Libs, quiz programs, drawing gallery, text adventures
+
+### For Teachers
+
+The [Teacher Guide](docs/TEACHER_GUIDE.md) includes:
+
+- **16-week curriculum** with detailed lesson plans
+- **Teaching strategies**: Pair programming, live coding, debugging as learning
+- **Assessment tools**: Rubrics, exit tickets, code reviews
+- **Differentiation**: Support for struggling and advanced students
+- **20+ project ideas** categorized by difficulty
+
+## 🔧 For Developers
+
+### Using as a Library
+
+```python
+from Super_PILOT import SuperPILOTInterpreter
+
+# Create interpreter
+interp = SuperPILOTInterpreter()
+
+# Register callbacks
+interp.on_output.append(lambda text: print(text))
+interp.on_variable_changed.append(lambda name, val: print(f"{name} = {val}"))
+
+# Execute program
+program = """
+T:Computing factorial...
+U:N=5
+U:RESULT=1
+"""
+success = interp.run_program(program)
+```
+
+See the [Technical Reference](docs/TECHNICAL_REFERENCE.md) for complete API documentation.
+
+### Contributing
+
+We welcome contributions! See the [Developer Handbook](docs/DEVELOPER_HANDBOOK.md) for:
+
+- Development environment setup
+- Code style guidelines
+- Testing requirements
+- Pull request process
+
+```bash
+# Run tests
+python -m pytest
+
+# Run with coverage
+pytest --cov=. --cov-report=html
+
+# Format code
+black .
+isort .
+```
+
+## 📋 Language Quick Reference
+
+### PILOT Commands
+
+```pilot
+T:text          Output text
+A:var           Accept input
+U:var=value     Set variable
+Y:condition     Test condition (if true, run next)
+J:label         Jump to label
+L:label         Define label
+```
+
+### BASIC Commands
+
+```basic
+PRINT           Output text/numbers
+LET var = val   Assign variable
+INPUT var       Get user input
+IF...THEN       Conditional execution
+FOR...NEXT      Loop with counter
+GOTO linenum    Jump to line number
+```
+
+### Logo Commands
+
+```logo
+FORWARD n       Move turtle forward
+RIGHT n         Turn right (degrees)
+LEFT n          Turn left (degrees)
+PENUP/PENDOWN   Lift/lower pen
+REPEAT n [...]  Loop n times
+CS              Clear screen
+```
+
+## 🎯 Example Programs
+
+### Hello World (PILOT)
+
+```pilot
+T:What is your name?
+A:NAME
+T:Hello, *NAME*!
+T:Welcome to SuperPILOT!
+```
+
+### Number Guessing Game (BASIC)
+
+```basic
+10 LET SECRET = INT(RND(10)) + 1
+20 PRINT "Guess a number (1-10):"
+30 INPUT GUESS
+40 IF GUESS = SECRET THEN GOTO 70
+50 PRINT "Wrong! Try again."
+60 GOTO 20
+70 PRINT "Correct! The number was "; SECRET
+80 END
+```
+
+### Drawing Patterns (Logo)
+
+```logo
+CS
+REPEAT 36 [
+  REPEAT 4 [
+    FORWARD 100
+    RIGHT 90
+  ]
+  RIGHT 10
+]
+```
+
+More examples in the [examples/](examples/) directory.
+
+## 🎮 Version History
+
+### Version 3.0.0 (Current)
+
+**Turtle / Logo Extensions:**
+- New commands: `COLOR`, `TRACE`, `KEEP_CANVAS`, `CENTER`, `PENSTYLE`, `DEBUGLINES`, `FIT`
+- Pen style customization: `PENSTYLE solid|dashed|dotted`
+- Auto color cycle per shape
+- Pen-down start markers with optional tracing
+- Auto-pan and dynamic scroll region
+- Canvas preservation toggle
+- Geometry inspection tools
+
+**Interpreter / Core:**
+- Conditional jump sentinel consumption (`Y:`/`N:` + `J:`/`T:`)
+- Compute assignment: `C:VAR=EXPR`
+- Nested `REPEAT` loops
+- Macro system: `DEFINE` and `CALL`
+- Performance profiling: `PROFILE ON/OFF/REPORT`
+- Style-aware line metadata
+
+**IDE / UX:**
+- Output pane context menu (Copy/Clear)
+- Dedicated Turtle menu
+- Theme switching (dark/light mode)
+- Extended syntax highlighting
+- Breakpoint debugging with gutter
+- Enhanced variables panel
+- Settings persistence
+
+### Version 2.0.0
+
+- Modular architecture with event system
+- Non-blocking execution with threading
+- Enhanced debugger UI
+- Settings system with JSON persistence
+- Keyboard shortcuts
+- Recent files menu
+
+### Version 1.0.0
+
+- Initial monolithic implementation
+- Three-language support (PILOT, BASIC, Logo)
+- Basic turtle graphics
+- Simple IDE
+
+## 🗺️ Roadmap
+
+**Planned for >3.0.0:**
+- Polygon fill & EXPORT (PNG/SVG) commands
+- Persistent settings (trace, themes, profiling)
+- BOUNDS and ZOOM/ZOOMRESET viewport helpers
+- FILL mode for teaching geometry
+- Sandboxed expression evaluator (remove eval)
+- Live variable watch + time-travel execution
+
+## 🧪 Testing
+
+Run the comprehensive test suite:
+
+```bash
+# All tests
+python -m pytest
+
+# With coverage report
+pytest --cov=. --cov-report=html
+
+# Specific test file
+pytest tests/test_interpreter.py
+
+# Verbose output
+pytest -v
+```
+
+Test coverage includes:
+- ✅ Core interpreter functionality
+- ✅ All three language implementations
+- ✅ Event callback system
+- ✅ Threading and concurrency
+- ✅ Hardware integration (mocked)
+- ✅ Expression evaluation
+- ✅ Security constraints
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read the [Developer Handbook](docs/DEVELOPER_HANDBOOK.md) for:
+
+1. **Development setup** - Environment configuration
+2. **Code style** - PEP 8, Black formatting, type hints
+3. **Testing** - Write tests for all new features
+4. **Documentation** - Update relevant docs
+5. **Pull requests** - Follow conventional commits
+
+### Quick Contribution Workflow
+
+```bash
+# 1. Fork and clone
+git clone https://github.com/yourusername/SuperPILOT.git
+cd SuperPILOT
+
+# 2. Create feature branch
+git checkout -b feature/your-feature-name
+
+# 3. Make changes and test
+# ... edit code ...
+pytest
+
+# 4. Format and lint
+black .
+isort .
+flake8
+
+# 5. Commit and push
+git add .
+git commit -m "feat: add your feature"
+git push origin feature/your-feature-name
+
+# 6. Create pull request on GitHub
+```
+
+## 📜 License
+
+SuperPILOT is released under the MIT License. See [LICENSE](LICENSE) file for details.
+
+Documentation is licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
+
+## 🙏 Acknowledgments
+
+SuperPILOT builds on decades of educational programming language research:
+
+- **PILOT** - Developed by John Starkweather (1968)
+- **BASIC** - Developed by John Kemeny and Thomas Kurtz (1964)
+- **Logo** - Developed by Seymour Papert and colleagues (1967)
+
+Special thanks to all contributors and educators using SuperPILOT in classrooms worldwide.
+
+## 📞 Support & Community
+
+- **📖 Documentation**: [docs/README.md](docs/README.md)
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/James-HoneyBadger/SuperPILOT/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/James-HoneyBadger/SuperPILOT/discussions)
+- **✉️ Email**: support@superpilot.org
+
+## ⭐ Star History
+
+If you find SuperPILOT useful, please consider giving it a star on GitHub!
+
+---
+
+**Made with ❤️ for educators and students learning to program**
 
 ## Version 3 Highlights (3.0.0)
 
