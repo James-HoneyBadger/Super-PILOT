@@ -202,7 +202,7 @@ fn execute_goto(interp: &mut Interpreter, line_num: &str) -> Result<ExecutionRes
         if let Some(idx) = find_line_index(interp, num) {
             return Ok(ExecutionResult::Jump(idx));
         } else {
-            interp.log_output(format!("GOTO {} failed: line not found", num));
+            interp.log_output(format!("❌ GOTO {} failed: line not found", num));
         }
     }
     Ok(ExecutionResult::Continue)
