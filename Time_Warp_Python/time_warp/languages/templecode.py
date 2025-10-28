@@ -41,12 +41,14 @@ def execute_templecode(
 
     # Logo keywords (excluding PRINT which BASIC owns in TempleCode)
     logo_keywords = {
-        "FORWARD", "FD", "BACK", "BK", "LEFT", "LT", "RIGHT", "RT",
-        "PENUP", "PU", "PENDOWN", "PD", "CLEARSCREEN", "CS", "HOME",
+        "FORWARD", "FD", "BACK", "BK", "BACKWARD", "LEFT", "LT",
+        "RIGHT", "RT", "PENUP", "PU", "PENDOWN", "PD",
+        "CLEARSCREEN", "CS", "CLEAR", "HOME",
         "SETXY", "SETX", "SETY", "REPEAT", "TO",
         "SETHEADING", "SETH",
-        "SETCOLOR", "SETPENCOLOR", "SETPC", "PENWIDTH", "SETPENSIZE",
-        "SETPENWIDTH", "SETPW", "SETBGCOLOR", "SETBG",
+        "SETCOLOR", "SETPENCOLOR", "SETPC",
+        "PENWIDTH", "SETPENSIZE", "SETPENWIDTH", "SETPW",
+        "SETBGCOLOR", "SETBG",
         "HIDETURTLE", "HT", "SHOWTURTLE", "ST"
     }
     if first_word in logo_keywords:
@@ -497,7 +499,7 @@ def _execute_logo(
         return _logo_setcolor(interpreter, turtle, args)
     if cmd_name in ['SETBGCOLOR', 'SETBG']:
         return _logo_setbgcolor(interpreter, turtle, args)
-    if cmd_name in ['SETPENWIDTH', 'SETPW']:
+    if cmd_name in ['SETPENWIDTH', 'SETPW', 'PENWIDTH', 'SETPENSIZE']:
         return _logo_setpenwidth(interpreter, turtle, args)
     if cmd_name == 'REPEAT':
         return _logo_repeat(interpreter, turtle, command)
@@ -648,9 +650,35 @@ def _logo_setcolor(
     turtle: 'TurtleState',
     args: List[str],
 ) -> str:
-    """SETCOLOR supports either '#RRGGBB' or three numeric args."""
+    """SETCOLOR supports color names, '#RRGGBB', or three numeric args."""
     if not args:
-        return "❌ SETCOLOR requires '#RRGGBB' or R G B\n"
+        return "❌ SETCOLOR requires color name, '#RRGGBB', or R G B\n"
+    
+    # Color names mapping (common Logo colors)
+    color_names = {
+        'BLACK': (0, 0, 0),
+        'WHITE': (255, 255, 255),
+        'RED': (255, 0, 0),
+        'GREEN': (0, 255, 0),
+        'BLUE': (0, 0, 255),
+        'YELLOW': (255, 255, 0),
+        'CYAN': (0, 255, 255),
+        'MAGENTA': (255, 0, 255),
+        'ORANGE': (255, 165, 0),
+        'PURPLE': (128, 0, 128),
+        'PINK': (255, 192, 203),
+        'BROWN': (165, 42, 42),
+        'GRAY': (128, 128, 128),
+        'GREY': (128, 128, 128),
+    }
+    
+    # Check for color name
+    if len(args) == 1 and args[0].upper() in color_names:
+        r, g, b = color_names[args[0].upper()]
+        turtle.setcolor(r, g, b)
+        return ""
+    
+    # Check for hex color
     if len(args) == 1 and args[0].startswith('#') and len(args[0]) == 7:
         hexval = args[0][1:]
         try:
@@ -661,6 +689,8 @@ def _logo_setcolor(
             return ""
         except ValueError:
             return "❌ Invalid hex color for SETCOLOR\n"
+    
+    # Check for RGB values
     if len(args) >= 3:
         try:
             r = int(_logo_eval_arg(interpreter, args[0]))
@@ -670,7 +700,8 @@ def _logo_setcolor(
             return ""
         except Exception:
             return "❌ Invalid RGB values for SETCOLOR\n"
-    return "❌ SETCOLOR requires '#RRGGBB' or R G B\n"
+    
+    return "❌ SETCOLOR requires color name, '#RRGGBB', or R G B\n"
 
 
 def _logo_setbgcolor(
@@ -704,22 +735,55 @@ def _logo_repeat(
     turtle: 'TurtleState',
     command: str,
 ) -> str:
+    """Handle REPEAT command - both single-line and multi-line blocks."""
+    # Try single-line format first: REPEAT count [ commands ]
     match = re.match(r'REPEAT\s+(\S+)\s*\[(.*?)\]', command, re.IGNORECASE)
+    if match:
+        count_expr = match.group(1)
+        commands = match.group(2)
+        try:
+            count = int(_logo_eval_expr_str(interpreter, count_expr))
+        except Exception:
+            return "❌ REPEAT count must be a number\n"
+        for _ in range(max(0, count)):
+            for cmd in commands.split('\n'):
+                cmd = cmd.strip()
+                if cmd:
+                    result = _execute_logo(interpreter, cmd, turtle)
+                    if result and result.startswith('❌'):
+                        return result
+        return ""
+    
+    # Check for multi-line format: REPEAT count [
+    match = re.match(r'REPEAT\s+(.+?)\s*\[\s*$', command, re.IGNORECASE)
     if not match:
         return "❌ REPEAT requires format: REPEAT count [ commands ]\n"
+    
     count_expr = match.group(1)
-    commands = match.group(2)
     try:
-        count = int(_logo_eval_arg(interpreter, count_expr))
+        count = int(_logo_eval_expr_str(interpreter, count_expr))
     except Exception:
         return "❌ REPEAT count must be a number\n"
-    for _ in range(count):
-        for cmd in commands.split('\n'):
-            cmd = cmd.strip()
-            if cmd:
-                result = _execute_logo(interpreter, cmd, turtle)
-                if result and result.startswith('❌'):
-                    return result
+    
+    # Collect lines until closing ]
+    block_lines: List[str] = []
+    idx = interpreter.current_line + 1
+    while idx < len(interpreter.program_lines):
+        _, line = interpreter.program_lines[idx]
+        if line.strip() == ']':
+            break
+        block_lines.append(line)
+        idx += 1
+    
+    # Execute the block 'count' times
+    for _ in range(max(0, count)):
+        for bl in block_lines:
+            result = execute_templecode(interpreter, bl, turtle)
+            if result and result.startswith('❌'):
+                return result
+    
+    # Skip past the closing ]
+    interpreter.current_line = idx
     return ""
 
 

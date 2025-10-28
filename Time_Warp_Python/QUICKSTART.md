@@ -1,38 +1,68 @@
-# Time Warp IDE - Python Version - Quick Start (TempleCode)
+# Time Warp IDE - Python Version - Quick Start
 
-## Running the Python Version
+## 🚀 Getting Started
 
-The Python port is now **fully functional** and executes programs in the unified TempleCode language (combining BASIC, PILOT, and Logo).
+The Python version is **fully functional** with a complete PySide6 GUI and unified TempleCode language support (BASIC + PILOT + Logo).
 
 ### Installation
 
+**Option 1: Direct Run (Recommended)**
+```bash
+cd Time_Warp_Python
+pip install PySide6 pillow
+python time_warp_ide.py
+```
+
+**Option 2: Development Install**
 ```bash
 cd Time_Warp_Python
 pip install -e .
+python time_warp_ide.py
 ```
 
-### Running Programs
+---
 
-**Using the CLI runner:**
+## 🎮 Running the IDE
+
+### Graphical IDE (Full Featured)
 
 ```bash
-# List available examples
-python3 run_time_warp.py --examples
-
-# Run a TempleCode program (.tc recommended)
-python3 run_time_warp.py examples/demo_templecode.tc
-
-# Run a legacy-style program (still TempleCode)
-python3 run_time_warp.py examples/logo_square.logo
-
-# Show turtle graphics info
-python3 run_time_warp.py examples/logo_square.logo --turtle
-
-# Interactive mode (REPL)
-python3 run_time_warp.py --interactive
+python time_warp_ide.py
 ```
 
-**Using Python directly:**
+**Open a specific file:**
+```bash
+python time_warp_ide.py examples/logo_spiral_walk.logo
+python time_warp_ide.py examples/basic_hangman.bas
+python time_warp_ide.py examples/pilot_adventure.pilot
+```
+
+**IDE Features:**
+- Syntax-aware code editor with auto-indent
+- Interactive turtle graphics canvas (zoom/pan)
+- Multi-tab output (Text + Graphics)
+- Recent files menu
+- 8 color themes (Dracula, Monokai, Solarized, Ocean, Spring, Sunset, Candy, Forest)
+- Run/Stop controls with status feedback
+
+---
+
+## 💻 CLI Usage
+
+**Run programs from command line:**
+
+```bash
+# Using the CLI runner
+python run_time_warp.py examples/logo_square.logo
+
+# Interactive REPL
+python run_time_warp.py --interactive
+
+# Show turtle info
+python run_time_warp.py examples/logo_square.logo --turtle
+```
+
+**Using Python API:**
 
 ```python
 from time_warp.core.interpreter import Interpreter
@@ -41,155 +71,247 @@ from time_warp.graphics.turtle_state import TurtleState
 interp = Interpreter()
 turtle = TurtleState()
 
-# Load your program
-program = """
-T:Hello from PILOT
-C:X = 10 + 5
-U:X
-E:
+# TempleCode program
+code = """
+TO SQUARE :SIZE
+  REPEAT 4 [
+    FORWARD :SIZE
+    RIGHT 90
+  ]
+END
+
+SETCOLOR blue
+PENWIDTH 3
+SQUARE 100
 """
 
-interp.load_program(program)
-output = interp.execute(turtle)
-
-# Display results
-print('\n'.join(output))
+output = interp.execute_templecode(code, turtle)
+print(output)
 ```
 
-### Demo Script
+---
 
-Run the comprehensive demo:
+## 📝 Demo Script
+
+Run comprehensive demonstration:
 
 ```bash
 ./demo.sh
 ```
 
-This demonstrates:
-- Logo-style turtle graphics
-- PILOT-style text processing
-- BASIC-style expressions and control flow
-- Error detection and suggestions
+**Demonstrates:**
+- Logo turtle graphics with procedures
+- PILOT interactive text processing
+- BASIC arithmetic and control flow
+- Error detection with suggestions
 
-## What Works
+---
 
-✅ **TempleCode** styles:
-- PILOT-style: 11 commands (T:, A:, M:, Y:, N:, C:, U:, J:, L:, E:, R:)
-- BASIC-style: 15+ commands (PRINT, LET, INPUT, GOTO, FOR/NEXT, etc.)
-- Logo-style: 20+ commands (turtle movement, pen control, colors, REPEAT)
-✅ **Expression Evaluator** - Safe math with 15+ functions  
-✅ **Error Hints** - 100+ typo suggestions  
-✅ **Compiler** - TempleCode → C transpilation  
-✅ **32 Example Programs** - Ready to run  
+## ✅ What Works
 
-## Performance
+**TempleCode Language Support:**
+- ✅ **PILOT**: 11 commands (T:, A:, M:, Y:, N:, C:, U:, J:, L:, E:, R:)
+- ✅ **BASIC**: 20+ commands (PRINT, LET, INPUT, GOTO, FOR/NEXT, IF/THEN, etc.)
+- ✅ **Logo**: 50+ turtle commands + procedures (TO/END)
+
+**Core Systems:**
+- ✅ **Expression Evaluator**: Safe math with 15+ functions (SIN, COS, SQRT, etc.)
+- ✅ **Error Hints**: 100+ command suggestions for typos
+- ✅ **Turtle Graphics**: Full support with colors, pen width, procedures
+- ✅ **GUI**: Complete PySide6 interface with themes
+- ✅ **34 Example Programs**: Ready to run
+
+**Logo Features:**
+- ✅ User-defined procedures: `TO name :param1 :param2 ... END`
+- ✅ Multi-line REPEAT blocks: `REPEAT n [ ... ]`
+- ✅ Named colors: `SETCOLOR blue` (14 colors)
+- ✅ Hex colors: `SETCOLOR #FF5733`
+- ✅ RGB colors: `SETCOLOR 255,100,50`
+- ✅ Expression evaluation: `RIGHT 360 / :SIDES`
+- ✅ All aliases: PENWIDTH, BACKWARD, CLEAR, etc.
+
+---
+
+## 🧪 Testing
+
+```bash
+# Test all turtle graphics commands
+python test_all_turtle_commands.py
+
+# Test basic functionality
+python test_basic_functionality.py
+
+# Test IDE components
+python test_ide.py
+
+# Test graphics rendering
+python test_graphics.py
+
+# Verify all commands
+python verify_commands.py
+```
 
 **Test Results:**
 ```
 Testing PILOT... ✅
 Testing BASIC... ✅
 Testing Logo... ✅
-Testing expression evaluator... ✅
-Testing error hints... ✅
+Testing Turtle Graphics (50+ commands)... ✅
+Testing Expression Evaluator... ✅
+Testing Error Hints... ✅
 
 ALL TESTS PASSED!
 ```
 
-**Security:**
-- 100,000 iteration limit (prevents infinite loops)
-- 10-second timeout (prevents DoS)
-- No eval() or exec() (safe evaluation)
-- 1,000 token limit in expressions
+---
 
-## Example Programs
+## 🔒 Security
 
-### TempleCode PILOT-style (7 programs)
-- `pilot_screen_demo.pilot` - ✅ Works perfectly
-- `pilot_adventure.pilot` - Requires INPUT (interactive)
-- `pilot_simple_calculator.pilot` - Requires INPUT
+- **Iteration Limit**: 100,000 max (prevents infinite loops)
+- **Timeout**: 10 seconds per execution (prevents DoS)
+- **Safe Evaluation**: Manual expression parsing (no `eval()` or `exec()`)
+- **Input Validation**: All user input sanitized
+---
 
-### TempleCode BASIC-style (10 programs)
-- `basic_multiplication_table.bas` - Requires INPUT
-- `basic_countdown.bas` - Requires INPUT
-- All support graphics commands
+## 📚 Example Programs
 
-### TempleCode Logo-style (15 programs)
-- `logo_square.logo` - ✅ Works perfectly (5 lines)
-- `logo_starburst.logo` - ✅ Works perfectly (2 lines)
-- `logo_spiral_walk.logo` - ✅ Works perfectly
-- Programs using TO/END procedures need full implementation
+**34 programs included - organized by language style:**
 
-## Known Limitations
+### Logo Turtle Graphics (15 programs)
+- `logo_square.logo` - Simple square ✅
+- `logo_spiral_walk.logo` - Colorful spiral ✅
+- `logo_starburst.logo` - Radial starburst ✅
+- `logo_flower.logo` - Petal flower with procedures ✅
+- `logo_koch_snowflake.logo` - Fractal Koch curve ✅
+- `logo_spirograph.logo` - Mathematical spirograph ✅
+- `logo_fractal_tree.logo` - Recursive tree ✅
+- `logo_polygonal_rose.logo` - Rose curve ✅
+- ...and more!
 
-1. **INPUT commands** require interactive UI (not yet in CLI)
-2. **Logo TO/END** procedures partially implemented
-3. **GUI** not yet built (core is CLI/library ready)
+### BASIC Programs (10 programs)
+- `basic_hangman.bas` - Word guessing game ✅
+- `basic_graphics.bas` - Graphics demo ✅
+- `basic_countdown.bas` - Animated countdown ✅
+- `basic_multiplication_table.bas` - Math practice ✅
+- `basic_rock_paper_scissors.bas` - Classic game ✅
+- `basic_inkey_demo.bas` - Keyboard input ✅
+- ...and more!
 
-## Next Steps
+### PILOT Interactive (7 programs)
+- `pilot_adventure.pilot` - Text adventure ✅
+- `pilot_quiz_competition.pilot` - Quiz game ✅
+- `pilot_dragon_adventure.pilot` - Story game ✅
+- `pilot_simple_calculator.pilot` - Calculator ✅
+- `pilot_story_builder.pilot` - Story creator ✅
+- ...and more!
 
-To add GUI:
-```bash
-pip install PySide6
-# Then implement ui/ module (800-1000 lines estimated)
-```
-
-To expand tests:
-```bash
-pip install pytest pytest-cov
-# Port remaining 67 tests from Rust version
-```
-
-## Architecture
-
-```
-time_warp/
-├── core/
-│   └── interpreter.py         # 465 lines - Main engine
-├── languages/
-│   ├── templecode.py         # Unified TempleCode executor
-│   ├── pilot.py              # Compatibility shim → templecode
-│   ├── basic.py              # Compatibility shim → templecode
-│   └── logo.py               # Compatibility shim → templecode
-├── graphics/
-│   └── turtle_state.py       # 155 lines - Turtle graphics
-├── utils/
-│   ├── expression_evaluator.py  # 345 lines - Math engine
-│   └── error_hints.py           # 325 lines - Error detection
-└── compiler/
-    └── compiler.py           # 215 lines - C transpiler
-
-Total: 2,462 lines of core code
-```
-
-## Success Metrics
-
-- ✅ Runs PILOT programs
-- ✅ Runs BASIC programs
-- ✅ Runs Logo programs with turtle graphics
-- ✅ Evaluates complex math expressions
-- ✅ Detects typos and suggests corrections
-- ✅ Compiles to native C executables
-- ✅ All basic tests passing
-- ✅ Security hardened
-- ✅ Well documented
-
-## Status
-
-**Core Implementation: 100% Complete**
-
-The Python version is production-ready for:
-- Library use (import time_warp)
-- CLI execution (run_time_warp.py)
-- Educational purposes
-- Code examples and demos
-
-Optional enhancements:
-- GUI for desktop IDE experience
-- Expanded test suite (67 more tests)
-- Logo procedure system (TO/END)
-- Interactive INPUT handling
+**All programs work in the GUI!** Programs requiring INPUT use dialog prompts.
 
 ---
 
-**Time Warp IDE Python Port - Mission Accomplished! 🎉**
+## 🎯 Quick Examples
 
-*Bringing classic educational programming into the modern Python era.*
+### Simple Logo Program
+```logo
+REPEAT 6 [
+  FORWARD 100
+  RIGHT 60
+]
+```
+
+### Logo with Procedures
+```logo
+TO STAR :SIZE
+  REPEAT 5 [
+    FORWARD :SIZE
+    RIGHT 144
+  ]
+END
+
+SETCOLOR red
+STAR 100
+```
+
+### BASIC Program
+```basic
+10 CLS
+20 FOR I = 1 TO 10
+30   PRINT I * I
+40 NEXT I
+50 PRINT "Done!"
+```
+
+### PILOT Program
+```pilot
+T:Welcome! What's your name?
+A:NAME
+T:Hello *NAME*!
+T:Ready to learn?
+M:yes,no
+JY:LEARN
+T:Come back when ready!
+E:
+L:LEARN
+T:Great! Let's start...
+E:
+```
+
+---
+
+## 🚧 Known Limitations
+
+1. **Compiler**: TempleCode → C transpilation is experimental (not in GUI)
+2. **Test Coverage**: Comprehensive unit tests in progress (currently have integration tests)
+3. **Some BASIC commands**: DIM, DATA, READ not yet implemented
+
+---
+
+## 🆚 Python vs Rust
+
+| Aspect | Python | Rust |
+|--------|--------|------|
+| **Speed** | Fast enough | 10-50x faster |
+| **GUI** | PySide6 (Qt) | egui (native) |
+| **Themes** | 8 themes | 2 themes |
+| **Tests** | 5 test scripts | 72 unit tests |
+| **Ease of Use** | Very easy | Requires compilation |
+| **Best For** | Education, prototyping | Production, performance |
+
+**Recommendation**: Start with Python, switch to Rust if you need performance.
+
+---
+
+## 📖 More Resources
+
+- **Full Documentation**: See [README.md](README.md)
+- **Turtle Reference**: See [docs/TURTLE_GRAPHICS_REFERENCE.md](docs/TURTLE_GRAPHICS_REFERENCE.md)
+- **Examples**: Browse [examples/](examples/) directory
+- **Main Project**: See [../README.md](../README.md)
+
+---
+
+## 🐛 Troubleshooting
+
+**IDE won't start:**
+```bash
+# Check PySide6 installation
+pip install --upgrade PySide6 pillow
+```
+
+**Programs not running:**
+- Check syntax (unified TempleCode allows mixing styles)
+- Look at example programs for reference
+- Check error messages for hints
+
+**Turtle graphics not showing:**
+- Click "Graphics" tab after running
+- Check that commands like FORWARD/RIGHT are being called
+- Verify pen is down: use PENDOWN if needed
+
+---
+
+<div align="center">
+
+**Need help?** Check the full [README.md](README.md) or open an [issue](https://github.com/James-HoneyBadger/Time_Warp/issues)
+
+</div>

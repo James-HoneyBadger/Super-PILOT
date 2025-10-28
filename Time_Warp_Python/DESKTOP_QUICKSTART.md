@@ -1,15 +1,18 @@
-# Time Warp IDE Desktop - Quick Start Guide
+# Time Warp IDE - Desktop Quick Start Guide
 
-## Installation
+## 🚀 Installation
 
-### 1. Install Python Requirements
+### 1. Install Dependencies
 
 ```bash
-cd Time_Warp/Time_Warp_Python
-pip install -e ".[gui]"
+cd Time_Warp_Python
+pip install PySide6 pillow
 ```
 
-This installs PySide6 (Qt6) for the desktop interface.
+**Alternative (development install):**
+```bash
+pip install -e .
+```
 
 ### 2. Launch the IDE
 
@@ -17,170 +20,241 @@ This installs PySide6 (Qt6) for the desktop interface.
 python time_warp_ide.py
 ```
 
-Or open a specific file:
-
+**Open a specific file:**
 ```bash
-python time_warp_ide.py examples/logo_square.logo
+python time_warp_ide.py examples/logo_spiral_walk.logo
+python time_warp_ide.py examples/basic_hangman.bas
+python time_warp_ide.py examples/pilot_adventure.pilot
 ```
 
-## Interface Overview
+---
+
+## 🖥️ Interface Overview
 
 ### Main Window Components
 
-1. **Menu Bar**
-   - **File**: New, Open, Save, Recent Files, Exit
-   - **Edit**: Undo, Redo, Cut, Copy, Paste, Find
-   - **Run**: Run (F5), Stop (Shift+F5), Clear Output, Clear Canvas
-   - **View**: Themes, Zoom In/Out
-   - **Help**: Example Programs, About
+**1. Menu Bar**
+- **File**: New, Open, Save, Save As, Recent Files (last 10), Exit
+- **Run**: Run Program (F5), Stop Execution (Shift+F5), Clear Output, Clear Canvas
+- **View**: Themes (8 themes), Font Size
+- **Help**: Turtle Graphics Reference, About
 
-2. **Toolbar**
-   - Quick access to New, Open, Save, Run, Stop, Clear
+**2. Code Editor** (Left Panel)
+- ✨ Syntax highlighting for TempleCode (BASIC, PILOT, Logo)
+- 🔢 Line numbers
+- ⚡ Auto-indentation
+- 📝 Undo/Redo support
+- 🔍 Bracket matching
 
-3. **Code Editor** (left panel)
-   - Line numbers
-   - Syntax highlighting for all 3 languages
-   - Find/Replace (F3)
-   - Zoom (Ctrl+Plus/Minus)
+**3. Output Panel** (Right Panel - Top Tab)
+- 📊 Multi-tab interface: **Text** and **Graphics**
+- 🎨 Colored output with emoji indicators
+- ⚡ Auto-switches to Graphics tab when drawing
+- 📜 Scrollable text output
 
-4. **Output/Canvas Tabs** (right panel)
-   - **Output**: Text output with colored messages
-   - **Graphics**: Turtle graphics canvas
+**4. Turtle Graphics Canvas** (Right Panel - Graphics Tab)
+- 🐢 Interactive turtle rendering
+- 🔍 Zoom: Mouse wheel or +/- buttons
+- 🖱️ Pan: Click and drag
+- 📐 Coordinate system: (0, 0) at center, Y-axis up
+- 🎨 Real-time drawing updates
 
-### Turtle Graphics Canvas
+---
 
-- **Zoom**: Mouse wheel or View menu
-- **Pan**: Middle-click drag or Ctrl+Left-click drag
-- **Reset View**: Clear Canvas button
-- **Coordinate System**: (0,0) at center, Y-axis up
+## 🎮 Running Your First Programs
 
-## Running Your First Program
-
-### PILOT Example
-
-1. Click **File → New**
-2. Enter this code:
+### PILOT Interactive Program
 
 ```pilot
 T:Welcome to Time Warp!
+T:What is your name?
+A:NAME
+T:Hello *NAME*!
 T:What is 5 + 3?
 A:ANSWER
 M:8
-Y:CORRECT
-T:Try again!
+JY:CORRECT
+T:Try again! What is 5 + 3?
 J:START
 L:CORRECT
 T:Correct! Well done.
 E:
 ```
 
+**Steps:**
+1. Click **File → New** or press **Ctrl+N**
+2. Paste the code above
 3. Press **F5** or click **Run**
-4. Type your answer in the input dialog
+4. Follow the prompts in dialog boxes
 
-### BASIC Example
+### BASIC Graphics Program
 
 ```basic
-10 PRINT "Countdown!"
-20 FOR I = 10 TO 1 STEP -1
-30 PRINT I
-40 NEXT I
-50 PRINT "Blastoff!"
+10 CLS
+20 FOR I = 1 TO 10
+30   LOCATE I, I
+40   PRINT "Line "; I
+50 NEXT I
+60 PRINT "Done!"
 ```
 
-### Logo Example
+### Logo Turtle Graphics
 
 ```logo
-REPEAT 4 [
-  FORWARD 100
-  RIGHT 90
-]
+TO SQUARE :SIZE
+  REPEAT 4 [
+    FORWARD :SIZE
+    RIGHT 90
+  ]
+END
+
+SETCOLOR blue
+PENWIDTH 3
+SQUARE 100
 ```
 
-Watch the turtle draw a square in the Graphics tab!
+**IDE automatically switches to Graphics tab when turtle draws!**
 
-## Themes
+---
 
-Switch themes via **View → Theme**:
+## 🎨 Themes
 
-- **Dracula** - Dark purple theme
-- **Monokai** - Dark with bright colors
-- **Solarized Light** - Easy on the eyes
-- **Solarized Dark** - Dark variant
-- **Ocean** - Blue-gray theme
-- **Spring** - Light and fresh
-- **Sunset** - Warm orange tones
-- **Candy** - Purple pink theme
+Switch via **View → Theme**:
 
-Theme preference is saved automatically.
+Switch via **View → Theme**:
 
-## Keyboard Shortcuts
+1. **Dracula** - Dark purple (popular!)
+2. **Monokai** - Dark with vibrant colors
+3. **Solarized Light** - Easy on the eyes
+4. **Solarized Dark** - Dark variant
+5. **Ocean** - Blue-gray theme
+6. **Spring** - Fresh and light
+7. **Sunset** - Warm orange tones
+8. **Candy** - Purple-pink delight
+9. **Forest** - Green nature theme
 
-- **F5** - Run program
-- **Shift+F5** - Stop execution
-- **Ctrl+N** - New file
-- **Ctrl+O** - Open file
-- **Ctrl+S** - Save file
-- **Ctrl+Shift+S** - Save As
-- **F3** - Find
-- **Ctrl+Plus** - Zoom In
-- **Ctrl+Minus** - Zoom Out
-- **Ctrl+Z** - Undo
-- **Ctrl+Y** - Redo
+**Theme preference is saved automatically!**
 
-## Example Programs
+---
 
-Browse example programs via **Help → Example Programs**:
+## ⌨️ Keyboard Shortcuts
 
-- **PILOT**: Interactive quizzes, adventures, calculators
-- **BASIC**: Games, graphics, screen modes
-- **Logo**: Fractals, spirals, shapes, snowflakes
+| Shortcut | Action |
+|----------|--------|
+| **F5** | Run program |
+| **Shift+F5** | Stop execution |
+| **Ctrl+N** | New file |
+| **Ctrl+O** | Open file |
+| **Ctrl+S** | Save file |
+| **Ctrl+Shift+S** | Save As |
+| **Ctrl+Z** | Undo |
+| **Ctrl+Y** | Redo |
+| **Ctrl++** | Zoom In (editor) |
+| **Ctrl+-** | Zoom Out (editor) |
 
-## Tips
+---
 
-1. **Save Often**: IDE warns about unsaved changes
-2. **Recent Files**: Quick access to last 10 files opened
-3. **Error Messages**: Includes suggestions for typos
-4. **Canvas Controls**: Zoom and pan to see details
-5. **Threaded Execution**: UI remains responsive during long programs
+## 📚 Example Programs
 
-## Troubleshooting
+The IDE includes **34 example programs**:
 
-### PySide6 Not Installed
+**Logo Turtle Graphics** (15 programs)
+- `logo_square.logo` - Simple square
+- `logo_spiral_walk.logo` - Colorful spiral
+- `logo_koch_snowflake.logo` - Fractal
+- `logo_flower.logo` - Petal flower with procedures
+- ...and more fractals, spirographs, and shapes!
+
+**BASIC Programs** (10 programs)
+- `basic_hangman.bas` - Word guessing game
+- `basic_graphics.bas` - Graphics demonstration
+- `basic_rock_paper_scissors.bas` - Classic game
+- ...and more interactive programs!
+
+**PILOT Interactive** (7 programs)
+- `pilot_adventure.pilot` - Text adventure
+- `pilot_quiz_competition.pilot` - Quiz game
+- `pilot_dragon_adventure.pilot` - Story adventure
+- ...and more interactive tutorials!
+
+**Access via**: **File → Open** → browse `examples/` directory
+
+---
+
+## 💡 Tips & Tricks
+
+1. **Save Often**: IDE warns about unsaved changes on exit
+2. **Recent Files**: Quick access to last 10 files (File → Recent)
+3. **Error Hints**: Error messages include typo suggestions
+4. **Canvas Zoom**: Use mouse wheel to zoom, click-drag to pan
+5. **Auto-Switch**: IDE switches to Graphics tab automatically when drawing
+6. **Procedures**: Logo supports user-defined procedures with `TO name :param1 ... END`
+7. **Colors**: Use color names (`blue`), hex (`#FF5733`), or RGB (`255,100,50`)
+
+---
+
+## 🔧 Troubleshooting
+
+### IDE Won't Start
 
 ```bash
-pip install PySide6
+# Check Python version (need 3.8+)
+python --version
+
+# Reinstall PySide6
+pip install --upgrade PySide6 pillow
 ```
 
-### Window Doesn't Appear
+### Graphics Not Showing
 
-Check for errors in terminal:
+1. Make sure you're using turtle commands (FORWARD, RIGHT, etc.)
+2. Click the **Graphics** tab in output panel
+3. Check that pen is down (use `PENDOWN` if needed)
+4. Try zooming out (canvas might be zoomed in)
 
-```bash
-python time_warp_ide.py 2>&1 | tee ide_log.txt
-```
+### Programs Running Slowly
 
-### Turtle Graphics Not Showing
+- Check for infinite loops
+- Reduce iteration counts in REPEAT loops
+- Logo procedures with high recursion depth can be slow
 
-1. Run a Logo program first
-2. Switch to Graphics tab
-3. Check if canvas is cleared (might be zoomed out)
+### Theme Not Saving
 
-### Theme Not Persisting
+Check QSettings configuration location:
+- **Linux**: `~/.config/TimeWarp/`
+- **macOS**: `~/Library/Preferences/`
+- **Windows**: Registry under `HKEY_CURRENT_USER\Software\TimeWarp\`
 
-Check QSettings path:
-- Linux: `~/.config/TimeWarp/IDE.conf`
-- macOS: `~/Library/Preferences/com.timewarp.IDE.plist`
-- Windows: Registry under `HKEY_CURRENT_USER\Software\TimeWarp\IDE`
+### Input Dialogs Not Appearing
 
-## Next Steps
+- INPUT commands show Qt dialog boxes
+- Check if dialogs are behind main window
+- Try Alt+Tab to find dialog window
 
-- Explore example programs in `examples/` directory
-- Read language documentation in `docs/`
-- Try compiling TempleCode to C (see `docs/compiler.md`)
-- Contribute your own examples!
+---
 
-## Support
+## 📖 Next Steps
 
-For issues or questions:
-- GitHub: https://github.com/James-HoneyBadger/Time_Warp
-- Email: james@honey-badger.org
+- ✅ **Explore Examples**: Browse all 34 example programs
+- 📚 **Read Turtle Reference**: See [docs/TURTLE_GRAPHICS_REFERENCE.md](docs/TURTLE_GRAPHICS_REFERENCE.md)
+- 🎨 **Try Different Themes**: Find your favorite!
+- 💻 **Write Your Own**: Create programs in all three language styles
+- 🤝 **Contribute**: Share your programs with the community!
+
+---
+
+## 🆘 Support
+
+**Need Help?**
+- 📖 Full Documentation: [README.md](README.md)
+- 🐛 Report Issues: [GitHub Issues](https://github.com/James-HoneyBadger/Time_Warp/issues)
+- 📧 Email: james@honey-badger.org
+- 🌐 Repository: https://github.com/James-HoneyBadger/Time_Warp
+
+---
+
+<div align="center">
+
+**Time Warp IDE** - *Classic educational programming meets modern desktop experience* 🚀
+
+</div>
