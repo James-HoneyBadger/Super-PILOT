@@ -1,37 +1,37 @@
-/// Safe Expression Evaluator for Time Warp IDE
-/// 
-/// This module provides secure mathematical expression evaluation without using eval().
-/// 
-/// # Features
-/// - Arithmetic operators: `+`, `-`, `*`, `/`, `^` (exponent), `%` (modulo)
-/// - Mathematical functions: `sin()`, `cos()`, `tan()`, `sqrt()`, `abs()`, `log()`, etc.
-/// - Variables: Pre-defined or dynamic via `set_variable()`
-/// - Parentheses for grouping
-/// - Negative numbers: `-5`, `-(3 + 2)`
-/// 
-/// # Example
-/// ```rust,no_run
-/// use time_warp_unified::utils::ExpressionEvaluator;
-/// 
-/// let mut eval = ExpressionEvaluator::new();
-/// eval.set_variable("X".to_string(), 10.0);
-/// 
-/// let result = eval.evaluate("2 * X + 5").unwrap();
-/// assert_eq!(result, 25.0);
-/// 
-/// let trig = eval.evaluate("sin(0) + cos(0)").unwrap();
-/// assert_eq!(trig, 1.0);
-/// ```
-/// 
-/// # Supported Functions
-/// Trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sinh`, `cosh`, `tanh`
-/// Math: `sqrt`, `abs`, `floor`, `ceil`, `round`, `exp`, `log` (natural log), `log10`
-/// Special: `min(a,b)`, `max(a,b)`, `pow(base,exp)`, `rand()` (0-1), `int(x)` (truncate)
-/// 
-/// # Security
-/// - No `eval()` or code execution - only safe arithmetic
-/// - Complexity limits: MAX_TOKENS=1000, MAX_DEPTH=100 (prevents DoS)
-/// - Detailed error messages for debugging
+//! Safe Expression Evaluator for Time Warp IDE
+//! 
+//! This module provides secure mathematical expression evaluation without using eval().
+//! 
+//! # Features
+//! - Arithmetic operators: `+`, `-`, `*`, `/`, `^` (exponent), `%` (modulo)
+//! - Mathematical functions: `sin()`, `cos()`, `tan()`, `sqrt()`, `abs()`, `log()`, etc.
+//! - Variables: Pre-defined or dynamic via `set_variable()`
+//! - Parentheses for grouping
+//! - Negative numbers: `-5`, `-(3 + 2)`
+//! 
+//! # Example
+//! ```rust,no_run
+//! use time_warp_unified::utils::ExpressionEvaluator;
+//! 
+//! let mut eval = ExpressionEvaluator::new();
+//! eval.set_variable("X".to_string(), 10.0);
+//! 
+//! let result = eval.evaluate("2 * X + 5").unwrap();
+//! assert_eq!(result, 25.0);
+//! 
+//! let trig = eval.evaluate("sin(0) + cos(0)").unwrap();
+//! assert_eq!(trig, 1.0);
+//! ```
+//! 
+//! # Supported Functions
+//! Trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sinh`, `cosh`, `tanh`
+//! Math: `sqrt`, `abs`, `floor`, `ceil`, `round`, `exp`, `log` (natural log), `log10`
+//! Special: `min(a,b)`, `max(a,b)`, `pow(base,exp)`, `rand()` (0-1), `int(x)` (truncate)
+//! 
+//! # Security
+//! - No `eval()` or code execution - only safe arithmetic
+//! - Complexity limits: MAX_TOKENS=1000, MAX_DEPTH=100 (prevents DoS)
+//! - Detailed error messages for debugging
 
 use anyhow::{Result, anyhow};
 use std::collections::HashMap;
@@ -293,8 +293,6 @@ impl ExpressionEvaluator {
                             } else {
                                 break;
                             }
-                        } else if matches!(top, Token::Function(_)) {
-                            break;
                         } else {
                             break;
                         }

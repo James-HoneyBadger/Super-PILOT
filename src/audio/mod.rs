@@ -1,5 +1,5 @@
-/// Audio system for Time Warp IDE
-/// Supports sound playback and BASIC-style music strings
+//! Audio system for Time Warp IDE
+//! Supports sound playback and BASIC-style music strings
 
 use std::collections::HashMap;
 use std::path::PathBuf;

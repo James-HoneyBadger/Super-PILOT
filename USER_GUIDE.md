@@ -1,6 +1,6 @@
 # Time Warp IDE — User Guide
 
-Welcome to Time Warp IDE, a retromodern learning environment supporting PILOT, BASIC, and Logo with turtle graphics. This guide covers daily use across the Python and Rust IDEs.
+Welcome to Time Warp IDE, a retromodern learning environment for TempleCode — a unified language combining BASIC, PILOT, and Logo with turtle graphics. This guide covers daily use of the Rust-based IDE.
 
 For help: <james@honey-badger.org>
 
@@ -8,14 +8,9 @@ For help: <james@honey-badger.org>
 
 ## Getting Started
 
-Pick one IDE:
-
-- Python (modern, PySide6): `python Time_Warp_IDE.py`
-- Python (classic, Tkinter): `python Time_Warp.py`
-- Rust (egui):
+Run the IDE:
 
 ```bash
-cd Time_Warp_Rust
 cargo run
 ```
 
@@ -29,8 +24,8 @@ cargo run
 
 Notes:
 
-- Examples are in `examples/` and top-level `*.spt`, `*.pilot`, `*.logo`.
-- Turtle graphics render on the canvas (Python IDE) or unified canvas (Rust IDE).
+- Examples are in `examples/` (TempleCode supports `.tc`, `.bas`, `.pilot`, `.logo`).
+- Turtle graphics render on the unified canvas.
 
 ## Language Reference
 
@@ -185,9 +180,8 @@ Time Warp IDE supports:
 
 Common issues:
 
-1. Python GUI fails to start: verify PySide6 (modern) or tkinter (classic) is installed.
-2. Turtle graphics not showing: ensure your system supports GUI apps (X11/Wayland on Linux).
-3. Rust IDE build fails: run `rustup update` and `cargo clean && cargo build`.
+1. Turtle graphics not showing: ensure your system supports GUI apps (X11/Wayland on Linux).
+2. Build fails: run `rustup update` and `cargo clean && cargo build`.
 
 Getting help:
 
@@ -196,9 +190,9 @@ Getting help:
 
 ## System Requirements
 
-- Python 3.7 or higher
-- tkinter (usually included with Python)
-- Pillow library for enhanced graphics
+- Rust stable toolchain (rustup, cargo)
+- Linux desktop environment (X11/Wayland)
+- Optional: C compiler (cc/gcc/clang) to build TempleCode to native executables
 - At least 50MB disk space
 
 ---

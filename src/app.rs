@@ -49,6 +49,7 @@ pub struct TimeWarpApp {
 
     // UI options
     pub show_overlay_text: bool,
+    pub show_about_dialog: bool,
     
     // Debug state (future features)
     #[allow(dead_code)]
@@ -91,6 +92,7 @@ impl TimeWarpApp {
             last_key_pressed: None,
 
             show_overlay_text: true,
+            show_about_dialog: false,
             
             debug_mode: false,
             breakpoints: HashMap::new(),
@@ -178,6 +180,30 @@ impl eframe::App for TimeWarpApp {
                     if ui.button("OK").clicked() {
                         self.error_message = None;
                     }
+                });
+        }
+        
+        // About dialog
+        if self.show_about_dialog {
+            egui::Window::new("About Time Warp IDE")
+                .collapsible(false)
+                .resizable(false)
+                .show(ctx, |ui| {
+                    ui.vertical_centered(|ui| {
+                        ui.heading("Time Warp IDE");
+                        ui.label(format!("Version {}", env!("CARGO_PKG_VERSION")));
+                        ui.add_space(10.0);
+                        ui.label("Educational programming environment for TempleCode");
+                        ui.label("Combining BASIC, PILOT, and Logo");
+                        ui.add_space(10.0);
+                        ui.hyperlink_to("GitHub Repository", "https://github.com/James-HoneyBadger/Time_Warp");
+                        ui.add_space(10.0);
+                        ui.label("© 2025 James Temple");
+                        ui.add_space(10.0);
+                        if ui.button("Close").clicked() {
+                            self.show_about_dialog = false;
+                        }
+                    });
                 });
         }
     }

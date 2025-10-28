@@ -8,3 +8,9 @@ impl GameEngine {
         Self
     }
 }
+
+impl Default for GameEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}

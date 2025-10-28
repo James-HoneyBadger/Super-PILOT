@@ -4,6 +4,7 @@ use thiserror::Error;
 // Currently using anyhow::Result in most places, but these are available for typed errors
 #[allow(dead_code)]
 #[derive(Error, Debug)]
+#[allow(clippy::enum_variant_names)]
 pub enum TimeWarpError {
     #[error("Parse error: {0}")]
     ParseError(String),

@@ -7,16 +7,16 @@ Thank you for your interest in contributing! Please take a moment to read this g
 - Fork the repository and create a feature branch.
 - Keep changes focused and incremental. Prefer small PRs.
 - Run tests locally before pushing.
-- Ensure formatting and linting pass for Python and Rust code.
+- Ensure formatting and linting pass for Rust code.
 
 ## Code Style
 
-- Python: black, isort, ruff
 - Rust: rustfmt, clippy
 
 ## Commit Messages
 
 Use conventional commits when possible:
+
 - feat: new feature
 - fix: bug fix
 - docs: documentation only changes
@@ -28,7 +28,7 @@ Use conventional commits when possible:
 
 - [ ] Tests added/updated where relevant
 - [ ] Docs updated (README/USER_GUIDE/DEVELOPMENT)
-- [ ] CI passes (Python and Rust)
+- [ ] CI passes (Rust)
 - [ ] No broken lints or format checks
 
 ## Reporting Issues

@@ -16,6 +16,12 @@ pub fn execute(interp: &mut Interpreter, command: &str, turtle: &mut TurtleState
     if parts.is_empty() {
         return Ok(ExecutionResult::Continue);
     }
+    // User-defined procedure names take precedence over built-in keywords
+    let proc_upper = parts[0].to_uppercase();
+    if interp.logo_procedures.contains_key(&proc_upper) {
+        let arg_str = parts.get(1).copied().unwrap_or("");
+        return execute_procedure(interp, &proc_upper, arg_str, turtle);
+    }
     
     match parts[0] {
         "FORWARD" | "FD" => execute_forward(interp, turtle, parts.get(1).unwrap_or(&"0")),
@@ -37,15 +43,9 @@ pub fn execute(interp: &mut Interpreter, command: &str, turtle: &mut TurtleState
         "TO" => execute_to(interp, parts.get(1).unwrap_or(&"")),
         "END" => Ok(ExecutionResult::Continue), // END handled in execute_to
         _ => {
-            // Check if command is a stored procedure name
-            let proc_upper = parts[0].to_uppercase();
-            if interp.logo_procedures.contains_key(&proc_upper) {
-                let arg_str = parts.get(1).copied().unwrap_or("");
-                execute_procedure(interp, &proc_upper, arg_str, turtle)
-            } else {
-                interp.log_output(format!("Unknown Logo command: {}", parts[0]));
-                Ok(ExecutionResult::Continue)
-            }
+            // Unknown command (user procedures already handled before match)
+            interp.log_output(format!("❌ Unknown Logo command: {}", parts[0]));
+            Ok(ExecutionResult::Continue)
         }
     }
 }
@@ -244,9 +244,9 @@ fn parse_commands(block: &str) -> Result<Vec<String>> {
     let mut commands = Vec::new();
     let mut current = String::new();
     let mut depth: i32 = 0;
-    let mut tokens = block.split_whitespace().peekable();
+    let tokens = block.split_whitespace();
 
-    while let Some(token) = tokens.next() {
+    for token in tokens {
         // Decide if we should start a new command before appending this token
         let starts_upper = token.chars().next().map(|c| c.is_ascii_uppercase()).unwrap_or(false);
         if depth == 0 && starts_upper && !current.is_empty() {
@@ -283,8 +283,8 @@ fn execute_to(interp: &mut Interpreter, name_and_params: &str) -> Result<Executi
     let mut params: Vec<String> = Vec::new();
     for t in tokens.iter().skip(1) {
         let t = t.trim();
-        if t.starts_with(':') {
-            params.push(t[1..].to_uppercase());
+        if let Some(stripped) = t.strip_prefix(':') {
+            params.push(stripped.to_uppercase());
         } else {
             params.push(t.to_uppercase());
         }
@@ -312,8 +312,8 @@ fn execute_to(interp: &mut Interpreter, name_and_params: &str) -> Result<Executi
 fn execute_procedure(interp: &mut Interpreter, name: &str, arg_str: &str, turtle: &mut TurtleState) -> Result<ExecutionResult> {
     // Execute stored procedure body with optional args
     if let Some(proc_def) = interp.logo_procedures.get(name).cloned() {
-        // Bind parameters
-        let args: Vec<&str> = if arg_str.trim().is_empty() { Vec::new() } else { arg_str.trim().split_whitespace().collect() };
+    // Bind parameters
+    let args: Vec<&str> = arg_str.split_whitespace().collect();
         let mut old_num: HashMap<String, Option<f64>> = HashMap::new();
         let mut old_str: HashMap<String, Option<String>> = HashMap::new();
         for (i, p) in proc_def.params.iter().enumerate() {

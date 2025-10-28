@@ -200,8 +200,8 @@ fn stop_program(app: &mut TimeWarpApp) {
     app.is_executing = false;
 }
 
-fn show_about(_app: &mut TimeWarpApp) {
-    // TODO: Show about dialog
+fn show_about(app: &mut TimeWarpApp) {
+    app.show_about_dialog = true;
 }
 
 fn save_canvas_as_png(app: &mut TimeWarpApp) {

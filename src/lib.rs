@@ -6,6 +6,7 @@ pub mod graphics;
 pub mod interpreter;
 pub mod iot;
 pub mod languages;
+pub mod compiler;
 pub mod ml;
 pub mod plugins;
 pub mod ui;

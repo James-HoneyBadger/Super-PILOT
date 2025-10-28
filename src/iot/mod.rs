@@ -8,3 +8,9 @@ impl IoTManager {
         Self
     }
 }
+
+impl Default for IoTManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}

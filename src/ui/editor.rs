@@ -82,6 +82,10 @@ pub fn render(app: &mut TimeWarpApp, ui: &mut egui::Ui) {
 }
 
 pub fn render_find_replace(app: &mut TimeWarpApp, ctx: &egui::Context) {
+    let mut should_find = false;
+    let mut should_replace = false;
+    let mut should_replace_all = false;
+    
     egui::Window::new("Find/Replace")
         .open(&mut app.show_find_replace)
         .show(ctx, |ui| {
@@ -95,14 +99,65 @@ pub fn render_find_replace(app: &mut TimeWarpApp, ctx: &egui::Context) {
             });
             ui.horizontal(|ui| {
                 if ui.button("Find Next").clicked() {
-                    // TODO: Implement find
+                    should_find = true;
                 }
                 if ui.button("Replace").clicked() {
-                    // TODO: Implement replace
+                    should_replace = true;
                 }
                 if ui.button("Replace All").clicked() {
-                    // TODO: Implement replace all
+                    should_replace_all = true;
                 }
             });
         });
+    
+    if should_find {
+        find_next(app);
+    }
+    if should_replace {
+        replace_current(app);
+    }
+    if should_replace_all {
+        replace_all(app);
+    }
+}
+
+fn find_next(app: &mut TimeWarpApp) {
+    if app.find_text.is_empty() {
+        return;
+    }
+    let code = app.current_code();
+    if code.contains(&app.find_text) {
+        app.error_message = Some(format!("Found '{}' in code", app.find_text));
+    } else {
+        app.error_message = Some(format!("'{}' not found", app.find_text));
+    }
+}
+
+fn replace_current(app: &mut TimeWarpApp) {
+    if app.find_text.is_empty() {
+        return;
+    }
+    let code = app.current_code();
+    if let Some(pos) = code.find(&app.find_text) {
+        let new_code = format!("{}{}{}", &code[..pos], &app.replace_text, &code[pos + app.find_text.len()..]);
+        app.set_current_code(new_code);
+        app.error_message = Some("Replaced one occurrence".to_string());
+    } else {
+        app.error_message = Some(format!("'{}' not found", app.find_text));
+    }
+}
+
+fn replace_all(app: &mut TimeWarpApp) {
+    if app.find_text.is_empty() {
+        return;
+    }
+    let code = app.current_code();
+    let count = code.matches(&app.find_text).count();
+    if count > 0 {
+        let new_code = code.replace(&app.find_text, &app.replace_text);
+        app.set_current_code(new_code);
+        app.error_message = Some(format!("Replaced {} occurrence(s)", count));
+    } else {
+        app.error_message = Some(format!("'{}' not found", app.find_text));
+    }
 }

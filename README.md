@@ -1,8 +1,8 @@
-# Time Warp IDE
+# Time Warp IDE (TempleCode)
 
 A modern educational programming environment written in Rust.
 
-Time Warp IDE is a unified implementation supporting PILOT, BASIC, and Logo languages with integrated turtle graphics, safe expression evaluation, and modern UI powered by egui.
+Time Warp IDE implements TempleCode — a unified language that combines the best of BASIC, PILOT, and Logo — with integrated turtle graphics, safe expression evaluation, and a modern egui UI. You can freely mix commands (PRINT / T: / FORWARD, etc.) in a single program.
 
 ## Quick Start
 
@@ -20,9 +20,10 @@ cargo build --release
 
 ## Features
 
-- **PILOT**: Full implementation (text, variables, conditionals, jumps)
-- **BASIC**: Core commands (PRINT, LET, INPUT, INKEY$, IF...THEN, FOR/NEXT, GOTO, GOSUB, RETURN, LINE, CIRCLE)
-- **Logo**: Turtle graphics with REPEAT, procedures (TO/END), PENWIDTH, named/hex colors, PNG export
+- TempleCode language: All BASIC, PILOT, and Logo commands in one language
+  - Text commands: PRINT, LET, INPUT, INKEY$, IF...THEN, FOR/NEXT, GOTO, GOSUB, RETURN
+  - PILOT-style: T:, A:, labels (L:), jumps (J:)
+  - Logo turtle graphics: FORWARD/FD, LEFT/LT, RIGHT/RT, REPEAT, TO/END procedures, PENWIDTH, colors, PNG export
 - Safe expression evaluator (no eval())
 - Async execution with tokio
 - Expression caching (10-50x speedup)
@@ -43,7 +44,7 @@ A:NAME
 T:Hello *NAME*!
 ```
 
-**BASIC:**
+**TempleCode (BASIC-style):**
 
 ```basic
 10 LET A = 5
@@ -76,8 +77,37 @@ PNG export: use View → "Save Canvas as PNG…" in the UI.
 **For Developers**:
 
 - [Developer Reference](docs/DEVELOPER_REFERENCE.md) — API documentation and extension guide
+- [Parsing & Language Detection](docs/PARSING_REFERENCE.md) — Command precedence, line numbers, comparisons
 
-**See also**: [Examples README](examples/README.md) for learning paths and all 23 programs.
+### TempleCode Compiler (experimental)
+
+You can transpile TempleCode to C and build a native Linux executable.
+
+Scope (v0):
+ 
+- Text-mode subset: PRINT, LET, INPUT, IF ... THEN (GOTO | PRINT), GOTO, END
+- PILOT: T:, A:
+- Logo: currently ignored at compile-time (runtime support remains via interpreter)
+
+Usage:
+
+```bash
+# Build and run the GUI normally
+cargo run
+
+# Compile a TempleCode source file to an executable
+cargo run -- --compile my_program.tc -o my_program
+
+# Then run it
+./my_program
+```
+
+Notes:
+ 
+- Requires a system C compiler (cc/gcc/clang) on PATH.
+- Output C file is written to target/tmp internally before linking.
+
+**See also**: [Examples README](examples/README.md) for learning paths and all 32 programs.
 
 ## Testing
 

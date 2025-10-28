@@ -1,10 +1,11 @@
 use eframe::egui;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum Theme {
     AmberPhosphor,
     GreenPhosphor,
     BluePhosphor,
+    #[default]
     ModernDark,
     ModernLight,
     Dracula,
@@ -104,8 +105,4 @@ impl Theme {
     }
 }
 
-impl Default for Theme {
-    fn default() -> Self {
-        Theme::ModernDark
-    }
-}
+// Default is derived; ModernDark marked as the default variant

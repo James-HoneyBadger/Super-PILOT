@@ -1,4 +1,4 @@
-/// Async execution support for Time Warp IDE
+//! Async execution support for Time Warp IDE
 
 use anyhow::Result;
 use tokio::sync::mpsc;

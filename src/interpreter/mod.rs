@@ -1,36 +1,36 @@
-/// Time Warp Unified Interpreter
-/// 
-/// Central execution engine supporting PILOT, BASIC, and Logo languages.
-/// Handles program loading, execution, variable management, and control flow.
-/// 
-/// # Supported Languages
-/// - **PILOT**: Educational language with text/match/jump commands
-/// - **BASIC**: Classic PRINT/LET/INPUT/IF/FOR/GOTO (in progress)
-/// - **Logo**: Turtle graphics with forward/back/left/right (in progress)
-/// 
-/// # Example
-/// ```rust,no_run
-/// use time_warp_unified::interpreter::Interpreter;
-/// use time_warp_unified::graphics::TurtleState;
-/// 
-/// let mut interp = Interpreter::new();
-/// let mut turtle = TurtleState::default();
-/// 
-/// // Load PILOT program
-/// interp.load_program("T:Hello\nT:World").unwrap();
-/// let output = interp.execute(&mut turtle).unwrap();
-/// assert_eq!(output, vec!["Hello", "World"]);
-/// ```
-/// 
-/// # Architecture
-/// - Stateless language executors in `languages/` modules
-/// - Shared state: variables, output buffer, control flow stacks
-/// - Regex optimization: Lazy-compiled patterns for 5-10x speedup
-/// 
-/// # Security
-/// - Execution timeout: MAX_ITERATIONS=100,000 prevents infinite loops
-/// - Expression complexity limits in ExpressionEvaluator
-/// - Error recovery: Continues on non-fatal errors
+//! Time Warp Unified Interpreter
+//! 
+//! Central execution engine supporting PILOT, BASIC, and Logo languages.
+//! Handles program loading, execution, variable management, and control flow.
+//! 
+//! # Supported Languages
+//! - **PILOT**: Educational language with text/match/jump commands
+//! - **BASIC**: Classic PRINT/LET/INPUT/IF/FOR/GOTO (in progress)
+//! - **Logo**: Turtle graphics with forward/back/left/right (in progress)
+//! 
+//! # Example
+//! ```rust,no_run
+//! use time_warp_unified::interpreter::Interpreter;
+//! use time_warp_unified::graphics::TurtleState;
+//! 
+//! let mut interp = Interpreter::new();
+//! let mut turtle = TurtleState::default();
+//! 
+//! // Load PILOT program
+//! interp.load_program("T:Hello\nT:World").unwrap();
+//! let output = interp.execute(&mut turtle).unwrap();
+//! assert_eq!(output, vec!["Hello", "World"]);
+//! ```
+//! 
+//! # Architecture
+//! - Stateless language executors in `languages/` modules
+//! - Shared state: variables, output buffer, control flow stacks
+//! - Regex optimization: Lazy-compiled patterns for 5-10x speedup
+//! 
+//! # Security
+//! - Execution timeout: MAX_ITERATIONS=100,000 prevents infinite loops
+//! - Expression complexity limits in ExpressionEvaluator
+//! - Error recovery: Continues on non-fatal errors
 
 use anyhow::Result;
 use std::time::{Duration, Instant};
@@ -45,6 +45,10 @@ use crate::graphics::TurtleState;
 use crate::languages::{Language, pilot, basic, logo};
 use crate::languages::logo::LogoProcedure;
 use crate::utils::ExpressionEvaluator;
+
+// Type aliases to reduce type complexity in public fields
+pub type InputCallback = Box<dyn FnMut(&str) -> String>;
+pub type InkeyCallback = Box<dyn Fn() -> Option<String>>;
 
 // Lazy compiled regex for variable interpolation (5-10x performance boost)
 static VAR_INTERPOLATION_PATTERN: Lazy<Regex> = Lazy::new(|| {
@@ -99,7 +103,7 @@ pub struct Interpreter {
     pub current_language: Language,
     
     // I/O handling
-    pub input_callback: Option<Box<dyn FnMut(&str) -> String>>,
+    pub input_callback: Option<InputCallback>,
     pub last_input: String,
 
     // Logo procedures (name -> body lines)
@@ -110,7 +114,7 @@ pub struct Interpreter {
     pub pending_resume_line: Option<usize>,
     
     // Keyboard state for INKEY$ (callback for tests, direct field for UI)
-    pub inkey_callback: Option<Box<dyn Fn() -> Option<String>>>,
+    pub inkey_callback: Option<InkeyCallback>,
     pub last_key_pressed: Option<String>,
     
     // Unified screen state
@@ -194,8 +198,8 @@ impl Interpreter {
             }
             
             // Collect PILOT labels before pushing
-            if command_owned.starts_with("L:") {
-                let label = command_owned[2..].trim();
+            if let Some(stripped) = command_owned.strip_prefix("L:") {
+                let label = stripped.trim();
                 self.labels.insert(label.to_string(), idx);
             }
             

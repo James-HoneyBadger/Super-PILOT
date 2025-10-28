@@ -8,56 +8,22 @@
 
 ## Project Overview
 
-Time Warp IDE is an educational programming environment supporting PILOT, BASIC, Logo, and modern languages (Python/JS/Perl) with integrated turtle graphics, IoT/robotics capabilities, and game development features.
+Time Warp IDE is an educational programming environment for TempleCode — a unified language combining BASIC, PILOT, and Logo — with integrated turtle graphics, IoT/robotics capabilities, and game development features.
 
-**Current State:** Triple implementation (Python PySide6 = primary, Python tkinter = archived, Rust = experimental)
+**Current State:** Rust implementation is primary. Legacy Python variants have been removed.
 
 ## Architecture: The Big Picture
 
-### Three Parallel Implementations
+### Implementation
 
-1. **`Time_Warp_IDE.py`** (PySide6) - **PRIMARY/OFFICIAL VERSION**
-   - Modern Qt-based UI, runs on systems with CPU instruction support (SSSE3, SSE4.1, SSE4.2, POPCNT)
-   - Entry point: `Time_Warp_IDE.py` → UI factory: `ui/qt_ui.py` → Core: `core/interpreter.py`
-   
-2. **`Time_Warp.py`** (tkinter) - **ARCHIVED** (reference only, ~4700 lines monolithic)
-   - Legacy implementation, all-in-one file with embedded UI logic
+- **Rust (egui)** — primary and official version
+  - Entry point: `src/main.rs` → App: `src/app.rs` → Interpreter: `src/interpreter/`
 
-3. **Rust versions** (`src/main.rs`, `Time_Warp_Rust/`, `Time_Warp_II/`) - **EXPERIMENTAL**
-   - Not yet feature-complete; exploring egui-based rewrite
-
-### Core Component Flow
-
-```
-Time_Warp_IDE.py (559 lines)
-  ↓ checks PySide6 compatibility via subprocess
-  ↓ imports UI factory
-ui/qt_ui.py (QtUIFactory)
-  ↓ creates PySide6 widgets
-  ↓ connects to interpreter
-core/interpreter.py (TimeWarpInterpreter, 1521 lines)
-  ↓ dispatches to language-specific executors
-core/interpreters/{pilot.py, basic.py, logo.py}
-  ↓ each implements LanguageExecutor protocol
-  ↓ execute_command() returns string output
-```
-
-**Critical Design Decision:** Language executors are **stateless command processors** returning text output. All UI state (turtle canvas, output display, themes) lives in the main application, not the interpreter.
+**Critical Design Decision:** Language executors are stateless command processors returning text output. All UI state (turtle canvas, output display, themes) lives in the main application, not the interpreter.
 
 ## Language Executor Pattern
 
-Each language in `core/interpreters/` follows this protocol:
-
-```python
-class LanguageExecutor:
-    def execute_command(self, command: str) -> str:
-        """Execute command and return output text"""
-        # Parse command
-        # Update internal state (variables, turtle position)
-        # Return formatted output string
-```
-
-**Key Pattern:** Executors return strings like `"🐢 Forward 100\n"` with emoji prefixes (❌ error, ℹ️ info, 🎨 theme, 🚀 run, 🐢 turtle).
+Each language executor in Rust handles parsing and updates interpreter state, emitting text output with emoji prefixes (❌ error, ℹ️ info, 🎨 theme, 🚀 run, 🐢 turtle).
 
 ## Critical Workflows
 
