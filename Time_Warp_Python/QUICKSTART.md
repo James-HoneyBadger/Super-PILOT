@@ -1,8 +1,8 @@
-# Time Warp IDE - Python Version - Quick Start
+# Time Warp IDE - Python Version - Quick Start (TempleCode)
 
 ## Running the Python Version
 
-The Python port is now **fully functional** and can execute programs in all three languages!
+The Python port is now **fully functional** and executes programs in the unified TempleCode language (combining BASIC, PILOT, and Logo).
 
 ### Installation
 
@@ -19,7 +19,10 @@ pip install -e .
 # List available examples
 python3 run_time_warp.py --examples
 
-# Run a program
+# Run a TempleCode program (.tc recommended)
+python3 run_time_warp.py examples/demo_templecode.tc
+
+# Run a legacy-style program (still TempleCode)
 python3 run_time_warp.py examples/logo_square.logo
 
 # Show turtle graphics info
@@ -62,16 +65,17 @@ Run the comprehensive demo:
 ```
 
 This demonstrates:
-- Logo turtle graphics
-- PILOT text processing
-- Expression evaluation
+- Logo-style turtle graphics
+- PILOT-style text processing
+- BASIC-style expressions and control flow
 - Error detection and suggestions
 
 ## What Works
 
-✅ **PILOT** - All 11 commands (T:, A:, M:, Y:, N:, C:, U:, J:, L:, E:, R:)  
-✅ **BASIC** - 15+ commands (PRINT, LET, INPUT, GOTO, FOR/NEXT, etc.)  
-✅ **Logo** - 20+ commands (turtle movement, pen control, colors, REPEAT)  
+✅ **TempleCode** styles:
+- PILOT-style: 11 commands (T:, A:, M:, Y:, N:, C:, U:, J:, L:, E:, R:)
+- BASIC-style: 15+ commands (PRINT, LET, INPUT, GOTO, FOR/NEXT, etc.)
+- Logo-style: 20+ commands (turtle movement, pen control, colors, REPEAT)
 ✅ **Expression Evaluator** - Safe math with 15+ functions  
 ✅ **Error Hints** - 100+ typo suggestions  
 ✅ **Compiler** - TempleCode → C transpilation  
@@ -98,17 +102,17 @@ ALL TESTS PASSED!
 
 ## Example Programs
 
-### PILOT (7 programs)
+### TempleCode PILOT-style (7 programs)
 - `pilot_screen_demo.pilot` - ✅ Works perfectly
 - `pilot_adventure.pilot` - Requires INPUT (interactive)
 - `pilot_simple_calculator.pilot` - Requires INPUT
 
-### BASIC (10 programs)
+### TempleCode BASIC-style (10 programs)
 - `basic_multiplication_table.bas` - Requires INPUT
 - `basic_countdown.bas` - Requires INPUT
 - All support graphics commands
 
-### Logo (15 programs)
+### TempleCode Logo-style (15 programs)
 - `logo_square.logo` - ✅ Works perfectly (5 lines)
 - `logo_starburst.logo` - ✅ Works perfectly (2 lines)
 - `logo_spiral_walk.logo` - ✅ Works perfectly
@@ -141,9 +145,10 @@ time_warp/
 ├── core/
 │   └── interpreter.py         # 465 lines - Main engine
 ├── languages/
-│   ├── pilot.py              # 162 lines - PILOT executor
-│   ├── basic.py              # 412 lines - BASIC executor
-│   └── logo.py               # 383 lines - Logo executor
+│   ├── templecode.py         # Unified TempleCode executor
+│   ├── pilot.py              # Compatibility shim → templecode
+│   ├── basic.py              # Compatibility shim → templecode
+│   └── logo.py               # Compatibility shim → templecode
 ├── graphics/
 │   └── turtle_state.py       # 155 lines - Turtle graphics
 ├── utils/

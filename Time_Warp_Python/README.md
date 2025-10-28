@@ -1,20 +1,20 @@
-# Time Warp IDE - Python Port
+# Time Warp IDE - Python Port (TempleCode)
 
-Educational multi-language programming environment supporting PILOT, BASIC, and Logo.
+Educational TempleCode programming environment — a unified language combining BASIC, PILOT, and Logo.
 
 ## Overview
 
-Time Warp IDE is a modern educational programming platform that brings together three classic teaching languages in one unified environment:
+Time Warp IDE is a modern educational programming platform built around **TempleCode** — a single, unified language that blends the strengths of three classics:
 
-- **PILOT** - Simple command-based language for interactive lessons
-- **BASIC** - Classic BASIC with line numbers and structured programming
-- **Logo** - Turtle graphics for visual learning
+- **PILOT-style** text/label commands (e.g., T:, A:, M:, Y:/N:, L:, E:)
+- **BASIC-style** control flow and expressions (PRINT, INPUT, IF/THEN, FOR/NEXT)
+- **Logo-style** turtle graphics (FORWARD, LEFT/RIGHT, PENUP/PENDOWN, REPEAT)
 
-Ported from the Rust implementation with full feature parity.
+Aligned with the Rust TempleCode implementation with functional parity.
 
 ## Features
 
-- ✅ Three integrated programming languages
+- ✅ Unified TempleCode combining BASIC, PILOT, and Logo
 - ✅ Turtle graphics with zoom/pan
 - ✅ Safe expression evaluation (no eval/exec)
 - ✅ Error detection with helpful suggestions
@@ -40,7 +40,32 @@ pip install -e .
 
 ## Quick Start
 
-### Running Programs
+### Desktop IDE (Recommended)
+
+Launch the full graphical IDE:
+
+```bash
+cd Time_Warp/Time_Warp_Python
+python time_warp_ide.py
+```
+
+Or open a specific file (TempleCode .tc is recommended):
+
+```bash
+python time_warp_ide.py examples/demo_templecode.tc
+```
+
+**Features:**
+- Code editor with syntax highlighting
+- Turtle graphics canvas with zoom/pan
+- Output panel with colored text
+- File menu with recent files
+- 8 beautiful themes (Dracula, Monokai, Solarized, etc.)
+- Run/Stop execution controls
+
+### CLI Usage
+
+Run programs from command line:
 
 ```python
 from time_warp.core.interpreter import Interpreter
@@ -63,7 +88,7 @@ output = interp.execute(turtle)
 print(output)
 ```
 
-### PILOT Example
+### PILOT-style Example (TempleCode)
 
 ```pilot
 L:START
@@ -78,7 +103,7 @@ T:Nice to meet you!
 E:
 ```
 
-### BASIC Example
+### BASIC-style Example (TempleCode)
 
 ```basic
 10 PRINT "Countdown"
@@ -88,7 +113,7 @@ E:
 50 PRINT "Blastoff!"
 ```
 
-### Logo Example
+### Logo-style Example (TempleCode)
 
 ```logo
 REPEAT 4 [
@@ -104,9 +129,10 @@ time_warp/
 ├── core/              # Core interpreter engine
 │   └── interpreter.py # Main execution engine
 ├── languages/         # Language executors
-│   ├── pilot.py       # PILOT commands
-│   ├── basic.py       # BASIC commands
-│   └── logo.py        # Logo/turtle graphics
+│   ├── templecode.py  # Unified TempleCode executor (BASIC/PILOT/Logo)
+│   ├── pilot.py       # Compatibility shim → templecode
+│   ├── basic.py       # Compatibility shim → templecode
+│   └── logo.py        # Compatibility shim → templecode
 ├── graphics/          # Turtle graphics
 │   └── turtle_state.py
 ├── utils/             # Utilities

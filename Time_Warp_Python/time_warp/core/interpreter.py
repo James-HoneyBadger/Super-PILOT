@@ -6,7 +6,7 @@ Ported from Rust: time_warp_unified::interpreter::mod.rs
 import re
 import time
 from enum import Enum, auto
-from typing import Optional, List, Dict, Tuple, Callable
+from typing import Optional, List, Dict, Tuple, Callable, TYPE_CHECKING
 from dataclasses import dataclass
 
 
@@ -43,10 +43,16 @@ class ScreenMode(Enum):
 
 
 class Language(Enum):
-    """Supported programming languages"""
-    PILOT = auto()
-    BASIC = auto()
-    LOGO = auto()
+    """Single unified language for Time Warp"""
+    TEMPLECODE = auto()
+
+    @classmethod
+    def from_extension(cls, ext: str) -> 'Language':
+        """All supported extensions map to TempleCode."""
+        return cls.TEMPLECODE
+
+    def name(self) -> str:
+        return "TempleCode"
 
 
 @dataclass
@@ -66,9 +72,14 @@ class InputRequest:
     is_numeric: bool
 
 
+if TYPE_CHECKING:
+    from ..graphics.turtle_state import TurtleState
+
+
 class Interpreter:
     """
-    Central execution engine supporting PILOT, BASIC, and Logo languages.
+    Central execution engine for TempleCode (unified BASIC, PILOT, Logo
+    semantics).
     
     Manages program state, variable storage, and control flow.
     Ported from Rust time_warp_unified::interpreter::Interpreter
@@ -127,17 +138,17 @@ class Interpreter:
         self.inkey_callback: Optional[Callable[[], Optional[str]]] = None
         self.last_key_pressed: Optional[str] = None
         
-        # Logo procedures
-        self.logo_procedures: Dict[str, 'LogoProcedure'] = {}
-        
+        # Logo/TempleCode procedures (user-defined)
+        self.logo_procedures: Dict[str, object] = {}
+
         # Screen state
         self.screen_mode = ScreenMode.GRAPHICS
         self.text_lines: List[str] = []
         self.cursor_row: int = 0
         self.cursor_col: int = 0
-        
-        # Language detection
-        self.current_language = Language.PILOT
+
+        # Language mode (TempleCode only)
+        self.current_language = Language.TEMPLECODE
     
     def reset(self):
         """Reset interpreter state"""
@@ -268,62 +279,13 @@ class Interpreter:
         Returns:
             Output text from command execution
         """
-        lang = self._determine_command_type(command)
-        
-        if lang == Language.PILOT:
-            from ..languages.pilot import execute_pilot
-            output = execute_pilot(self, command, turtle)
-            self.log_output(output)
-            return output
-        elif lang == Language.BASIC:
-            from ..languages.basic import execute_basic
-            output = execute_basic(self, command, turtle)
-            self.log_output(output)
-            return output
-        elif lang == Language.LOGO:
-            from ..languages.logo import execute_logo
-            output = execute_logo(self, command, turtle)
-            self.log_output(output)
-            return output
-        
-        return ""
+        # Unified TempleCode execution path
+        from ..languages.templecode import execute_templecode
+        output = execute_templecode(self, command, turtle)
+        self.log_output(output)
+        return output
     
-    def _determine_command_type(self, command: str) -> Language:
-        """Determine language based on command syntax"""
-        cmd = command.strip().upper()
-        
-        # PILOT: commands start with letter followed by colon
-        if len(cmd) > 1 and cmd[1] == ':':
-            return Language.PILOT
-        
-        first_word = cmd.split()[0] if cmd.split() else ""
-        
-        # Check Logo procedures first (user-defined takes precedence)
-        if first_word in self.logo_procedures:
-            return Language.LOGO
-        
-        # Logo keywords
-        logo_keywords = {
-            "FORWARD", "FD", "BACK", "BK", "LEFT", "LT", "RIGHT", "RT",
-            "PENUP", "PU", "PENDOWN", "PD", "CLEARSCREEN", "CS", "HOME",
-            "SETXY", "REPEAT", "TO", "END", "SETHEADING", "SETH",
-            "SETCOLOR", "SETPENCOLOR", "PENWIDTH", "SETPENSIZE", "SETBGCOLOR",
-            "HIDETURTLE", "HT", "SHOWTURTLE", "ST"
-        }
-        if first_word in logo_keywords:
-            return Language.LOGO
-        
-        # BASIC keywords
-        basic_keywords = {
-            "LET", "PRINT", "INPUT", "GOTO", "IF", "THEN", "FOR", "NEXT",
-            "GOSUB", "RETURN", "REM", "DIM", "DATA", "READ", "LINE", "CIRCLE",
-            "SCREEN", "CLS", "LOCATE"
-        }
-        if first_word in basic_keywords:
-            return Language.BASIC
-        
-        # Default to PILOT
-        return Language.PILOT
+    # Note: _determine_command_type removed in TempleCode-only mode.
     
     def _parse_line(self, line: str) -> Tuple[Optional[int], str]:
         """Parse line number if present, return (line_num, command)"""

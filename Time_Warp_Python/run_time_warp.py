@@ -12,8 +12,8 @@ from pathlib import Path
 # Add package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from time_warp.core.interpreter import Interpreter
-from time_warp.graphics.turtle_state import TurtleState
+from time_warp.core.interpreter import Interpreter  # noqa: E402
+from time_warp.graphics.turtle_state import TurtleState  # noqa: E402
 
 
 def run_program(filepath: str, show_turtle: bool = False):
@@ -67,12 +67,16 @@ def run_program(filepath: str, show_turtle: bool = False):
             print(f"  Heading: {turtle.heading:.1f}°")
             print(f"  Lines drawn: {len(turtle.lines)}")
             print(f"  Pen: {'down' if turtle.pen_down else 'up'}")
-            print(f"  Color: RGB({turtle.pen_color[0]}, {turtle.pen_color[1]}, {turtle.pen_color[2]})")
+            r, g, b = turtle.pen_color
+            print(f"  Color: RGB({r}, {g}, {b})")
             
             if len(turtle.lines) <= 10:
                 print("\n  Line segments:")
-                for i, line in enumerate(turtle.lines, 1):
-                    print(f"    {i}. ({line.start_x:.1f},{line.start_y:.1f}) -> ({line.end_x:.1f},{line.end_y:.1f})")
+                for i, seg in enumerate(turtle.lines, 1):
+                    print(
+                        f"    {i}. ({seg.start_x:.1f},{seg.start_y:.1f}) -> "
+                        f"({seg.end_x:.1f},{seg.end_y:.1f})"
+                    )
         
         print()
         print("✅ Execution completed successfully")
@@ -94,7 +98,7 @@ def interactive_mode():
     print("Time Warp IDE - Interactive Mode")
     print("=" * 60)
     print("Enter commands line by line. Type 'exit' or 'quit' to exit.")
-    print("Type 'help' for language help.\n")
+    print("Type 'help' for TempleCode help.\n")
     
     interp = Interpreter()
     turtle = TurtleState()
@@ -111,15 +115,22 @@ def interactive_mode():
                 break
             
             if line.lower() == 'help':
-                print("""
-Time Warp IDE supports three languages:
-
-PILOT: T:text  A:var  M:pattern  Y:label  N:label  C:var=expr  U:var  J:label  E:
-BASIC: PRINT, LET, INPUT, GOTO, IF/THEN, FOR/NEXT, GOSUB/RETURN
-Logo:  FORWARD, BACK, LEFT, RIGHT, PENUP, PENDOWN, HOME, REPEAT
-
-Type commands directly at the >>> prompt.
-""")
+                help_text = [
+                    "TempleCode is a unified language that combines BASIC,",
+                    "PILOT, and Logo.",
+                    "You can mix styles naturally in one program:",
+                    "",
+                    "PILOT-style: T:text  A:var  M:pattern  Y:label  N:label",
+                    "            C:var=expr  U:var  J:label  E:",
+                    "BASIC-style: PRINT, LET (X = 5), INPUT, GOTO,",
+                    "            IF/THEN, FOR/NEXT, GOSUB/RETURN",
+                    "Logo-style:  FORWARD, BACK, LEFT, RIGHT, PENUP,",
+                    "            PENDOWN, HOME, REPEAT",
+                    "",
+                    "Type TempleCode commands directly at the >>> prompt.",
+                    "The recommended file extension is .tc.",
+                ]
+                print("\n".join(help_text))
                 continue
             
             if line.lower() == 'clear':
@@ -151,14 +162,22 @@ Type commands directly at the >>> prompt.
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        description='Time Warp IDE - Multi-language educational programming environment',
-        epilog='Supports PILOT, BASIC, and Logo languages'
+        description=(
+            'Time Warp IDE - TempleCode unified educational programming env.'
+        ),
+        epilog=(
+            'TempleCode combines BASIC, PILOT, and Logo semantics. '
+            'Use .tc; legacy .pilot/.bas/.logo supported.'
+        ),
     )
     
     parser.add_argument(
         'file',
         nargs='?',
-        help='Program file to execute (.pilot, .bas, .logo)'
+        help=(
+            'Program file to execute (.tc recommended; also supports .pilot, '
+            '.bas, .logo)'
+        ),
     )
     
     parser.add_argument(
@@ -191,12 +210,24 @@ def main():
     if args.examples:
         examples_dir = Path(__file__).parent / 'examples'
         if examples_dir.exists():
-            print("Available example programs:")
+            print("Available TempleCode example programs:")
             print()
-            for ext, lang in [('.pilot', 'PILOT'), ('.bas', 'BASIC'), ('.logo', 'Logo')]:
+            # Preferred TempleCode extension first
+            tc_files = sorted(examples_dir.glob('*.tc'))
+            if tc_files:
+                print("TempleCode (.tc):")
+                for f in tc_files:
+                    print(f"  - {f.name}")
+                print()
+            # Legacy extensions, still valid TempleCode programs
+            for ext, label in [
+                ('.pilot', 'TempleCode (PILOT-style)'),
+                ('.bas', 'TempleCode (BASIC-style)'),
+                ('.logo', 'TempleCode (Logo-style)'),
+            ]:
                 files = sorted(examples_dir.glob(f'*{ext}'))
                 if files:
-                    print(f"{lang}:")
+                    print(f"{label}:")
                     for f in files:
                         print(f"  - {f.name}")
                     print()

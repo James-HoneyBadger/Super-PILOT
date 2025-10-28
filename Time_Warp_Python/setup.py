@@ -8,25 +8,40 @@ with open('README.md', 'r', encoding='utf-8') as f:
     long_description = f.read()
 
 # Read requirements
+
+
 def read_requirements(filename):
     """Read requirements from file."""
     if os.path.exists(filename):
         with open(filename, 'r') as f:
-            return [line.strip() for line in f if line.strip() and not line.startswith('#')]
+            return [
+                line.strip()
+                for line in f
+                if line.strip() and not line.startswith('#')
+            ]
     return []
+
 
 setup(
     name='time-warp-ide',
     version='2.0.0a1',  # Alpha version
     author='James Temple',
     author_email='james@honey-badger.org',
-    description='Educational multi-language programming environment',
+    description=(
+        'Educational TempleCode programming environment '
+        '(unified BASIC, PILOT, Logo)'
+    ),
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/James-HoneyBadger/Time_Warp',
     project_urls={
-        'Bug Tracker': 'https://github.com/James-HoneyBadger/Time_Warp/issues',
-        'Documentation': 'https://github.com/James-HoneyBadger/Time_Warp/tree/main/Time_Warp_Python',
+        'Bug Tracker': (
+            'https://github.com/James-HoneyBadger/Time_Warp/issues'
+        ),
+        'Documentation': (
+            'https://github.com/James-HoneyBadger/Time_Warp/tree/main/'
+            'Time_Warp_Python'
+        ),
         'Source Code': 'https://github.com/James-HoneyBadger/Time_Warp',
     },
     packages=find_packages(exclude=['tests', 'tests.*']),
@@ -53,7 +68,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'time-warp=time_warp.cli:main',  # CLI entry point (when implemented)
+            # CLI entry point (when implemented)
+            'time-warp=time_warp.cli:main',
         ],
     },
     classifiers=[
@@ -70,7 +86,10 @@ setup(
         'Programming Language :: Python :: 3.12',
         'Operating System :: OS Independent',
     ],
-    keywords='education programming pilot basic logo turtle-graphics interpreter',
+    keywords=(
+        'education programming templecode pilot basic logo '
+        'turtle-graphics interpreter'
+    ),
     include_package_data=True,
     zip_safe=False,
 )
