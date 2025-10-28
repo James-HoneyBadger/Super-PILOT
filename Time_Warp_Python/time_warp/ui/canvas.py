@@ -1,7 +1,7 @@
 """Turtle graphics canvas widget."""
 
 from PySide6.QtWidgets import QWidget
-from PySide6.QtCore import Qt, QPoint, QPointF
+from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QPainter, QPen, QColor, QWheelEvent, QMouseEvent
 
 
@@ -34,6 +34,13 @@ class TurtleCanvas(QWidget):
         """Set turtle state and repaint."""
         self.turtle = turtle
         self.lines = turtle.lines.copy()
+        # Adopt background color from turtle state if available
+        try:
+            r, g, b = getattr(turtle, 'bg_color', (40, 42, 54))
+            self.bg_color = QColor(int(r), int(g), int(b))
+        except Exception:
+            # Fallback to default theme background
+            self.bg_color = QColor(40, 42, 54)
         self.update()
         
     def clear(self):
@@ -59,7 +66,8 @@ class TurtleCanvas(QWidget):
         
         # Apply transform
         painter.translate(center_x + self.offset_x, center_y + self.offset_y)
-        painter.scale(self.zoom, -self.zoom)  # Flip Y-axis for math coordinates
+        # Flip Y-axis for math coordinates
+        painter.scale(self.zoom, -self.zoom)
         
         # Draw coordinate axes (light gray)
         pen = QPen(QColor(100, 100, 100), 1)

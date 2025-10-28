@@ -6,7 +6,7 @@ This module fully inlines BASIC, PILOT, and Logo implementations so the
 IDE exposes a single TempleCode language. Internal helpers mirror the
 original command handlers, but are private to this module.
 """
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Dict
 import re
 
 if TYPE_CHECKING:
@@ -454,6 +454,9 @@ def _execute_logo(
         return ""
     cmd_name = words[0]
     args = words[1:] if len(words) > 1 else []
+    # User-defined procedures
+    if cmd_name in interpreter.logo_procedures:
+        return _logo_call_procedure(interpreter, cmd_name, args, turtle)
     if cmd_name in ['FORWARD', 'FD']:
         return _logo_forward(interpreter, turtle, args)
     if cmd_name in ['BACK', 'BK', 'BACKWARD']:
@@ -490,6 +493,8 @@ def _execute_logo(
         return _logo_setheading(interpreter, turtle, args)
     if cmd_name in ['SETPENCOLOR', 'SETPC']:
         return _logo_setpencolor(interpreter, turtle, args)
+    if cmd_name in ['SETCOLOR']:
+        return _logo_setcolor(interpreter, turtle, args)
     if cmd_name in ['SETBGCOLOR', 'SETBG']:
         return _logo_setbgcolor(interpreter, turtle, args)
     if cmd_name in ['SETPENWIDTH', 'SETPW']:
@@ -511,6 +516,16 @@ def _logo_eval_arg(interpreter: 'Interpreter', arg: str) -> float:
             var_name = arg[1:].upper()
             return interpreter.variables.get(var_name, 0)
         return interpreter.evaluate_expression(arg)
+    except Exception:
+        return 0.0
+
+
+def _logo_eval_expr_str(interpreter: 'Interpreter', expr: str) -> float:
+    """Evaluate a Logo expression string with :VAR names and spaces."""
+    # Replace :VAR with VAR for evaluator
+    expr_norm = re.sub(r':([A-Za-z_][A-Za-z0-9_]*)', r'\1', expr)
+    try:
+        return interpreter.evaluate_expression(expr_norm)
     except Exception:
         return 0.0
 
@@ -546,7 +561,8 @@ def _logo_left(
 ) -> str:
     if not args:
         return "❌ LEFT requires angle\n"
-    angle = _logo_eval_arg(interpreter, args[0])
+    angle_expr = ' '.join(args)
+    angle = _logo_eval_expr_str(interpreter, angle_expr)
     turtle.left(angle)
     return ""
 
@@ -558,7 +574,8 @@ def _logo_right(
 ) -> str:
     if not args:
         return "❌ RIGHT requires angle\n"
-    angle = _logo_eval_arg(interpreter, args[0])
+    angle_expr = ' '.join(args)
+    angle = _logo_eval_expr_str(interpreter, angle_expr)
     turtle.right(angle)
     return ""
 
@@ -588,7 +605,11 @@ def _logo_setx(
     return ""
 
 
-def _logo_sety(interpreter: 'Interpreter', turtle: 'TurtleState', args: List[str]) -> str:
+def _logo_sety(
+    interpreter: 'Interpreter',
+    turtle: 'TurtleState',
+    args: List[str],
+) -> str:
     if not args:
         return "❌ SETY requires y coordinate\n"
     y = _logo_eval_arg(interpreter, args[0])
@@ -596,7 +617,11 @@ def _logo_sety(interpreter: 'Interpreter', turtle: 'TurtleState', args: List[str
     return ""
 
 
-def _logo_setheading(interpreter: 'Interpreter', turtle: 'TurtleState', args: List[str]) -> str:
+def _logo_setheading(
+    interpreter: 'Interpreter',
+    turtle: 'TurtleState',
+    args: List[str],
+) -> str:
     if not args:
         return "❌ SETHEADING requires angle\n"
     angle = _logo_eval_arg(interpreter, args[0])
@@ -604,7 +629,11 @@ def _logo_setheading(interpreter: 'Interpreter', turtle: 'TurtleState', args: Li
     return ""
 
 
-def _logo_setpencolor(interpreter: 'Interpreter', turtle: 'TurtleState', args: List[str]) -> str:
+def _logo_setpencolor(
+    interpreter: 'Interpreter',
+    turtle: 'TurtleState',
+    args: List[str],
+) -> str:
     if len(args) < 3:
         return "❌ SETPENCOLOR requires R G B values (0-255)\n"
     r = int(_logo_eval_arg(interpreter, args[0]))
@@ -614,7 +643,41 @@ def _logo_setpencolor(interpreter: 'Interpreter', turtle: 'TurtleState', args: L
     return ""
 
 
-def _logo_setbgcolor(interpreter: 'Interpreter', turtle: 'TurtleState', args: List[str]) -> str:
+def _logo_setcolor(
+    interpreter: 'Interpreter',
+    turtle: 'TurtleState',
+    args: List[str],
+) -> str:
+    """SETCOLOR supports either '#RRGGBB' or three numeric args."""
+    if not args:
+        return "❌ SETCOLOR requires '#RRGGBB' or R G B\n"
+    if len(args) == 1 and args[0].startswith('#') and len(args[0]) == 7:
+        hexval = args[0][1:]
+        try:
+            r = int(hexval[0:2], 16)
+            g = int(hexval[2:4], 16)
+            b = int(hexval[4:6], 16)
+            turtle.setcolor(r, g, b)
+            return ""
+        except ValueError:
+            return "❌ Invalid hex color for SETCOLOR\n"
+    if len(args) >= 3:
+        try:
+            r = int(_logo_eval_arg(interpreter, args[0]))
+            g = int(_logo_eval_arg(interpreter, args[1]))
+            b = int(_logo_eval_arg(interpreter, args[2]))
+            turtle.setcolor(r, g, b)
+            return ""
+        except Exception:
+            return "❌ Invalid RGB values for SETCOLOR\n"
+    return "❌ SETCOLOR requires '#RRGGBB' or R G B\n"
+
+
+def _logo_setbgcolor(
+    interpreter: 'Interpreter',
+    turtle: 'TurtleState',
+    args: List[str],
+) -> str:
     if len(args) < 3:
         return "❌ SETBGCOLOR requires R G B values (0-255)\n"
     r = int(_logo_eval_arg(interpreter, args[0]))
@@ -624,7 +687,11 @@ def _logo_setbgcolor(interpreter: 'Interpreter', turtle: 'TurtleState', args: Li
     return ""
 
 
-def _logo_setpenwidth(interpreter: 'Interpreter', turtle: 'TurtleState', args: List[str]) -> str:
+def _logo_setpenwidth(
+    interpreter: 'Interpreter',
+    turtle: 'TurtleState',
+    args: List[str],
+) -> str:
     if not args:
         return "❌ SETPENWIDTH requires width\n"
     width = _logo_eval_arg(interpreter, args[0])
@@ -632,7 +699,11 @@ def _logo_setpenwidth(interpreter: 'Interpreter', turtle: 'TurtleState', args: L
     return ""
 
 
-def _logo_repeat(interpreter: 'Interpreter', turtle: 'TurtleState', command: str) -> str:
+def _logo_repeat(
+    interpreter: 'Interpreter',
+    turtle: 'TurtleState',
+    command: str,
+) -> str:
     match = re.match(r'REPEAT\s+(\S+)\s*\[(.*?)\]', command, re.IGNORECASE)
     if not match:
         return "❌ REPEAT requires format: REPEAT count [ commands ]\n"
@@ -653,7 +724,39 @@ def _logo_repeat(interpreter: 'Interpreter', turtle: 'TurtleState', command: str
 
 
 def _logo_to(interpreter: 'Interpreter', command: str) -> str:
-    return "ℹ️ Procedure definitions not yet fully implemented\n"
+    """Parse and store a Logo procedure defined with TO ... END."""
+    # Parse header: TO NAME :ARG1 :ARG2 ...
+    header = command.strip()
+    parts = header.split()
+    if len(parts) < 2:
+        return "❌ TO requires a procedure name\n"
+    name = parts[1].upper()
+    params = []
+    for p in parts[2:]:
+        if p.startswith(':'):
+            params.append(p[1:].upper())
+        else:
+            params.append(p.upper())
+
+    # Gather body lines until END
+    body: List[str] = []
+    idx = interpreter.current_line + 1
+    while idx < len(interpreter.program_lines):
+        _, cmd = interpreter.program_lines[idx]
+        if cmd.strip().upper() == 'END':
+            break
+        body.append(cmd)
+        idx += 1
+
+    # Store procedure
+    interpreter.logo_procedures[name] = {
+        'params': params,
+        'body': body,
+    }
+
+    # Skip to line after END (execution loop will +1)
+    interpreter.current_line = idx
+    return f"ℹ️ Defined procedure {name}\n"
 
 
 def _logo_end_procedure(interpreter: 'Interpreter') -> str:
@@ -667,3 +770,85 @@ def _logo_print(interpreter: 'Interpreter', text: str) -> str:
     output = interpreter.interpolate_text(text)
     interpreter.output.append(output)
     return output + "\n"
+
+
+def _logo_call_procedure(
+    interpreter: 'Interpreter',
+    name: str,
+    args: List[str],
+    turtle: 'TurtleState',
+) -> str:
+    proc = interpreter.logo_procedures.get(name)
+    if not proc:
+        return f"❌ Unknown procedure {name}\n"
+    # Extract params/body safely
+    if not isinstance(proc, dict):
+        return f"❌ Unknown procedure {name}\n"
+    params = list(proc.get('params', []))
+    body = list(proc.get('body', []))
+
+    # Bind arguments
+    saved_vars: Dict[str, object] = {}
+    for i, p in enumerate(params):
+        # Save previous value if any
+        if p in interpreter.variables:
+            prev = interpreter.variables.get(p)
+        else:
+            prev = None
+        saved_vars[p] = prev
+        if i < len(args):
+            val = _logo_eval_expr_str(interpreter, args[i])
+        else:
+            val = 0.0
+        interpreter.variables[p] = val
+
+    # Execute body without changing current_line
+    saved_line = interpreter.current_line
+    try:
+        i = 0
+        while i < len(body):
+            line = body[i]
+            up = line.strip().upper()
+            # Handle multi-line REPEAT blocks: REPEAT <expr> [ ... ]
+            if up.startswith('REPEAT') and '[' in up and not up.endswith(']'):
+                # Parse count expression before '['
+                m = re.match(r'REPEAT\s+(.+?)\s*\[\s*$', up, re.IGNORECASE)
+                if not m:
+                    # Fallback to normal execution if pattern not matched
+                    execute_templecode(interpreter, line, turtle)
+                    i += 1
+                    continue
+                count_expr = m.group(1)
+                try:
+                    count = int(_logo_eval_expr_str(interpreter, count_expr))
+                except Exception:
+                    count = 0
+                # Collect lines until a ']'
+                block_lines: List[str] = []
+                j = i + 1
+                while j < len(body):
+                    end_line = body[j].strip()
+                    if end_line == ']':
+                        break
+                    block_lines.append(body[j])
+                    j += 1
+                # Execute the block 'count' times
+                for _ in range(max(0, count)):
+                    for bl in block_lines:
+                        execute_templecode(interpreter, bl, turtle)
+                # Skip past the closing ']' line
+                i = j + 1
+                continue
+            # Normal execution for non-REPEAT lines or single-line repeats
+            execute_templecode(interpreter, line, turtle)
+            i += 1
+    finally:
+        # Restore current line
+        interpreter.current_line = saved_line
+        # Restore variables
+        for p, old in saved_vars.items():
+            if old is None:
+                interpreter.variables.pop(p, None)
+            else:
+                interpreter.variables[p] = old
+    return ""

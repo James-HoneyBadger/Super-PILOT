@@ -1,13 +1,12 @@
 """Main window for Time Warp IDE."""
 
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QTabWidget, QMenuBar, QMenu, QFileDialog, QMessageBox,
+    QMainWindow, QWidget, QVBoxLayout,
+    QTabWidget, QFileDialog, QMessageBox,
     QStatusBar, QToolBar, QSplitter
 )
 from PySide6.QtCore import Qt, QSettings, QTimer
-from PySide6.QtGui import QAction, QKeySequence, QIcon
-import sys
+from PySide6.QtGui import QAction, QKeySequence
 from pathlib import Path
 
 from .editor import CodeEditor
@@ -373,6 +372,14 @@ class MainWindow(QMainWindow):
             self.run_action.setEnabled(True)
             self.stop_action.setEnabled(False)
             self.statusbar.showMessage('Execution complete')
+            # If graphics were drawn, switch to Graphics tab for convenience
+            try:
+                if getattr(self.canvas, 'lines', None):
+                    if len(self.canvas.lines) > 0:
+                        self.right_tabs.setCurrentWidget(self.canvas)
+            except Exception:
+                # Non-fatal; ignore any unexpected attribute issues
+                pass
             
     def stop_program(self):
         """Stop running program."""
