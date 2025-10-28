@@ -7,13 +7,16 @@ This file contains concise, actionable guidance for an AI coding agent working o
 - **Core interpreter**: `SuperPILOTInterpreter` class (lines 376-2750) in `SuperPILOT.py` loads program text into `program_lines` and executes by index. Labels collect during `load_program()`.
 - **Three languages**: PILOT (`T:`, `A:`, `U:`), BASIC (`LET`, `PRINT`, `GOTO`), Logo (`FORWARD`, `RIGHT`). Language detection in `determine_command_type()`.
 - **Advanced features**: Full templecode integration (particles, tweens, timers), hardware integration (Arduino/RPi/sensors), turtle graphics with macros.
+- **Phase 1-5 complete**: Professional IDE with breakpoints, watches, performance monitoring, syntax highlighting, minimap, and auto-save. See `COMPLETE_PHASES_1_5.md`.
 
 2) Key files & symbols to reference
-- `SuperPILOT.py` — SuperPILOTInterpreter, SuperPILOTII IDE, hardware controllers, templecode systems
+- `SuperPILOT.py` — SuperPILOTInterpreter, SuperPILOTII IDE (5785 lines), hardware controllers, templecode systems, Phase 1-5 features
 - `templecode.py` — Original templecode engine (fully integrated into SuperPILOT.py)
 - `hardware_demo.spt` — Example program showing hardware integration
-- `tests/test_interpreter.py` — Core interpreter tests
+- `tests/test_interpreter.py` — Core interpreter tests (278 tests, all passing)
 - `Square.pil` — Numbered BASIC/Logo example program
+- `COMPLETE_PHASES_1_5.md` — Master documentation for all IDE enhancements
+- `phase5_demo.spt` — Demo of minimap and auto-save features
 
 3) Project-specific conventions and gotchas (use these when changing behavior)
 - **Variable interpolation**: Use `*VAR*` in text output. `interpolate_text()` replaces with values from `interpreter.variables`.
@@ -42,6 +45,7 @@ This file contains concise, actionable guidance for an AI coding agent working o
 - **Adding new PILOT commands**: modify `execute_pilot_command()` and update the IDE help text in `get_help_text()` inside `SuperPILOTII` (in `SuperPILOT.py`).
 - **Changing UI debugger behavior**: sync `SuperPILOT.py`'s `AdvancedDebugger` with `SuperPILOTInterpreter` if you intend breakpoints to actually pause interpreter execution.
 - **Hardware integration**: Add new hardware classes following the simulation pattern (see `ArduinoController`, `RPiController`).
+- **Phase 5 IDE features**: Minimap (lines 3683-3697, 5530-5595), Auto-save (lines 3487-3497, 5597-5685). All UI updates via `root.after()` for thread safety.
 
 6) Examples to cite in patches
 - **PILOT output with variable interpolation**: `T:Sum of X and Y is *SUM*` (see `create_demo_program()` in `SuperPILOT.py`).
