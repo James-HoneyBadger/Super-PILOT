@@ -10,7 +10,7 @@ print()
 # Test 1: Import all UI components
 print("1. Testing imports...")
 try:
-    from time_warp.ui import MainWindow, CodeEditor, OutputPanel, TurtleCanvas, ThemeManager
+    import time_warp.ui as _tw_ui  # noqa: F401
     print("   ✅ All UI components imported successfully")
 except Exception as e:
     print(f"   ❌ Import failed: {e}")
@@ -21,8 +21,8 @@ print("2. Testing core library imports...")
 try:
     from time_warp.core.interpreter import Interpreter
     from time_warp.graphics.turtle_state import TurtleState
-    from time_warp.languages import pilot, basic, logo
-    print("   ✅ Core library imported successfully")
+    from time_warp.languages import templecode  # noqa: F401
+    print("   ✅ Core library imported successfully (TempleCode)")
 except Exception as e:
     print(f"   ❌ Core import failed: {e}")
     sys.exit(1)
@@ -30,8 +30,9 @@ except Exception as e:
 # Test 3: Check PySide6
 print("3. Testing PySide6...")
 try:
-    import PySide6
-    from PySide6.QtWidgets import QApplication
+    import PySide6  # type: ignore[import]
+    # type: ignore[import]
+    from PySide6.QtWidgets import QApplication  # noqa: F401
     print(f"   ✅ PySide6 version {PySide6.__version__}")
 except Exception as e:
     print(f"   ❌ PySide6 not found: {e}")
@@ -59,7 +60,7 @@ try:
     output = interp.execute(turtle)
     assert len(turtle.lines) >= 1  # At least one line segment drawn
     
-    print("   ✅ All three languages execute correctly")
+    print("   ✅ TempleCode styles execute correctly")
 except Exception as e:
     import traceback
     print(f"   ❌ Execution test failed: {e}")
@@ -70,22 +71,27 @@ except Exception as e:
 print("5. Checking example programs...")
 examples_dir = Path(__file__).parent / "examples"
 if examples_dir.exists():
+    tc_files = list(examples_dir.glob("*.tc"))
     pilot_files = list(examples_dir.glob("*.pilot"))
     basic_files = list(examples_dir.glob("*.bas"))
     logo_files = list(examples_dir.glob("*.logo"))
     
-    total = len(pilot_files) + len(basic_files) + len(logo_files)
+    total = (
+        len(tc_files) + len(pilot_files) + len(basic_files) + len(logo_files)
+    )
     print(f"   ✅ Found {total} example programs:")
-    print(f"      - {len(pilot_files)} PILOT programs")
-    print(f"      - {len(basic_files)} BASIC programs")
-    print(f"      - {len(logo_files)} Logo programs")
+    if tc_files:
+        print(f"      - {len(tc_files)} TempleCode (.tc) programs")
+    print(f"      - {len(pilot_files)} TempleCode (PILOT-style) programs")
+    print(f"      - {len(basic_files)} TempleCode (BASIC-style) programs")
+    print(f"      - {len(logo_files)} TempleCode (Logo-style) programs")
 else:
     print(f"   ⚠️  Examples directory not found at {examples_dir}")
 
 # Test 6: Test ThemeManager
 print("6. Testing ThemeManager...")
 try:
-    tm = ThemeManager()
+    tm = _tw_ui.ThemeManager()
     themes = tm.get_theme_names()
     assert len(themes) == 8, f"Expected 8 themes, found {len(themes)}"
     assert 'Dracula' in themes
