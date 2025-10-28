@@ -28,11 +28,8 @@ pub struct TimeWarpApp {
     pub error_message: Option<String>,
     
     // Edit history (future features)
-    #[allow(dead_code)]
     pub undo_history: Vec<String>,
-    #[allow(dead_code)]
     pub undo_position: usize,
-    #[allow(dead_code)]
     pub max_undo_steps: usize,
     
     // Graphics
@@ -113,8 +110,52 @@ impl TimeWarpApp {
     
     pub fn set_current_code(&mut self, code: String) {
         if let Some(file) = self.current_file().cloned() {
+            // Save to undo history before changing
+            let old_code = self.file_buffers.get(&file).cloned().unwrap_or_default();
+            if old_code != code {
+                self.push_undo_state(old_code);
+            }
             self.file_buffers.insert(file.clone(), code);
             self.file_modified.insert(file, true);
+        }
+    }
+    
+    pub fn push_undo_state(&mut self, state: String) {
+        // Remove any states after current position
+        self.undo_history.truncate(self.undo_position);
+        
+        // Add new state
+        self.undo_history.push(state);
+        
+        // Maintain max history size
+        if self.undo_history.len() > self.max_undo_steps {
+            self.undo_history.remove(0);
+        } else {
+            self.undo_position = self.undo_history.len();
+        }
+    }
+    
+    pub fn undo(&mut self) {
+        if self.undo_position > 0 {
+            self.undo_position -= 1;
+            if let Some(state) = self.undo_history.get(self.undo_position).cloned() {
+                if let Some(file) = self.current_file().cloned() {
+                    self.file_buffers.insert(file.clone(), state);
+                    self.file_modified.insert(file, true);
+                }
+            }
+        }
+    }
+    
+    pub fn redo(&mut self) {
+        if self.undo_position < self.undo_history.len() {
+            if let Some(state) = self.undo_history.get(self.undo_position).cloned() {
+                if let Some(file) = self.current_file().cloned() {
+                    self.file_buffers.insert(file.clone(), state);
+                    self.file_modified.insert(file, true);
+                }
+                self.undo_position += 1;
+            }
         }
     }
 }

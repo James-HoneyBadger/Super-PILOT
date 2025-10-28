@@ -151,12 +151,12 @@ fn save_file_as(app: &mut TimeWarpApp) {
     }
 }
 
-fn undo(_app: &mut TimeWarpApp) {
-    // TODO: Implement undo
+fn undo(app: &mut TimeWarpApp) {
+    app.undo();
 }
 
-fn redo(_app: &mut TimeWarpApp) {
-    // TODO: Implement redo
+fn redo(app: &mut TimeWarpApp) {
+    app.redo();
 }
 
 fn run_program(app: &mut TimeWarpApp) {
