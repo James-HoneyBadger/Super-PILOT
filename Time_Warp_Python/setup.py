@@ -24,7 +24,7 @@ def read_requirements(filename):
 
 setup(
     name='time-warp-ide',
-    version='2.0.0a1',  # Alpha version
+    version='2.0.0',  # Stable release
     author='James Temple',
     author_email='james@honey-badger.org',
     description=(

@@ -52,7 +52,7 @@ T:Hello *NAME*!
 30 IF A > 3 THEN PRINT "Greater"
 ```
 
-**32 example programs** organized by difficulty in `examples/`:
+**33 example programs** organized by difficulty in `examples/`:
 
 - **Beginner**: `pilot_quiz.pilot`, `basic_guess.bas`, `logo_star.logo`
 - **Intermediate**: `basic_rock_paper_scissors.bas`, `logo_flower.logo`
@@ -61,6 +61,8 @@ T:Hello *NAME*!
 PNG export: use View → "Save Canvas as PNG…" in the UI.
 
 ## Learning Resources
+
+- [User Guide (Unified)](../USER_GUIDE.md) — Covers both Rust and Python versions
 
 **Getting Started**:
 
@@ -107,7 +109,7 @@ Notes:
 - Requires a system C compiler (cc/gcc/clang) on PATH.
 - Output C file is written to target/tmp internally before linking.
 
-**See also**: [Examples README](examples/README.md) for learning paths and all 32 programs.
+**See also**: [Examples README](examples/README.md) for learning paths and all 33 programs.
 
 ## Testing
 

@@ -7,6 +7,8 @@ Time Warp IDE is a modern, cross-platform educational programming environment th
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.8+-green.svg)
 ![Rust](https://img.shields.io/badge/Rust-1.70+-orange.svg)
+![Version](https://img.shields.io/badge/Version-2.0.0-brightgreen.svg)
+![Status](https://img.shields.io/badge/Status-Stable-success.svg)
 
 ---
 
@@ -104,6 +106,13 @@ python time_warp_ide.py
 
 ## 🚀 Quick Start
 
+From the repository root:
+
+```bash
+./run.sh python       # Launch Python IDE
+./run.sh rust --release  # Launch Rust IDE (release)
+```
+
 ### Option 1: Rust (Fast & Native)
 
 ```bash
@@ -142,6 +151,7 @@ python run_time_warp.py examples/logo_flower.logo
 
 ### For Users
 
+- **[User Guide](USER_GUIDE.md)** - Unified guide for both Python and Rust
 - **[Getting Started](Time_Warp_Rust/docs/GETTING_STARTED.md)** - Your first 5 minutes
 - **[Quick Reference](Time_Warp_Rust/docs/QUICK_REFERENCE.md)** - Complete command reference
 - **[Turtle Graphics Reference](Time_Warp_Python/docs/TURTLE_GRAPHICS_REFERENCE.md)** - All graphics commands

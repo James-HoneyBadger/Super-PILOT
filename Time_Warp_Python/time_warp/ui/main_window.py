@@ -44,6 +44,12 @@ class MainWindow(QMainWindow):
         self.theme_manager.apply_theme(
             self.settings.value('theme', 'Dracula')
         )
+
+        # Ensure output starts cleared at application runtime
+        try:
+            self.output.clear()
+        except Exception:
+            pass
         
     def setup_ui(self):
         """Setup main UI layout."""
@@ -496,7 +502,7 @@ class MainWindow(QMainWindow):
             self,
             'About Time Warp IDE',
             '<h2>Time Warp IDE - Python Edition</h2>'
-            '<p>Version 2.0.0-alpha</p>'
+            '<p>Version 2.0.0</p>'
             '<p>Educational programming environment supporting:</p>'
             '<ul>'
             '<li>PILOT - Interactive teaching language</li>'

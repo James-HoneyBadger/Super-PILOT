@@ -69,15 +69,6 @@ class OutputPanel(QTextEdit):
         # Execution thread
         self.exec_thread = None
         
-        # Welcome message
-        self.append_colored(
-            '═' * 60 + '\n'
-            'Time Warp IDE - Output Panel\n'
-            '═' * 60 + '\n'
-            'Press F5 to run your program\n',
-            'info'
-        )
-        
     def run_program(self, code, canvas):
         """Run program in background thread."""
         if self.exec_thread and self.exec_thread.isRunning():

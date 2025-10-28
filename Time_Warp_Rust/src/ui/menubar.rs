@@ -163,6 +163,10 @@ fn run_program(app: &mut TimeWarpApp) {
     app.is_executing = true;
     let code = app.current_code();
     
+    // Clear previous output and graphics
+    app.interpreter.output.clear();
+    app.turtle_state.clear();
+    
     // Transfer any pending key press to interpreter for INKEY$
     if app.last_key_pressed.is_some() {
         app.interpreter.last_key_pressed = app.last_key_pressed.take();
