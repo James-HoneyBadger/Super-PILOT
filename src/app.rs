@@ -49,12 +49,11 @@ pub struct TimeWarpApp {
     pub show_about_dialog: bool,
     
     // Debug state (future features)
-    #[allow(dead_code)]
     pub debug_mode: bool,
     #[allow(dead_code)]
     pub breakpoints: HashMap<String, Vec<usize>>,
-    #[allow(dead_code)]
     pub current_debug_line: Option<usize>,
+    pub step_mode: bool,
 }
 
 impl TimeWarpApp {
@@ -94,6 +93,7 @@ impl TimeWarpApp {
             debug_mode: false,
             breakpoints: HashMap::new(),
             current_debug_line: None,
+            step_mode: false,
         }
     }
     

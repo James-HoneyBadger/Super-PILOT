@@ -192,8 +192,53 @@ fn run_program(app: &mut TimeWarpApp) {
     }
 }
 
-fn step_program(_app: &mut TimeWarpApp) {
-    // TODO: Implement step execution
+fn step_program(app: &mut TimeWarpApp) {
+    // Enable step mode and execute one line
+    app.step_mode = true;
+    app.debug_mode = true;
+    
+    if !app.is_executing {
+        // Start execution in step mode
+        app.is_executing = true;
+        let code = app.current_code();
+        
+        match app.interpreter.load_program(&code) {
+            Ok(_) => {
+                // Execute just one line
+                match app.interpreter.execute(&mut app.turtle_state) {
+                    Ok(_) => {
+                        app.current_debug_line = Some(app.interpreter.current_line);
+                        app.is_executing = false; // Pause after one step
+                    }
+                    Err(e) => {
+                        app.error_message = Some(format!("Step error: {}", e));
+                        app.is_executing = false;
+                        app.step_mode = false;
+                    }
+                }
+            }
+            Err(e) => {
+                app.error_message = Some(format!("Load error: {}", e));
+                app.step_mode = false;
+            }
+        }
+    } else {
+        // Continue stepping through execution
+        match app.interpreter.execute(&mut app.turtle_state) {
+            Ok(_) => {
+                app.current_debug_line = Some(app.interpreter.current_line);
+                if app.interpreter.current_line >= app.interpreter.program_lines.len() {
+                    app.is_executing = false;
+                    app.step_mode = false;
+                }
+            }
+            Err(e) => {
+                app.error_message = Some(format!("Step error: {}", e));
+                app.is_executing = false;
+                app.step_mode = false;
+            }
+        }
+    }
 }
 
 fn stop_program(app: &mut TimeWarpApp) {
