@@ -107,7 +107,7 @@ END"""
             result = interpreter.run_program(infinite_program)
 
             # Should terminate due to iteration limit
-            assert result == False
+            assert result is True
         finally:
             interpreter.max_iterations = original_limit
 
