@@ -1,9 +1,0 @@
-pub mod themes;
-pub mod menubar;
-pub mod statusbar;
-pub mod editor;
-pub mod output;
-pub mod canvas;
-pub mod debugger;
-pub mod explorer;
-pub mod help;

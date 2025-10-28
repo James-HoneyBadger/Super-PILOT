@@ -228,6 +228,90 @@ fn test_error_recovery() {
 }
 
 #[test]
+fn test_basic_input_numeric_via_callback() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::default();
+    // Provide input via callback
+    let mut answers = vec!["42".to_string()].into_iter();
+    interp.input_callback = Some(Box::new(move |_| answers.next().unwrap_or_default()));
+
+    let program = r#"
+10 INPUT A
+20 PRINT A
+30 END
+"#;
+    interp.load_program(program).unwrap();
+    let output = interp.execute(&mut turtle).unwrap();
+    // Should print 42
+    assert!(output.iter().any(|s| s.trim() == "42"));
+}
+
+#[test]
+fn test_basic_input_string_via_callback() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::default();
+    let mut answers = vec!["Alice".to_string()].into_iter();
+    interp.input_callback = Some(Box::new(move |_| answers.next().unwrap_or_default()));
+
+    let program = r#"
+10 INPUT NAME
+20 PRINT NAME
+30 END
+"#;
+    interp.load_program(program).unwrap();
+    let output = interp.execute(&mut turtle).unwrap();
+    // Should print Alice
+    assert!(output.iter().any(|s| s.contains("Alice")));
+}
+
+#[test]
+fn test_pilot_accept_and_match_via_callback() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::default();
+    let mut answers = vec!["Alice".to_string()].into_iter();
+    interp.input_callback = Some(Box::new(move |_| answers.next().unwrap_or_default()));
+
+    let program = r#"
+T:Enter your name:
+A:NAME
+M:ICE
+Y:
+T:Match
+N:
+T:No Match
+E:
+"#;
+    interp.load_program(program).unwrap();
+    let output = interp.execute(&mut turtle).unwrap();
+    // Alice contains ICE -> Match
+    assert!(output.iter().any(|s| s.contains("Match")));
+}
+
+#[test]
+fn test_wait_for_input_and_resume_without_callback() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::default();
+    // No callback -> should pause waiting for input
+    let program = r#"
+10 PRINT "Start"
+20 INPUT X
+30 PRINT X
+40 END
+"#;
+    interp.load_program(program).unwrap();
+    // First execute will pause on INPUT
+    let output1 = interp.execute(&mut turtle).unwrap();
+    assert!(interp.pending_input.is_some());
+    assert!(output1.iter().any(|s| s.contains("Start")));
+    // Provide value and resume
+    interp.provide_input("7");
+    let output2 = interp.execute(&mut turtle).unwrap();
+    // pending_input should be cleared after providing input and resuming
+    assert!(output2.iter().any(|s| s.trim() == "7"));
+    assert!(output2.iter().any(|s| s.trim() == "7"));
+}
+
+#[test]
 fn test_logo_procedures() {
     let mut interp = Interpreter::new();
     let mut turtle = TurtleState::new();
@@ -348,3 +432,53 @@ REPEAT 2 [REPEAT 2 [FORWARD 10 RIGHT 90]]
     // 2 outer * 2 inner * 1 line each = 4 lines
     assert_eq!(turtle.lines.len(), 4);
 }
+
+#[test]
+fn test_basic_inkey_with_callback() {
+    let mut interp = Interpreter::new();
+    let mut turtle = TurtleState::new();
+    
+    // Set up callback to simulate key presses
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    
+    let key_sequence = Rc::new(RefCell::new(vec!["a", "b", ""]));
+    let index = Rc::new(RefCell::new(0));
+    
+    let seq_clone = key_sequence.clone();
+    let idx_clone = index.clone();
+    
+    interp.inkey_callback = Some(Box::new(move || {
+        let mut idx = idx_clone.borrow_mut();
+        let seq = seq_clone.borrow();
+        
+        if *idx < seq.len() {
+            let result = if seq[*idx].is_empty() {
+                None
+            } else {
+                Some(seq[*idx].to_string())
+            };
+            *idx += 1;
+            result
+        } else {
+            None
+        }
+    }));
+    
+    let code = r#"
+10 LET K$ = INKEY$
+20 PRINT K$
+30 LET K$ = INKEY$
+40 PRINT K$
+50 LET K$ = INKEY$
+60 PRINT K$
+"#;
+    
+    interp.load_program(code).unwrap();
+    let output = interp.execute(&mut turtle).unwrap();
+    
+    // Should print "a", "b", ""
+    assert!(output.iter().any(|s| s.contains("a")));
+    assert!(output.iter().any(|s| s.contains("b")));
+}
+
