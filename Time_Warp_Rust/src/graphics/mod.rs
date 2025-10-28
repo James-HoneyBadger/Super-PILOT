@@ -3,6 +3,10 @@ use image::{ImageBuffer, Rgba};
 use imageproc::drawing::draw_antialiased_line_segment_mut;
 // use imageproc::pixelops::interpolate;
 
+/// A line segment drawn by the turtle
+/// 
+/// Represents a single draw operation with start/end points, color, and width.
+/// Used for rendering and export to image formats.
 #[derive(Debug, Clone)]
 pub struct TurtleLine {
     pub start: egui::Pos2,
@@ -11,6 +15,18 @@ pub struct TurtleLine {
     pub width: f32,
 }
 
+/// Turtle graphics state for Logo-style drawing
+/// 
+/// Maintains turtle position, heading, pen state, and drawing history.
+/// Canvas coordinates: (0,0) is center, Y-axis inverted (up is negative).
+/// 
+/// # Example
+/// ```ignore
+/// let mut turtle = TurtleState::new();
+/// turtle.forward(100.0);  // Move forward 100 pixels
+/// turtle.right(90.0);     // Turn right 90 degrees
+/// turtle.forward(100.0);  // Draw an L shape
+/// ```
 pub struct TurtleState {
     pub x: f32,
     pub y: f32,

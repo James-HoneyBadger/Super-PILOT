@@ -74,9 +74,46 @@ fn main() -> Result<()> {
 }
 
 fn load_icon() -> egui::IconData {
-    // TODO: Load actual icon from assets
+    // Simple 32x32 icon with Time Warp theme colors
+    // Blue-teal gradient background with "TW" text representation
+    let mut rgba = vec![0u8; 32 * 32 * 4];
+    
+    for y in 0..32 {
+        for x in 0..32 {
+            let idx = (y * 32 + x) * 4;
+            
+            // Create a simple gradient background (blue to teal)
+            let t = y as f32 / 32.0;
+            let r = (30.0 * (1.0 - t) + 64.0 * t) as u8;
+            let g = (144.0 * (1.0 - t) + 224.0 * t) as u8;
+            let b = (255.0 * (1.0 - t) + 208.0 * t) as u8;
+            
+            // Draw a simple "TW" pattern in the center
+            let is_tw = 
+                // T letter (left side)
+                ((8..=10).contains(&y) && (6..=14).contains(&x)) ||  // top bar
+                ((10..=24).contains(&y) && (9..=11).contains(&x)) ||  // vertical
+                // W letter (right side)
+                ((8..=24).contains(&y) && (17..=18).contains(&x)) ||  // left stroke
+                ((20..=24).contains(&y) && (19..=21).contains(&x)) || // middle dip
+                ((8..=24).contains(&y) && (24..=25).contains(&x));    // right stroke
+            
+            if is_tw {
+                rgba[idx] = 255;     // white text
+                rgba[idx + 1] = 255;
+                rgba[idx + 2] = 255;
+                rgba[idx + 3] = 255;
+            } else {
+                rgba[idx] = r;
+                rgba[idx + 1] = g;
+                rgba[idx + 2] = b;
+                rgba[idx + 3] = 255;
+            }
+        }
+    }
+    
     egui::IconData {
-        rgba: vec![255; 32 * 32 * 4],
+        rgba,
         width: 32,
         height: 32,
     }

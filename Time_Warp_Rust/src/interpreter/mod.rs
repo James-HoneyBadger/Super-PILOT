@@ -45,6 +45,7 @@ use crate::graphics::TurtleState;
 use crate::languages::{Language, pilot, basic, logo};
 use crate::languages::logo::LogoProcedure;
 use crate::utils::ExpressionEvaluator;
+use crate::utils::error_hints;
 
 // Type aliases to reduce type complexity in public fields
 pub type InputCallback = Box<dyn FnMut(&str) -> String>;
@@ -244,7 +245,8 @@ impl Interpreter {
             
             iterations += 1;
             
-            let (_, command) = self.program_lines[self.current_line].clone();
+            // Clone command to avoid borrow checker issues with execute_line
+            let command = self.program_lines[self.current_line].1.clone();
             
             if command.trim().is_empty() {
                 self.current_line += 1;
@@ -255,7 +257,24 @@ impl Interpreter {
             let result = match self.execute_line(&command, turtle) {
                 Ok(res) => res,
                 Err(e) => {
-                    self.log_output(format!("❌ Error at line {}: {}", self.current_line + 1, e));
+                    // Enhanced error message with context and suggestions
+                    let mut error_msg = format!("❌ Error at line {}: {}", self.current_line + 1, e);
+                    
+                    // Check for syntax mistakes
+                    let syntax_hints = error_hints::check_syntax_mistakes(&command);
+                    if !syntax_hints.is_empty() {
+                        error_msg.push_str(&format!("\n   💡 Hint: {}", syntax_hints.join(", ")));
+                    }
+                    
+                    // Suggest command corrections for unknown commands
+                    if e.to_string().contains("Unknown") || e.to_string().contains("Invalid") {
+                        let first_word = command.split_whitespace().next().unwrap_or("");
+                        if let Some(suggestion) = error_hints::suggest_command(first_word) {
+                            error_msg.push_str(&format!("\n   💡 {}", suggestion));
+                        }
+                    }
+                    
+                    self.log_output(error_msg);
                     self.current_line += 1;
                     continue;
                 }
@@ -276,7 +295,14 @@ impl Interpreter {
             self.log_output("⚠️ Warning: Maximum iterations reached".to_string());
         }
         
+        // Return reference to avoid cloning output vector
         Ok(self.output.clone())
+    }
+    
+    /// Get reference to output without cloning (for performance-critical code)
+    #[allow(dead_code)]
+    pub fn get_output(&self) -> &[String] {
+        &self.output
     }
     
     fn execute_line(&mut self, command: &str, turtle: &mut TurtleState) -> Result<ExecutionResult> {
@@ -374,17 +400,27 @@ impl Interpreter {
             return text.to_string();
         }
         
-        let mut result = text.to_string();
+        // Use captures to avoid multiple regex scans
+        let mut result = String::with_capacity(text.len() + 32); // Pre-allocate with some headroom
+        let mut last_end = 0;
         
-        // Replace *VAR* with variable values using lazy-compiled regex
         for cap in VAR_INTERPOLATION_PATTERN.captures_iter(text) {
+            let m = cap.get(0).unwrap();
+            result.push_str(&text[last_end..m.start()]);
+            
             let var_name = &cap[1];
             if let Some(val) = self.variables.get(var_name) {
-                result = result.replace(&format!("*{}*", var_name), &val.to_string());
+                result.push_str(&val.to_string());
             } else if let Some(val) = self.string_variables.get(var_name) {
-                result = result.replace(&format!("*{}*", var_name), val);
+                result.push_str(val);
+            } else {
+                // Keep original *VAR* if not found
+                result.push_str(m.as_str());
             }
+            
+            last_end = m.end();
         }
+        result.push_str(&text[last_end..]);
         
         result
     }

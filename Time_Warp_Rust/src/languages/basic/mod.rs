@@ -105,7 +105,12 @@ fn execute_print(interp: &mut Interpreter, args: &str) -> Result<ExecutionResult
     for ch in args.chars() {
         match ch {
             '"' => { in_quotes = !in_quotes; current.push(ch); }
-            ',' if !in_quotes => { parts.push(current.trim().to_string()); current.clear(); }
+            ',' if !in_quotes => { 
+                if !current.trim().is_empty() {
+                    parts.push(current.trim().to_string()); 
+                }
+                current.clear(); 
+            }
             _ => current.push(ch),
         }
     }
@@ -116,11 +121,12 @@ fn execute_print(interp: &mut Interpreter, args: &str) -> Result<ExecutionResult
         return Ok(ExecutionResult::Continue);
     }
 
-    let mut out_items: Vec<String> = Vec::new();
+    // Pre-allocate with estimated capacity
+    let mut out_items: Vec<String> = Vec::with_capacity(parts.len());
     for item in parts {
         let item_trim = item.trim();
         if item_trim.starts_with('"') && item_trim.ends_with('"') && item_trim.len() >= 2 {
-            // String literal
+            // String literal - avoid allocation by using slice
             out_items.push(item_trim[1..item_trim.len()-1].to_string());
         } else if item_trim.to_uppercase() == "INKEY$" {
             // Special handling for INKEY$
@@ -128,13 +134,13 @@ fn execute_print(interp: &mut Interpreter, args: &str) -> Result<ExecutionResult
         } else {
             // Try numeric expression first
             match interp.evaluate_expression(item_trim) {
-                Ok(v) => out_items.push(format!("{}", v)),
+                Ok(v) => out_items.push(v.to_string()),
                 Err(_) => {
                     // Try variable lookup (string or numeric) before interpolation
                     if let Some(s) = interp.string_variables.get(item_trim) {
                         out_items.push(s.clone());
                     } else if let Some(n) = interp.variables.get(item_trim) {
-                        out_items.push(format!("{}", n));
+                        out_items.push(n.to_string());
                     } else {
                         // Fallback: interpolate *VAR* style
                         out_items.push(interp.interpolate_text(item_trim));

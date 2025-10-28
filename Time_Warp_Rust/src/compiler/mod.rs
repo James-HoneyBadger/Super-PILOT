@@ -4,17 +4,40 @@ use std::fs;
 use std::path::Path;
 use std::process::Command;
 
-/// TempleCodeCompiler transpiles TempleCode (BASIC + PILOT + Logo) to C and builds an executable.
-///
-/// Scope (initial):
-/// - Text-mode commands only: PRINT, LET, INPUT, IF ... THEN (GOTO | PRINT), GOTO, END
-/// - PILOT: T:, A:
-/// - Logo: commands are ignored with a comment (future work)
-///
-/// Notes:
-/// - Numeric variables compiled as `double`.
-/// - String inputs stored in fixed-size buffers per variable when encountered.
-/// - Expressions are passed through to C with variables renamed; supported ops: + - * / % ^ (maps to pow()).
+/// Experimental TempleCode-to-C compiler (transpiler + system compiler invoker)
+/// 
+/// Transpiles TempleCode programs to C and invokes the system compiler (cc, gcc, or clang)
+/// to produce standalone executables. Supports text-mode BASIC and PILOT subset.
+/// 
+/// # Supported Features
+/// - **BASIC**: PRINT, LET, INPUT, IF...THEN, GOTO, END, REM
+/// - **PILOT**: T: (text output), A: (accept input)
+/// - **Logo**: Commands converted to C comments (execution not yet supported)
+/// 
+/// # Variable Mapping
+/// - Numeric variables → `double V_<name>`
+/// - String variables → `char S_<name>[256]`
+/// - Expressions passed to C with minimal transformation
+/// - Operators: `+`, `-`, `*`, `/`, `%`, `^` (maps to `pow()`)
+/// - Comparisons: `<>` → `!=`, `=` → `==`
+/// 
+/// # Compilation Process
+/// 1. `compile_to_c()`: TempleCode → C source string
+/// 2. `compile_to_executable()`: Write temp file → invoke system cc → produce binary
+/// 
+/// # Example
+/// ```ignore
+/// let compiler = TempleCodeCompiler::new();
+/// let c_code = compiler.compile_to_c("10 PRINT \"Hello\"\n20 END")?;
+/// let exe_path = compiler.compile_to_executable(&c_code, "hello")?;
+/// // Run: ./hello
+/// ```
+/// 
+/// # Architecture Notes
+/// - Labels generated as `line_<number>:` for GOTO/GOSUB targets
+/// - INPUT prompts embedded as string literals
+/// - REM comments converted to `/* ... */`
+/// - System compiler detected via `cc` command (gcc/clang fallback)
 pub struct TempleCodeCompiler;
 
 impl TempleCodeCompiler {

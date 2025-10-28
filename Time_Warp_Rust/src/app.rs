@@ -5,6 +5,26 @@ use crate::interpreter::Interpreter;
 use crate::graphics::TurtleState;
 use crate::ui::themes::Theme;
 
+/// Main application state for Time Warp IDE
+/// 
+/// Manages the entire IDE lifecycle including:
+/// - Multi-file editing with undo/redo support
+/// - Program execution across PILOT, BASIC, and Logo
+/// - Turtle graphics visualization with zoom/pan
+/// - Theme management and UI customization
+/// - Input/output handling for interactive programs
+/// 
+/// # Architecture
+/// - File buffers: In-memory text storage for open files
+/// - Interpreter: Stateless command processor for all languages
+/// - Turtle state: Separate graphics state for drawing
+/// - UI state: Tab management, find/replace, debug mode
+/// 
+/// # Example
+/// ```ignore
+/// let app = TimeWarpApp::default();
+/// eframe::run_native("Time Warp", options, Box::new(|_| Ok(Box::new(app))));
+/// ```
 pub struct TimeWarpApp {
     // File management
     pub file_buffers: HashMap<String, String>,
