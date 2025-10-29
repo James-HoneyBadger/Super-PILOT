@@ -848,24 +848,34 @@ class SuperPILOTInterpreter:
             # Replace undefined variables with defaults
             def replace_undefined_var(match):
                 var = match.group(0)
+                normalized_var = var.replace("$", "_DOLLAR")
+                
                 # Check if it's a GW-BASIC function (with $ replaced)
-                if var.replace("$", "_DOLLAR") in allowed_names:
-                    return var.replace("$", "_DOLLAR")
+                if normalized_var in allowed_names:
+                    return normalized_var
+                
+                # Check both original and normalized variable names
                 if var in self.variables:
                     value = self.variables[var]
                     if isinstance(value, str):
                         return '"' + value + '"'
                     else:
                         return str(value)
+                elif normalized_var in self.variables:
+                    value = self.variables[normalized_var]
+                    if isinstance(value, str):
+                        return '"' + value + '"'
+                    else:
+                        return str(value)
+                
+                # Default undefined variables
                 if var.endswith("$"):
                     return '""'
                 else:
                     # Default undefined numeric variables to 0 to avoid NameError
                     return "0"
 
-            expr = re.sub(r"\b[A-Za-z_]\w*\$?\b", replace_undefined_var, expr)
-            # Replace $ with _DOLLAR for function names
-            expr = expr.replace("$", "_DOLLAR")
+            expr = re.sub(r"\b[A-Za-z_]\w*\$?(?!\w)", replace_undefined_var, expr)
             # Replace custom functions
             expr = expr.replace("RND(1)", str(random.random()))
             expr = expr.replace("RND()", str(random.random()))
@@ -1714,7 +1724,11 @@ class SuperPILOTInterpreter:
                         expr = expr.strip()
                         try:
                             value = self.evaluate_expression(expr)
+                            # Store under both original and normalized names
                             self.variables[var_name] = value
+                            normalized_var = var_name.replace("$", "_DOLLAR")
+                            if normalized_var != var_name:
+                                self.variables[normalized_var] = value
                         except Exception as e:
                             self.log_output(f"Error in LET {assignment}: {e}")
                 return "continue"
