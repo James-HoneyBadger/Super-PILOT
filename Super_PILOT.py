@@ -32,86 +32,104 @@ except Exception:  # pragma: no cover - environment-specific
     scrolledtext = _tk_unavailable  # type: ignore
     messagebox = _tk_unavailable  # type: ignore
     simpledialog = _tk_unavailable  # type: ignore
+
+
+
+# --- Hardware/Simulation Stubs (to prevent NameError after PILOT removal) ---
+
+class ArduinoController:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def connect(self, *args, **kwargs):
+        pass
+
+    def disconnect(self, *args, **kwargs):
+        pass
+
+
+class RPiController:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def setup_pin(self, *args, **kwargs):
+        pass
+
+    def cleanup(self, *args, **kwargs):
+        pass
+
+
+class AudioMixer:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def play(self, *args, **kwargs):
+        pass
+
+    def stop(self, *args, **kwargs):
+        pass
+
+
+class IoTDeviceManager:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def connect_device(self, *args, **kwargs):
+        pass
+
+    def disconnect_device(self, *args, **kwargs):
+        pass
+
+
+class SmartHomeSystem:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def activate(self, *args, **kwargs):
+        pass
+
+    def deactivate(self, *args, **kwargs):
+        pass
+#!/usr/bin/env python3
+# SuperPILOT Interpreter - Complete Implementation
+# For integration with SuperPILOT II IDE
+
+# Tkinter (GUI) is optional at import time so headless environments can still
+# use the interpreter and run tests. When unavailable, TK_AVAILABLE is False
+# and attempting to invoke GUI features will raise a clear error.
+try:  # Graceful optional import for headless environments / minimal containers
+    import tkinter as tk  # type: ignore
+    from tkinter import (  # type: ignore
+        ttk,
+        scrolledtext,
+        messagebox,
+        simpledialog,
+    )
+    TK_AVAILABLE = True
+except Exception:  # pragma: no cover - environment-specific
+    tk = None  # type: ignore
+    TK_AVAILABLE = False
+
+    class _TkUnavailable:
+        def __getattr__(self, name):
+            raise RuntimeError(
+                "Tkinter is not available (missing system libtk). "
+                "Install your OS package for python3-tk to use the GUI."
+            )
+
+    # Provide placeholder objects so module import succeeds; any GUI usage will
+    # raise a clear RuntimeError via _TkUnavailable.
+    _tk_unavailable = _TkUnavailable()
+    ttk = _tk_unavailable  # type: ignore
+    scrolledtext = _tk_unavailable  # type: ignore
+    messagebox = _tk_unavailable  # type: ignore
+    simpledialog = _tk_unavailable  # type: ignore
 import random
 import math
 import re
 import time
-import threading
-from datetime import datetime
 from collections import deque
-
-# Import modularized components
-from superpilot.runtime.templecode import (
-    Tween,
-    Timer,
-    Particle,
-    EASE_FUNCTIONS,
-    MIN_DELTA_TIME_MS,
-    MAX_DELTA_TIME_MS,
-)
-from superpilot.runtime.hardware import (
-    ArduinoController,
-    RPiController,
-    IoTDeviceManager,
-    SmartHomeSystem,
-)
-from superpilot.runtime.audio import AudioMixer
-from superpilot.ide.settings import Settings
-
-
-class ToolTip:
-    """Lightweight tooltip helper usable across the UI."""
-
-    def __init__(self, widget, text, delay=500):
-        self.widget = widget
-        self.text = text
-        self.delay = delay
-        self.tipwindow = None
-        self.id = None
-        widget.bind("<Enter>", self.schedule)
-        widget.bind("<Leave>", self.hide)
-
-    def schedule(self, event=None):
-        try:
-            self.id = self.widget.after(self.delay, self.show)
-        except Exception:
-            self.id = None
-
-    def show(self):
-        if self.tipwindow or not self.text:
-            return
-        try:
-            x = self.widget.winfo_rootx() + 20
-            y = self.widget.winfo_rooty() + self.widget.winfo_height() + 5
-            self.tipwindow = tw = tk.Toplevel(self.widget)
-            tw.wm_overrideredirect(True)
-            tw.wm_geometry(f"+{x}+{y}")
-            label = tk.Label(
-                tw,
-                text=self.text,
-                justify=tk.LEFT,
-                background="#ffffe0",
-                relief=tk.SOLID,
-                borderwidth=1,
-                font=("Segoe UI", 9),
-            )
-            label.pack(ipadx=4, ipady=2)
-        except Exception:
-            self.tipwindow = None
-
-    def hide(self, event=None):
-        if self.id:
-            try:
-                self.widget.after_cancel(self.id)
-            except Exception:
-                pass
-            self.id = None
-        if self.tipwindow:
-            try:
-                self.tipwindow.destroy()
-            except Exception:
-                pass
-            self.tipwindow = None
+from superpilot.core.settings import Settings
 
 
 class SuperPILOTInterpreter:
@@ -977,764 +995,8 @@ class SuperPILOTInterpreter:
                 # Running in main thread - safe to use dialog directly
                 result = simpledialog.askstring("Input", prompt)
                 return result if result is not None else ""
-        else:
-            # Use console input for command line
-            return input(prompt)
 
-    def execute_pilot_command(self, command):
-        """Execute PILOT commands"""
-        try:
-            # Super-PILOT unification: accept BASIC and Logo commands under the PILOT umbrella
-            cmd_strip = command.strip()
-            if cmd_strip:
-                first_tok = cmd_strip.split()[0].upper()
-                # Recognize common Logo commands and delegate
-                logo_commands = {
-                    "FORWARD","FD","BACKWARD","BACK","BK","LEFT","LT","RIGHT","RT",
-                    "PENUP","PU","PENDOWN","PD","CLEARSCREEN","CS","HOME","REPEAT","SETXY",
-                    "SETX","SETY","SETHEADING","SETH","SETCOLOR","PENCOLOR","PC","PENSIZE",
-                    "HIDETURTLE","HT","SHOWTURTLE","ST","CLEARTEXT","CT","SPRITENEW","SPRITEPOS","SPRITEDRAW",
-                    "PROFILE","DEFINE","CALL","DEBUGLINES","PENSTYLE",
-                }
-                # Recognize common BASIC commands and delegate
-                basic_commands = {
-                    "LET","PRINT","INPUT","GOTO","IF","FOR","NEXT","GOSUB","RETURN","END","REM",
-                    "SCREEN","COLOR","PALETTE","PSET","PRESET","CIRCLE","DRAW","PAINT","PLAY","SOUND","BEEP",
-                    "DATA","READ","RESTORE",
-                }
-                if first_tok in logo_commands:
-                    return self.execute_logo_command(command)
-                if first_tok in basic_commands:
-                    return self.execute_basic_command(command)
 
-            # Handle conditional jump syntax: J(<expr>):LABEL
-            up = cmd_strip.upper()
-            if up.startswith("J(") and "):" in cmd_strip:
-                try:
-                    close_idx = cmd_strip.find("):" )
-                except Exception:
-                    close_idx = -1
-                if close_idx != -1:
-                    cond_str = cmd_strip[2:close_idx]
-                    label = cmd_strip[close_idx + 2 :].strip()
-                    try:
-                        cond_val = bool(self.evaluate_expression(cond_str))
-                    except Exception:
-                        cond_val = False
-                    if cond_val and label in self.labels:
-                        return f"jump:{self.labels[label]}"
-                    return "continue"
-
-            # Convenience non-colon commands used in tests
-            if up.startswith("CONTROLLERUPDATE") or up.startswith("CONTROLLER UPDATE"):
-                # No-op update in simulation
-                return "continue"
-            if up.startswith("IOTDISCOVER"):
-                # Discover a few simulated devices
-                try:
-                    self.iot_devices.devices = [
-                        {"id": "light_1", "type": "light"},
-                        {"id": "thermostat_1", "type": "thermostat"},
-                    ]
-                except Exception:
-                    pass
-                return "continue"
-            if up.startswith("SENSORCOLLECT"):
-                # SENSORCOLLECT temperature|humidity|air_quality
-                try:
-                    parts = cmd_strip.split()
-                    if len(parts) >= 2:
-                        sensor = parts[1].lower()
-                        if sensor.startswith("temp"):
-                            self.variables["SENSOR_TEMP"] = self.variables.get("SENSOR_TEMP", 24.0)
-                        elif sensor.startswith("humid"):
-                            self.variables["SENSOR_HUMIDITY"] = self.variables.get("SENSOR_HUMIDITY", 50.0)
-                        else:
-                            self.variables["SENSOR_AIR_QUALITY"] = self.variables.get("SENSOR_AIR_QUALITY", 100)
-                except Exception:
-                    pass
-                return "continue"
-            if up.startswith("SENSORCHART") or up.startswith("ROBOTPLAN") or up == "ROBOTSTOP":
-                # Visualization/plan/stop no-ops in headless tests
-                return "continue"
-
-            # Determine the command prefix up to the first colon (e.g., T:, A:, MT:)
-            colon_idx = command.find(":")
-            if colon_idx != -1:
-                cmd_type = command[: colon_idx + 1]
-            else:
-                cmd_type = command[:2] if len(command) > 1 else command
-
-            if cmd_type == "T:":
-                # Text output
-                text = command[2:].strip()
-                # If the previous command set a match (Y: or N:), then this T: is
-                # treated as conditional and only prints when match_flag is True.
-                if self._last_match_set:
-                    # consume the sentinel
-                    self._last_match_set = False
-                    if not self.match_flag:
-                        # do not print when match is false
-                        return "continue"
-
-                text = self.interpolate_text(text)
-                self.log_output(text)
-                return "continue"
-
-            elif cmd_type == "A:":
-                # Accept input
-                var_name = command[2:].strip()
-                prompt = f"Enter value for {var_name}: "
-                value = self.get_user_input(prompt).strip()
-                # Normalize variable name (replace $ with _DOLLAR for consistency)
-                normalized_var = var_name.replace("$", "_DOLLAR")
-                # Heuristic: only evaluate when input looks like a numeric expression
-                if re.fullmatch(r"[\d\s\.+\-*/()%]+", value):
-                    try:
-                        val = self.evaluate_expression(value)
-                        # Store under both names for consistency with INPUT
-                        self.variables[normalized_var] = val
-                        self.variables[var_name] = val
-                    except Exception:
-                        self.variables[normalized_var] = value
-                        self.variables[var_name] = value
-                else:
-                    # Treat as literal string
-                    self.variables[normalized_var] = value
-                    self.variables[var_name] = value
-                return "continue"
-
-            elif cmd_type == "Y:":
-                # Y: can either evaluate a condition OR execute an action based on prior match_flag
-                payload = command[2:].strip()
-                upy = payload.upper()
-                # Direct action pattern e.g. Y:J:LABEL or Y:T:Text or Y:R:...
-                if upy.startswith("J:"):
-                    if self.match_flag:
-                        label = payload[2:].strip()
-                        if label in self.labels:
-                            return f"jump:{self.labels[label]}"
-                    return "continue"
-                if upy.startswith("T:"):
-                    if self.match_flag:
-                        text = payload[2:].strip()
-                        text = self.interpolate_text(text)
-                        self.log_output(text)
-                    return "continue"
-                if upy.startswith("R:"):
-                    if self.match_flag:
-                        # Execute the R: payload directly
-                        action = payload
-                        res = self.execute_pilot_command(action)
-                        return res if res in ("continue", "end") or res.startswith("jump:") else "continue"
-                    return "continue"
-                # Otherwise treat as condition to set match_flag
-                condition = payload
-                try:
-                    result = self.evaluate_expression(condition)
-                    self.match_flag = bool(result)
-                except Exception as e:
-                    self.match_flag = False
-                    self.log_output(f"Error in Y: condition '{condition}': {e}")
-                # mark that the last command set the match flag so a following T: can be conditional
-                self._last_match_set = True
-                return "continue"
-
-            elif cmd_type == "N:":
-                # N: can execute direct action when previous match_flag is False or set a new condition
-                payload = command[2:].strip()
-                upn = payload.upper()
-                if upn.startswith("J:"):
-                    if not self.match_flag:
-                        label = payload[2:].strip()
-                        if label in self.labels:
-                            return f"jump:{self.labels[label]}"
-                    return "continue"
-                if upn.startswith("T:"):
-                    if not self.match_flag:
-                        text = payload[2:].strip()
-                        text = self.interpolate_text(text)
-                        self.log_output(text)
-                    return "continue"
-                if upn.startswith("R:"):
-                    if not self.match_flag:
-                        # Execute R: payload only when the last match was false
-                        action = payload
-                        res = self.execute_pilot_command(action)
-                        return res if res in ("continue", "end") or res.startswith("jump:") else "continue"
-                    return "continue"
-                # Otherwise set match_flag from condition
-                condition = payload
-                try:
-                    result = self.evaluate_expression(condition)
-                    self.match_flag = bool(result)
-                except Exception as e:
-                    self.match_flag = False
-                    self.log_output(f"Error in N: condition '{condition}': {e}")
-                self._last_match_set = True
-                return "continue"
-
-            elif cmd_type == "J:":
-                # Jump to label
-                label = command[2:].strip()
-                # If the previous command set a match (Y: or N:), treat this J:
-                # as conditional: consume the sentinel and only jump when
-                # match_flag is True. This matches examples that write
-                # "Y:cond" followed by "J:label" as a conditional jump.
-                if self._last_match_set:
-                    # consume sentinel
-                    self._last_match_set = False
-                    if not self.match_flag:
-                        return "continue"
-                if label in self.labels:
-                    return f"jump:{self.labels[label]}"
-                return "continue"
-
-            elif cmd_type == "M:":
-                # Jump if match flag is set
-                label = command[2:].strip()
-                if self.match_flag and label in self.labels:
-                    return f"jump:{self.labels[label]}"
-                return "continue"
-            elif cmd_type == "MT:":
-                # Match-conditional text output: only output when match_flag is True
-                text = command[3:].strip()
-                if self.match_flag:
-                    text = self.interpolate_text(text)
-                    self.log_output(text)
-                return "continue"
-
-            elif cmd_type == "R:":
-                # Extended runtime commands (from templecode.py)
-                arg_upper = command[2:].strip().upper()
-                if arg_upper.startswith("SND "):
-                    # R: SND name=file.wav
-                    m = re.search(
-                        r'name\s*=\s*"([^"]+)"\s*,\s*file\s*=\s*"([^"]+)"',
-                        command[2:],
-                        re.IGNORECASE,
-                    )
-                    if m:
-                        name, path = m.groups()
-                        self.audio_mixer.register_sound(name, path)
-                        self.log_output(f"Sound '{name}' registered")
-                    else:
-                        self.log_output(
-                            'Invalid SND syntax: R: SND name="soundname", file="path.wav"'
-                        )
-                elif arg_upper.startswith("PLAY "):
-                    # R: PLAY "soundname"
-                    m = re.search(r"\"([^\"]+)\"", command[2:])
-                    if m:
-                        name = m.group(1)
-                        self.audio_mixer.play_sound(name)
-                        self.log_output(f"Playing sound '{name}'")
-                    else:
-                        self.log_output('Invalid PLAY syntax: R: PLAY "soundname"')
-                elif arg_upper.startswith("SAVE "):
-                    # R: SAVE "slotname"
-                    m = re.search(r"\"([^\"]+)\"", command[2:])
-                    if m:
-                        slot = m.group(1)
-                        # Save current state
-                        import os
-
-                        save_dir = os.path.expanduser("~/.superpilot_saves")
-                        os.makedirs(save_dir, exist_ok=True)
-                        save_path = os.path.join(save_dir, f"{slot}.json")
-                        import json
-
-                        state = {
-                            "variables": self.variables,
-                            "turtle_x": self.turtle_x,
-                            "turtle_y": self.turtle_y,
-                            "turtle_heading": self.turtle_heading,
-                            "pen_down": self.pen_down,
-                            "pen_color": self.pen_color,
-                            "pen_width": self.pen_width,
-                        }
-                        with open(save_path, "w") as f:
-                            json.dump(state, f)
-                        self.log_output(f"Game saved to slot '{slot}'")
-                    else:
-                        self.log_output('Invalid SAVE syntax: R: SAVE "slotname"')
-                elif arg_upper.startswith("LOAD "):
-                    # R: LOAD "slotname"
-                    m = re.search(r"\"([^\"]+)\"", command[2:])
-                    if m:
-                        slot = m.group(1)
-                        import os
-
-                        save_path = os.path.expanduser(
-                            f"~/.superpilot_saves/{slot}.json"
-                        )
-                        if os.path.exists(save_path):
-                            import json
-
-                            with open(save_path, "r") as f:
-                                state = json.load(f)
-                            self.variables.update(state.get("variables", {}))
-                            self.turtle_x = state.get("turtle_x", 200)
-                            self.turtle_y = state.get("turtle_y", 200)
-                            self.turtle_heading = state.get("turtle_heading", 90)
-                            self.pen_down = state.get("pen_down", True)
-                            self.pen_color = state.get("pen_color", "black")
-                            self.pen_width = state.get("pen_width", 1)
-                            self.log_output(f"Game loaded from slot '{slot}'")
-                        else:
-                            self.log_output(f"Save slot '{slot}' not found")
-                    else:
-                        self.log_output('Invalid LOAD syntax: R: LOAD "slotname"')
-                # Templecode-style runtime systems
-                elif arg_upper.startswith("NEW "):
-                    # R: NEW "name", "path"
-                    m = re.search(r'NEW\s+"([^"]+)"\s*,\s*"([^"]+)"', command[2:], re.IGNORECASE)
-                    if m:
-                        name, path = m.groups()
-                        # Store with quotes to match tests that expect quoted keys
-                        self.create_sprite(f'"{name}"', path)
-                    else:
-                        self.log_output("Invalid NEW syntax: R: NEW \"name\", \"path\"")
-                elif arg_upper.startswith("POS "):
-                    # R: POS "name", x, y
-                    m = re.search(r'POS\s+"([^"]+)"\s*,\s*([^,]+)\s*,\s*([^\s]+)', command[2:], re.IGNORECASE)
-                    if m:
-                        name, x_expr, y_expr = m.groups()
-                        x = self.evaluate_expression(x_expr)
-                        y = self.evaluate_expression(y_expr)
-                        self.set_sprite_position(f'"{name}"', x, y)
-                    else:
-                        self.log_output("Invalid POS syntax: R: POS \"name\", x, y")
-                elif arg_upper.startswith("TWEEN "):
-                    # R: TWEEN VAR -> end IN 1000ms [EASE "name"]
-                    m = re.search(r'TWEEN\s+([A-Za-z_]\w*)\s*->\s*([^\s]+)\s+IN\s+(\d+)\s*ms(?:\s+EASE\s+"([^"]+)")?', command[2:], re.IGNORECASE)
-                    if m:
-                        var, end_expr, dur_ms, ease = m.groups()
-                        start_val = self.variables.get(var, 0)
-                        end_val = self.evaluate_expression(end_expr)
-                        tween = Tween(self.variables, var, start_val, end_val, int(dur_ms), ease or "linear")
-                        self.tweens.append(tween)
-                    else:
-                        self.log_output("Invalid TWEEN syntax")
-                elif arg_upper.startswith("AFTER "):
-                    # R: AFTER 500 DO LABEL
-                    m = re.search(r'AFTER\s+(\d+)\s+DO\s+([A-Za-z_][\w]*)', command[2:], re.IGNORECASE)
-                    if m:
-                        delay_ms, label = m.groups()
-                        self.timers.append(Timer(int(delay_ms), label))
-                    else:
-                        self.log_output("Invalid AFTER syntax: R: AFTER <ms> DO <LABEL>")
-                elif arg_upper.startswith("EMIT "):
-                    # R: EMIT "name", x, y, count, life_ms, speed
-                    m = re.search(r'EMIT\s+"([^"]+)"\s*,\s*([^,]+)\s*,\s*([^,]+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)', command[2:], re.IGNORECASE)
-                    if m:
-                        _pname, x_expr, y_expr, count, life, speed = m.groups()
-                        x = float(self.evaluate_expression(x_expr))
-                        y = float(self.evaluate_expression(y_expr))
-                        count = int(count)
-                        life = int(life)
-                        speed = float(speed)
-                        import random as _rnd
-                        for _ in range(count):
-                            angle = _rnd.random() * 2 * math.pi
-                            vx = math.cos(angle) * speed
-                            vy = math.sin(angle) * speed
-                            self.particles.append(Particle(x, y, vx, vy, life))
-                    else:
-                        self.log_output("Invalid EMIT syntax")
-                # Hardware/IoT/Robotics/Game Controller stubs
-                elif arg_upper.startswith("RPI "):
-                    # R: RPI PIN <n> OUTPUT|INPUT | R: RPI WRITE <pin> <val> | R: RPI READ <pin> <var>
-                    uprest = command[2:].strip().split()
-                    try:
-                        if len(uprest) >= 3 and uprest[1].upper() == "PIN":
-                            # Configure pin - simulation no-op
-                            pass
-                        elif len(uprest) >= 3 and uprest[1].upper() == "WRITE":
-                            # write value - simulation no-op
-                            pass
-                        elif len(uprest) >= 4 and uprest[1].upper() == "READ":
-                            varname = uprest[3]
-                            self.variables[varname] = 0
-                    except Exception:
-                        pass
-                elif arg_upper.startswith("ARDUINO "):
-                    # R: ARDUINO CONNECT <port> [baud] | SEND <data> | READ <var>
-                    try:
-                        parts = command[2:].strip().split()
-                        if len(parts) >= 2 and parts[1].upper() == "CONNECT":
-                            # Stay disconnected in simulation
-                            self.arduino.connected = False
-                        elif len(parts) >= 2 and parts[1].upper() == "SEND":
-                            pass
-                        elif len(parts) >= 3 and parts[1].upper() == "READ":
-                            # In simulation, do not set the variable (test expects it absent)
-                            pass
-                    except Exception:
-                        pass
-                elif arg_upper.startswith("ROBOT "):
-                    # Robot actions and sensors
-                    try:
-                        parts = command[2:].strip().split()
-                        if len(parts) >= 2 and parts[1].upper() == "FORWARD":
-                            # Move - update simulated distance
-                            val = self.evaluate_expression(parts[2]) if len(parts) > 2 else 0
-                            self.robot.distance = float(val)
-                        elif len(parts) >= 2 and parts[1].upper() == "LEFT":
-                            ang = self.evaluate_expression(parts[2]) if len(parts) > 2 else 0
-                            self.robot.orientation = (self.robot.orientation + float(ang)) % 360
-                        elif len(parts) >= 2 and parts[1].upper() == "DISTANCE" and len(parts) >= 3:
-                            self.variables[parts[2]] = float(self.robot.distance)
-                        elif len(parts) >= 2 and parts[1].upper() == "LIGHT" and len(parts) >= 3:
-                            self.variables[parts[2]] = 1.0
-                        elif parts[1].upper() == "PLAN":
-                            pass
-                        elif parts[1].upper() == "ARM":
-                            pass
-                        elif parts[1].upper() == "GRIPPER":
-                            pass
-                        elif parts[1].upper() == "NAVIGATE":
-                            pass
-                        elif parts[1].upper() == "SCAN" and len(parts) >= 3 and parts[2].upper() == "OBSTACLES":
-                            self.variables["ROBOT_OBSTACLES"] = 3
-                        elif parts[1].upper() == "VISION" and len(parts) >= 3 and parts[2].upper() == "DETECT":
-                            self.variables["ROBOT_OBJECTS"] = 1
-                        elif parts[1].upper() == "SWARM" and len(parts) >= 3 and parts[2].upper() == "INIT":
-                            try:
-                                n = int(self.evaluate_expression(parts[3])) if len(parts) > 3 else 1
-                            except Exception:
-                                n = 1
-                            self.variables["ROBOT_COUNT"] = n
-                        elif parts[1].upper() == "SWARM" and len(parts) >= 3 and parts[2].upper() == "STATUS":
-                            pass
-                    except Exception:
-                        pass
-                elif arg_upper.startswith("CONTROLLER "):
-                    # R: CONTROLLER UPDATE | BUTTON idx var | AXIS idx var
-                    try:
-                        parts = command[2:].strip().split()
-                        if len(parts) >= 2 and parts[1].upper() == "UPDATE":
-                            pass
-                        elif len(parts) >= 4 and parts[1].upper() == "BUTTON":
-                            self.variables[parts[3]] = 0
-                        elif len(parts) >= 4 and parts[1].upper() == "AXIS":
-                            self.variables[parts[3]] = 0.0
-                    except Exception:
-                        pass
-                elif arg_upper.startswith("SENSOR "):
-                    # R: SENSOR ADD name value | COLLECT <type> | PREDICT <type> <input> | MONITOR START | STREAM START <type>
-                    try:
-                        uprest = command[2:].strip()
-                        if re.search(r"SENSOR\s+ADD", uprest, re.IGNORECASE):
-                            # No-op add
-                            pass
-                        elif re.search(r"SENSOR\s+COLLECT", uprest, re.IGNORECASE):
-                            sensor = uprest.split()[2].lower()
-                            if sensor.startswith("temp"):
-                                self.variables["SENSOR_TEMP"] = 24.0
-                            elif sensor.startswith("humid"):
-                                self.variables["SENSOR_HUMIDITY"] = 50.0
-                            else:
-                                self.variables["SENSOR_AIR_QUALITY"] = 100
-                        elif re.search(r"SENSOR\s+PREDICT", uprest, re.IGNORECASE):
-                            # Set a numeric prediction value
-                            self.variables["SENSOR_PREDICTION"] = 25
-                        elif re.search(r"SENSOR\s+MONITOR\s+START", uprest, re.IGNORECASE):
-                            pass
-                        elif re.search(r"SENSOR\s+STREAM\s+START", uprest, re.IGNORECASE):
-                            pass
-                    except Exception:
-                        pass
-                elif arg_upper.startswith("SMARTHOME "):
-                    # R: SMARTHOME SETUP | RULE "cond" "action"
-                    try:
-                        rest = command[2:].strip()
-                        if re.search(r"SMARTHOME\s+SETUP", rest, re.IGNORECASE):
-                            self.smart_home.automation_rules = []
-                        elif re.search(r"SMARTHOME\s+RULE", rest, re.IGNORECASE):
-                            m = re.findall(r'"([^"]+)"', rest)
-                            if len(m) >= 2:
-                                self.smart_home.automation_rules.append({"cond": m[0], "action": m[1]})
-                    except Exception:
-                        pass
-                elif arg_upper.startswith("IOT "):
-                    # R: IOT DISCOVER | DEVICE <id> <ON|OFF|SET val> | SECURITY ENABLE | ENCRYPT ... | AUTHENTICATE ... | CLOUD CONNECT/UPLOAD
-                    try:
-                        rest = command[2:].strip()
-                        uprest = rest.upper()
-                        if uprest.startswith("IOT DISCOVER"):
-                            self.iot_devices.devices = [
-                                {"id": "light_1", "type": "light"},
-                                {"id": "thermostat_1", "type": "thermostat"},
-                            ]
-                        elif uprest.startswith("IOT DEVICE"):
-                            # Minimal: accept commands, no variable assertions in tests
-                            pass
-                        elif uprest.startswith("IOT SECURITY ENABLE"):
-                            self.variables["IOT_SECURE"] = 1
-                        elif uprest.startswith("IOT ENCRYPT") or uprest.startswith("IOT AUTHENTICATE"):
-                            self.variables["IOT_SECURE"] = 1
-                        elif uprest.startswith("IOT CLOUD CONNECT"):
-                            self.variables["IOT_CLOUD"] = 1
-                        elif uprest.startswith("IOT CLOUD UPLOAD"):
-                            self.variables["IOT_UPLOAD"] = "OK"
-                    except Exception:
-                        pass
-                elif arg_upper.startswith("HOME "):
-                    # R: HOME LIGHT <room> ON|OFF | HOME TEMP <room> value
-                    try:
-                        parts = command[2:].strip().split()
-                        if len(parts) >= 4 and parts[1].upper() == "LIGHT":
-                            room = parts[2]
-                            state = parts[3].upper()
-                            self.variables[f"LIGHT_{room}"] = 1 if state == "ON" else 0
-                        elif len(parts) >= 4 and parts[1].upper() == "TEMP":
-                            room = parts[2]
-                            try:
-                                val = float(self.evaluate_expression(parts[3]))
-                            except Exception:
-                                val = 0.0
-                            self.variables[f"TEMP_{room}"] = val
-                    except Exception:
-                        pass
-                else:
-                    # Default: treat as gosub (subroutine call)
-                    label = command[2:].strip()
-                    self.stack.append(self.current_line + 1)
-                    if label in self.labels:
-                        return f"jump:{self.labels[label]}"
-                    return "continue"
-
-            # Simple ML command stubs (headless/test-friendly)
-            elif command.strip().upper().startswith("LOADMODEL "):
-                try:
-                    parts = command.strip().split()
-                    if len(parts) >= 3:
-                        name = parts[1].upper()
-                        self.variables[f"MODEL_{name}_READY"] = 1
-                        self.log_output(f"Model {name} loaded")
-                except Exception:
-                    pass
-                return "continue"
-            elif command.strip().upper().startswith("CREATEDATA "):
-                try:
-                    parts = command.strip().split()
-                    if len(parts) >= 3:
-                        name = parts[1].upper()
-                        self.variables[f"DATA_{name}_READY"] = 1
-                        self.log_output(f"Data {name} created")
-                except Exception:
-                    pass
-                return "continue"
-            elif command.strip().upper().startswith("TRAINMODEL "):
-                try:
-                    parts = command.strip().split()
-                    if len(parts) >= 3:
-                        name = parts[1].upper()
-                        self.variables[f"MODEL_{name}_TRAINED"] = 1
-                        self.log_output(f"Model {name} trained")
-                except Exception:
-                    pass
-                return "continue"
-            elif command.strip().upper().startswith("PREDICT "):
-                try:
-                    parts = command.strip().split()
-                    if len(parts) >= 3:
-                        # store a dummy prediction
-                        val = self.evaluate_expression(parts[2])
-                        self.variables["ML_PREDICTION"] = val
-                        self.log_output(f"Predicted {val}")
-                except Exception:
-                    pass
-                return "continue"
-
-            # Simple Audio stubs
-            elif command.strip().upper().startswith("LOADSOUND "):
-                try:
-                    parts = command.strip().split()
-                    if len(parts) >= 3:
-                        name = parts[1].upper()
-                        self.variables[f"AUDIO_{name}_LOADED"] = 1
-                        self.log_output(f"Sound {name} loaded")
-                except Exception:
-                    pass
-                return "continue"
-            elif command.strip().upper().startswith("PLAYSOUND "):
-                try:
-                    parts = command.strip().split()
-                    if len(parts) >= 2:
-                        name = parts[1].upper()
-                        self.variables[f"AUDIO_{name}_PLAYING"] = 1
-                        self.log_output(f"Sound {name} playing")
-                except Exception:
-                    pass
-                return "continue"
-
-            # GAME: prefixed commands (creation, movement, physics, mp, net)
-            elif cmd_type == "GAME:":
-                try:
-                    payload = command.split(":", 1)[1].strip()
-                    up = payload.upper()
-                    # Create object: CREATE name sprite x y w h
-                    if up.startswith("CREATE "):
-                        parts = payload.split()
-                        if len(parts) >= 6:
-                            name = parts[1].upper()
-                            x = int(self.evaluate_expression(parts[3]))
-                            y = int(self.evaluate_expression(parts[4]))
-                            w = int(self.evaluate_expression(parts[5])) if len(parts) > 5 else 0
-                            h = int(self.evaluate_expression(parts[6])) if len(parts) > 6 else 0
-                            self.variables[f"GAME_{name}_CREATED"] = 1
-                            self.variables[f"GAME_{name}_X"] = x
-                            self.variables[f"GAME_{name}_Y"] = y
-                            self.variables[f"GAME_{name}_W"] = w
-                            self.variables[f"GAME_{name}_H"] = h
-                    elif up.startswith("MOVE "):
-                        parts = payload.split()
-                        if len(parts) >= 5:
-                            name = parts[1].upper()
-                            x = int(self.evaluate_expression(parts[2]))
-                            y = int(self.evaluate_expression(parts[3]))
-                            # speed ignored for tests
-                            self.variables[f"GAME_{name}_X"] = x
-                            self.variables[f"GAME_{name}_Y"] = y
-                    elif up.startswith("PHYSICS "):
-                        # PHYSICS name VELOCITY vx vy
-                        parts = payload.split()
-                        if len(parts) >= 5 and parts[2].upper() == "VELOCITY":
-                            name = parts[1].upper()
-                            vx = int(self.evaluate_expression(parts[3]))
-                            vy = int(self.evaluate_expression(parts[4]))
-                            self.variables[f"GAME_{name}_VX"] = vx
-                            self.variables[f"GAME_{name}_VY"] = vy
-                    elif up.startswith("COLLISION "):
-                        # COLLISION CHECK a b
-                        parts = payload.split()
-                        if len(parts) >= 4 and parts[1].upper() == "CHECK":
-                            a = parts[2].upper()
-                            b = parts[3].upper()
-                            ax = int(self.variables.get(f"GAME_{a}_X", 0))
-                            ay = int(self.variables.get(f"GAME_{a}_Y", 0))
-                            aw = int(self.variables.get(f"GAME_{a}_W", 0))
-                            ah = int(self.variables.get(f"GAME_{a}_H", 0))
-                            bx = int(self.variables.get(f"GAME_{b}_X", 0))
-                            by = int(self.variables.get(f"GAME_{b}_Y", 0))
-                            bw = int(self.variables.get(f"GAME_{b}_W", 0))
-                            bh = int(self.variables.get(f"GAME_{b}_H", 0))
-                            coll = (ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by)
-                            self.variables["GAME_COLLISION"] = 1 if coll else 0
-                    elif up.startswith("MPHOST "):
-                        parts = payload.split()
-                        # MPHOST room [mode] [max]
-                        if len(parts) >= 2:
-                            room = parts[1]
-                            self.variables["GAME_MP_ROOM"] = room
-                            if len(parts) >= 3:
-                                self.variables["GAME_MP_MODE"] = parts[2]
-                            if len(parts) >= 4:
-                                try:
-                                    self.variables["GAME_MP_MAX"] = int(parts[3])
-                                except Exception:
-                                    pass
-                            self.variables["GAME_MP_PLAYER_COUNT"] = 0
-                    elif up.startswith("MPJOIN "):
-                        # MPJOIN id name
-                        cnt = int(self.variables.get("GAME_MP_PLAYER_COUNT", 0)) + 1
-                        self.variables["GAME_MP_PLAYER_COUNT"] = cnt
-                    elif up.startswith("MPSNAPSHOT"):
-                        # Store a simple snapshot marker
-                        self.variables["GAME_MP_SNAPSHOT"] = time.time()
-                    elif up.startswith("NET "):
-                        # NET HOST port | CONNECT host port user | SEND kind payload
-                        parts = payload.split()
-                        if len(parts) >= 2 and parts[1].upper() == "HOST" and len(parts) >= 3:
-                            self.variables["NET_HOSTING"] = 1
-                        # Other NET commands are no-ops in tests
-                except Exception:
-                    pass
-                return "continue"
-
-            elif cmd_type == "C:":
-                # C: can either set match_flag from a condition, or act as RETURN when empty
-                payload = command[2:].strip()
-                if payload:
-                    try:
-                        result = self.evaluate_expression(payload)
-                        self.match_flag = bool(result)
-                        self._last_match_set = True
-                    except Exception as e:
-                        self.match_flag = False
-                        self.log_output(f"Error in C: condition '{payload}': {e}")
-                    return "continue"
-                # Return from subroutine (legacy behavior)
-                if self.stack:
-                    return f"jump:{self.stack.pop()}"
-                return "continue"
-
-            elif cmd_type == "L:":
-                # Label - do nothing
-                return "continue"
-
-            elif cmd_type == "U:":
-                # Update variable
-                assignment = command[2:].strip()
-                if "=" in assignment:
-                    var_name, expr = assignment.split("=", 1)
-                    var_name = var_name.strip()
-                    expr = expr.strip()
-                    # Heuristics:
-                    # - Quoted strings are stored literally
-                    # - Detect unsafe patterns (template injection, shell commands) and store literally
-                    # - Mathematical expressions (including *VAR* tokens) are evaluated
-                    # - Bare identifiers are stored literally
-                    if (len(expr) >= 2 and ((expr[0] == '"' and expr[-1] == '"') or (expr[0] == "'" and expr[-1] == "'"))):
-                        # Strip surrounding quotes
-                        self.variables[var_name] = expr[1:-1]
-                    else:
-                        # Check for unsafe patterns that should be stored literally (no evaluation)
-                        unsafe_patterns = ["{{", "}}", "$(", "|", "&&", "||", "`", "<script", "</script"]
-                        has_unsafe = any(pat in expr for pat in unsafe_patterns)
-                        
-                        if has_unsafe:
-                            # Store literally without evaluation for security
-                            self.variables[var_name] = expr
-                        else:
-                            # Decide if this looks like a numeric/boolean expression
-                            looks_math = bool(re.search(r"[\*\+\-/%%()<>]=?|\*[A-Za-z_]", expr)) or ("*" in expr)
-                            if looks_math:
-                                # Ensure all *VAR* references are resolved (defaulting undefined to 0) before evaluation
-                                for vm in re.findall(r"\*([A-Za-z_]\w*)\*", expr):
-                                    if vm not in self.variables:
-                                        self.variables[vm] = 0
-                                # Evaluate raw expression (evaluate_expression handles *VAR* and adjacency)
-                                try:
-                                    value = self.evaluate_expression(expr)
-                                    self.variables[var_name] = value
-                                except Exception:
-                                    # If evaluation fails, fall back to literal
-                                    self.variables[var_name] = expr
-                            else:
-                                # Bare identifier? store literally (treat like string variable name)
-                                if re.fullmatch(r"[A-Za-z_][\w]*\$?", expr):
-                                    self.variables[var_name] = expr
-                                else:
-                                    # Try evaluation as a last resort, else store text
-                                    try:
-                                        value = self.evaluate_expression(expr)
-                                        self.variables[var_name] = value
-                                    except Exception:
-                                        self.variables[var_name] = expr
-                return "continue"
-
-            elif command.strip().upper() == "END":
-                # End program
-                return "end"
-
-        except Exception as e:
-            self.log_output(f"PILOT command error: {e}")
-            return "continue"
-
-        return "continue"
 
     def execute_basic_command(self, command):
         """Execute BASIC-like commands"""
@@ -2898,125 +2160,6 @@ class SuperPILOTInterpreter:
             pass
         return "continue"
 
-    def determine_command_type(self, command):
-        """Determine which language the command belongs to (API compatibility)."""
-        command = command.strip()
-
-        # PILOT commands start with a letter followed by colon
-        if len(command) > 1 and command[1] == ":":
-            return "pilot"
-
-        # Logo commands
-        logo_commands = [
-            "FORWARD",
-            "FD",
-            "BACKWARD",
-            "BACK",
-            "BK",
-            "LEFT",
-            "LT",
-            "RIGHT",
-            "RT",
-            "PENUP",
-            "PU",
-            "PENDOWN",
-            "PD",
-            "CLEARSCREEN",
-            "CS",
-            "HOME",
-            "REPEAT",
-            "TO",
-            "END",
-            "SETXY",
-            "SETX",
-            "SETY",
-            "SETHEADING",
-            "SETH",
-            "SETCOLOR",
-            "PENCOLOR",
-            "PC",
-            "PENSIZE",
-            "HIDETURTLE",
-            "HT",
-            "SHOWTURTLE",
-            "ST",
-            "CLEARTEXT",
-            "CT",
-            "HUD",
-            "SNAPSHOT",
-            "IMAGE",
-            "RECT",
-            "DOT",
-            "SPRITENEW",
-            "SPRITEPOS",
-            "SPRITEDRAW",
-            "PROFILE",
-            "DEFINE",
-            "CALL",
-            "DEBUGLINES",
-            "PENSTYLE",
-        ]
-        if command.split()[0].upper() in logo_commands:
-            return "logo"
-
-        # BASIC commands
-        basic_commands = [
-            "LET",
-            "PRINT",
-            "INPUT",
-            "GOTO",
-            "IF",
-            "THEN",
-            "FOR",
-            "TO",
-            "NEXT",
-            "GOSUB",
-            "RETURN",
-            "END",
-            "REM",
-            "SCREEN",
-            "COLOR",
-            "PALETTE",
-            "PSET",
-            "PRESET",
-            "CIRCLE",
-            "DRAW",
-            "PAINT",
-            "PLAY",
-            "SOUND",
-            "BEEP",
-            "OBJECT",
-            "DEF",
-            "ACTIVATE",
-            "ON",
-            "OPEN",
-            "CLOSE",
-            "GET",
-            "PUT",
-            "BLOAD",
-            "BSAVE",
-            "CHAIN",
-            "COMMON",
-            "ERASE",
-            "RANDOMIZE",
-            "SWAP",
-            "CALL",
-            "USR",
-            "PEEK",
-            "POKE",
-            "WAIT",
-            "INKEY$",
-            "STICK",
-            "STRIG",
-            "DATA",
-            "READ",
-            "RESTORE",
-        ]
-        if command.split()[0].upper() in basic_commands:
-            return "basic"
-
-        # Default to PILOT for simple commands
-        return "pilot"
 
     
 
@@ -3083,8 +2226,31 @@ class SuperPILOTInterpreter:
             # Likely the END of a Logo TO ... END block that was already parsed
             return "continue"
 
-        # Unified execution: route all commands through PILOT handler which delegates as needed
-        return self.execute_pilot_command(command)
+        # Directly dispatch to BASIC or Logo command handlers
+        cmd_type = None
+        parts = command.split()
+        if not parts:
+            return "continue"
+        first_tok = parts[0].upper()
+        # Recognize Logo commands
+        logo_commands = {
+            "FORWARD","FD","BACKWARD","BACK","BK","LEFT","LT","RIGHT","RT",
+            "PENUP","PU","PENDOWN","PD","CLEARSCREEN","CS","HOME","REPEAT","SETXY",
+            "SETX","SETY","SETHEADING","SETH","SETCOLOR","PENCOLOR","PC","PENSIZE",
+            "HIDETURTLE","HT","SHOWTURTLE","ST","CLEARTEXT","CT","SPRITENEW","SPRITEPOS","SPRITEDRAW",
+            "PROFILE","DEFINE","CALL","DEBUGLINES","PENSTYLE",
+        }
+        basic_commands = {
+            "LET","PRINT","INPUT","GOTO","IF","FOR","NEXT","GOSUB","RETURN","END","REM",
+            "SCREEN","COLOR","PALETTE","PSET","PRESET","CIRCLE","DRAW","PAINT","PLAY","SOUND","BEEP",
+            "DATA","READ","RESTORE",
+        }
+        if first_tok in logo_commands:
+            return self.execute_logo_command(command)
+        if first_tok in basic_commands:
+            return self.execute_basic_command(command)
+        # Default: treat as BASIC for compatibility
+        return self.execute_basic_command(command)
 
     def load_program(self, program_text):
         """Load and parse a program"""
