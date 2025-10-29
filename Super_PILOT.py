@@ -860,7 +860,8 @@ class SuperPILOTInterpreter:
                 if var.endswith("$"):
                     return '""'
                 else:
-                    return var
+                    # Default undefined numeric variables to 0 to avoid NameError
+                    return "0"
 
             expr = re.sub(r"\b[A-Za-z_]\w*\$?\b", replace_undefined_var, expr)
             # Replace $ with _DOLLAR for function names
@@ -921,9 +922,9 @@ class SuperPILOTInterpreter:
             import threading
             if threading.current_thread() != threading.main_thread():
                 # Running in background thread - need to request input via IDE
-                # The IDE should have attached a _request_user_input method
-                if hasattr(self, '_ide_input_request'):
-                    result = self._ide_input_request(prompt)
+                # The IDE should have attached a _wait_for_input method
+                if hasattr(self, '_ide_wait_for_input'):
+                    result = self._ide_wait_for_input(prompt)
                     return result if result is not None else ""
                 # Fallback: try simpledialog (may fail but better than nothing)
                 try:
@@ -1044,15 +1045,18 @@ class SuperPILOTInterpreter:
                 var_name = command[2:].strip()
                 prompt = f"Enter value for {var_name}: "
                 value = self.get_user_input(prompt).strip()
+                # Normalize variable name (replace $ with _DOLLAR for consistency)
+                normalized_var = var_name.replace("$", "_DOLLAR")
                 # Heuristic: only evaluate when input looks like a numeric expression
                 if re.fullmatch(r"[\d\s\.+\-*/()%]+", value):
                     try:
                         val = self.evaluate_expression(value)
-                        self.variables[var_name] = val
+                        self.variables[normalized_var] = val
                     except Exception:
-                        self.variables[var_name] = value
+                        self.variables[normalized_var] = value
                 else:
                     # Treat as literal string
+                    self.variables[normalized_var] = value
                     self.variables[var_name] = value
                 return "continue"
 
@@ -1815,14 +1819,21 @@ class SuperPILOTInterpreter:
                     var_name = input_part.strip()
                     prompt = f"Enter value for {var_name}: "
                 value = self.get_user_input(prompt).strip()
+                # Normalize variable name (replace $ with _DOLLAR for consistency)
+                normalized_var = var_name.replace("$", "_DOLLAR")
                 # Only evaluate obvious numeric expressions; keep strings literal
                 if re.fullmatch(r"[\d\s\.+\-*/()%]+", value):
                     try:
                         val = self.evaluate_expression(value)
+                        # Store under both names to support *VAR$* interpolation and direct access
+                        self.variables[normalized_var] = val
                         self.variables[var_name] = val
                     except Exception:
+                        self.variables[normalized_var] = value
                         self.variables[var_name] = value
                 else:
+                    # Treat as literal string
+                    self.variables[normalized_var] = value
                     self.variables[var_name] = value
                 return "continue"
 
@@ -3502,6 +3513,9 @@ class SuperPILOTII:
 
         # Initialize interpreter
         self.interpreter = SuperPILOTInterpreter()
+        
+        # Attach IDE input handler to interpreter
+        self.interpreter._ide_wait_for_input = self._wait_for_input
 
         # Phase 2: initialize graphics queue, watches, and exception handling
         self._graphics_queue = deque()
@@ -3780,20 +3794,6 @@ class SuperPILOTII:
         )
         self.editor.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Phase 5: Code minimap
-        try:
-            self.minimap = tk.Canvas(
-                editor_frame,
-                width=100,
-                bg="#f0f0f0",
-                highlightthickness=0,
-                relief=tk.FLAT
-            )
-            self.minimap.pack(side=tk.RIGHT, fill=tk.Y, before=self.editor)
-            self.minimap.bind("<Button-1>", self._on_minimap_click)
-        except Exception:
-            pass
-
         # Scrollbars
         y_scrollbar = ttk.Scrollbar(
             editor_frame, orient=tk.VERTICAL, command=self.editor.yview
@@ -3802,7 +3802,7 @@ class SuperPILOTII:
             editor_frame, orient=tk.HORIZONTAL, command=self.editor.xview
         )
         self.editor.config(
-            yscrollcommand=lambda *args: (y_scrollbar.set(*args), self._update_minimap()),
+            yscrollcommand=y_scrollbar.set,
             xscrollcommand=x_scrollbar.set
         )
 
@@ -3820,15 +3820,14 @@ class SuperPILOTII:
         self.editor.bind("<KeyRelease>", self._on_text_change)
         self.editor.bind("<<Modified>>", self._on_text_modified)
         self.editor.bind("<ButtonRelease-1>", self._update_status_bar)
-        self.editor.bind("<KeyRelease>", lambda e: (self._on_text_change(e), self._update_status_bar(), self._update_minimap()), add="+")
+        self.editor.bind("<KeyRelease>", lambda e: (self._on_text_change(e), self._update_status_bar()), add="+")
         
         # Update gutter on scroll and text changes
-        self.editor.bind("<Configure>", lambda e: (self._update_gutter(), self._update_minimap()))
+        self.editor.bind("<Configure>", lambda e: self._update_gutter())
         self.editor.bind("<KeyRelease>", lambda e: self._update_gutter(), add="+")
         
-        # Initial gutter and minimap update
+        # Initial gutter update
         self.root.after(100, self._update_gutter)
-        self.root.after(200, self._update_minimap)
 
         # Control buttons under editor
         button_frame = ttk.Frame(self.editor_frame)
@@ -3880,6 +3879,18 @@ class SuperPILOTII:
         )
         self.error_banner_label.pack(fill=tk.X)
 
+        # Input field (at bottom, initially hidden)
+        self.input_frame = ttk.Frame(self.output_frame)
+        self.input_label = ttk.Label(self.input_frame, text="Input:", font=("Segoe UI", 12, "bold"))
+        self.input_label.pack(side=tk.LEFT, padx=5)
+        self.input_entry = ttk.Entry(self.input_frame, font=("Segoe UI", 12), width=50)
+        self.input_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        self.input_submit_btn = ttk.Button(self.input_frame, text="Submit", command=lambda: self._handle_input_submit())
+        self.input_submit_btn.pack(side=tk.LEFT, padx=5)
+        # Pack at bottom (but initially hide it)
+        self.input_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=5, pady=5)
+        self.input_frame.pack_forget()  # Hide initially
+        
         self.output_text = scrolledtext.ScrolledText(
             self.output_frame,
             wrap=tk.WORD,
@@ -3888,6 +3899,13 @@ class SuperPILOTII:
             fg="#eee8d5",
         )
         self.output_text.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        # Input handling state
+        self._input_result = None
+        self._input_ready = False
+
+        # Set interpreter output widget for GUI input mode
+        self.interpreter.output_widget = self.output_text
 
         # Connect interpreter output through buffered callback on main thread
         try:
@@ -4553,6 +4571,59 @@ END
 70 FORWARD 100
 """
         # ...create_menu continues...
+
+    def _handle_input_submit(self):
+        """Handle input submission from the input field."""
+        value = self.input_entry.get()
+        self._input_result = value
+        self._input_ready = True
+        # Hide the input field
+        self.input_frame.pack_forget()
+        # Show what was entered
+        self.output_text.insert(tk.END, f"> {value}\n")
+        self.output_text.see(tk.END)
+    
+    def _show_input_field(self, prompt):
+        """Show the input field with the given prompt."""
+        # Update label
+        self.input_label.config(text=prompt)
+        # Clear entry
+        self.input_entry.delete(0, tk.END)
+        # Show frame
+        self.input_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=10)
+        # Focus entry
+        self.input_entry.focus_set()
+        # Bind Enter key
+        self.input_entry.bind('<Return>', lambda e: self._handle_input_submit())
+        self.root.update()
+    
+    def _wait_for_input(self, prompt):
+        """Wait for user input (blocking). Called from background thread."""
+        import threading
+        
+        self._input_result = None
+        self._input_ready = False
+        
+        # Display prompt and show input field on main thread
+        def show_ui():
+            # Display prompt in output
+            self.output_text.insert(tk.END, str(prompt) + "\n")
+            self.output_text.see(tk.END)
+            # Show input field
+            self._show_input_field(prompt)
+        
+        # Schedule UI update on main thread
+        self.root.after(0, show_ui)
+        
+        # Wait for input (polling with timeout)
+        max_wait = 300  # 5 minutes
+        waited = 0
+        while not self._input_ready and waited < max_wait:
+            import time
+            time.sleep(0.1)
+            waited += 0.1
+        
+        return self._input_result if self._input_result is not None else ""
 
     def run_program(self):
         program_text = self.editor.get(1.0, tk.END)

@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### New Features
 
+- **Added visible input field for A: and INPUT commands**: User-friendly inline input in the Output panel
+  - Input field appears below output when INPUT or A: commands are executed
+  - Submit button and Enter key support for easy input
+  - Replaces popup dialog with integrated, visible input mechanism
+  - Input prompt displayed in output for better context
 - **Added Logo TO...END procedure definitions**: Full support for Logo-style procedures with parameters
   - Syntax: `TO SQUARE SIZE ... END` defines procedure with parameters
   - Parameters are passed by position: `SQUARE 100` calls with SIZE=100
@@ -14,6 +19,12 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes & Improvements
 
+- **Fixed minimap positioning**: Moved minimap to correct position on right side of editor
+  - Previously appeared between gutter and editor causing "weird middle screen"
+  - Now properly positioned after editor on the right side
+- **Fixed input prompt display**: Input prompts now show immediately in output
+  - Bypasses output buffering to ensure prompts are visible when input field appears
+  - Users can now see what they're being asked to enter
 - **Fixed SETCOLOR command**: Added missing handler for SETCOLOR Logo command
   - Previously only PENCOLOR was recognized, SETCOLOR was ignored despite being in command list
   - Both SETCOLOR and PENCOLOR now work correctly to change pen color

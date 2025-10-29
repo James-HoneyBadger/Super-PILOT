@@ -1,0 +1,24 @@
+T:Welcome to SuperPILOT Input Demo!
+T:==================================
+T:
+
+T:Let's get your name...
+A:NAME
+T:Nice to meet you, *NAME*!
+T:
+
+T:Now, enter your favorite number:
+INPUT FAVNUM
+T:*NAME*, your favorite number is *FAVNUM*
+T:
+
+T:Let's do some math!
+T:Enter first number:
+INPUT A
+T:Enter second number:
+INPUT B
+U:SUM=A+B
+T:*A* + *B* = *SUM*
+T:
+
+T:Demo complete! Thank you *NAME*!

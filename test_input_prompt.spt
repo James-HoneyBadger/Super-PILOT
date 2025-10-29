@@ -1,0 +1,5 @@
+T:Testing INPUT prompt visibility
+INPUT "What is your name? "; NAME$
+T:Hello *NAME$*!
+T:Done
+END
