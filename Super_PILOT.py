@@ -846,6 +846,7 @@ class SuperPILOTInterpreter:
             safe_dict.update(allowed_names)
 
             # Replace undefined variables with defaults
+            # But skip content inside quotes to avoid replacing "Alice" with "0"
             def replace_undefined_var(match):
                 var = match.group(0)
                 normalized_var = var.replace("$", "_DOLLAR")
@@ -875,7 +876,37 @@ class SuperPILOTInterpreter:
                     # Default undefined numeric variables to 0 to avoid NameError
                     return "0"
 
-            expr = re.sub(r"\b[A-Za-z_]\w*\$?(?!\w)", replace_undefined_var, expr)
+            # Split expression by quotes to avoid replacing inside strings
+            parts = []
+            in_string = False
+            current = []
+            for char in expr:
+                if char == '"':
+                    if in_string:
+                        # End of string - add it as-is
+                        parts.append(('string', '"' + ''.join(current) + '"'))
+                        current = []
+                    else:
+                        # End of non-string - process it
+                        if current:
+                            parts.append(('code', ''.join(current)))
+                            current = []
+                    in_string = not in_string
+                else:
+                    current.append(char)
+            # Don't forget remaining content
+            if current:
+                content_type = 'string' if in_string else 'code'
+                parts.append((content_type, ''.join(current)))
+            
+            # Apply variable replacement only to code parts
+            rebuilt_parts = []
+            for part_type, part_content in parts:
+                if part_type == 'code':
+                    part_content = re.sub(r"\b[A-Za-z_]\w*\$?(?!\w)", replace_undefined_var, part_content)
+                rebuilt_parts.append(part_content)
+            expr = ''.join(rebuilt_parts)
+            
             # Replace custom functions
             expr = expr.replace("RND(1)", str(random.random()))
             expr = expr.replace("RND()", str(random.random()))
