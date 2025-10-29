@@ -1051,9 +1051,12 @@ class SuperPILOTInterpreter:
                 if re.fullmatch(r"[\d\s\.+\-*/()%]+", value):
                     try:
                         val = self.evaluate_expression(value)
+                        # Store under both names for consistency with INPUT
                         self.variables[normalized_var] = val
+                        self.variables[var_name] = val
                     except Exception:
                         self.variables[normalized_var] = value
+                        self.variables[var_name] = value
                 else:
                     # Treat as literal string
                     self.variables[normalized_var] = value
