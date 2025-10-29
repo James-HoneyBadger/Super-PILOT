@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# SuperPILOT Interpreter - Complete Implementation
-# For integration with SuperPILOT II IDE
+# TempleCode IDE - Complete Implementation
+# For integration with TempleCode IDE
 
 # Tkinter (GUI) is optional at import time so headless environments can still
 # use the interpreter and run tests. When unavailable, TK_AVAILABLE is False
@@ -132,7 +132,7 @@ from collections import deque
 from superpilot.core.settings import Settings
 
 
-class SuperPILOTInterpreter:
+class TempleCodeInterpreter:
     def __init__(self, output_widget=None):
         # Event callbacks (observer pattern for decoupling from UI)
         self.on_output = []  # List of callbacks(text: str)
@@ -2706,7 +2706,7 @@ def test_interpreter():
 
 
 # Integration with SuperPILOT II IDE
-class SuperPILOTII:
+class TempleCodeIDE:
     def __init__(self, root):
         self.root = root
         # Consistent title across tests and app
