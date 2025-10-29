@@ -3,11 +3,13 @@ SuperPILOT - A multi-language educational programming environment
 Supports PILOT, BASIC, and Logo with turtle graphics and hardware integration
 """
 
-__version__ = "2.0.0"
+__version__ = "3.0.0"
 
-# Note: SuperPILOTInterpreter still in Super_PILOT.py until extraction complete
-# from superpilot.core.interpreter import SuperPILOTInterpreter
-from superpilot.runtime.templecode import Tween, Timer, Particle, EASE_FUNCTIONS
+# Note: SuperPILOTInterpreter is currently in Super_PILOT.py as monolithic
+# Future versions may extract it to superpilot.core.interpreter for modularity
+from superpilot.runtime.templecode import (
+    Tween, Timer, Particle, EASE_FUNCTIONS
+)
 from superpilot.runtime.hardware import (
     ArduinoController,
     RPiController,
@@ -17,7 +19,7 @@ from superpilot.runtime.hardware import (
 from superpilot.runtime.audio import AudioMixer
 
 __all__ = [
-    # "SuperPILOTInterpreter",  # TODO: uncomment after extraction
+    # "SuperPILOTInterpreter",  # Currently in Super_PILOT.py
     "Tween",
     "Timer",
     "Particle",

@@ -43,7 +43,7 @@ class SuperPILOTTestRunner:
         cmd = [
             sys.executable, "-m", "pytest",
             str(self.test_dir),
-            f"--cov=SuperPILOT",
+            f"--cov=Super_PILOT",
             f"--cov-report=html:{html_report}",
             f"--cov-report=term-missing",
             f"--cov-fail-under=80",

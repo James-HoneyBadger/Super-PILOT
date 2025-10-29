@@ -4,7 +4,6 @@ Compatibility shim module.
 Some tests and external code import `SuperPILOT` (without the underscore).
 This thin wrapper re-exports the public API from the main module `Super_PILOT`.
 """
-from Super_PILOT import *  # noqa: F401,F403
 # Compatibility shim for tests and external imports expecting `SuperPILOT`
 # Re-export the main implementation from Super_PILOT.py
 from Super_PILOT import *  # noqa: F401,F403

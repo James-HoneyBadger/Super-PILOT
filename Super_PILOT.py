@@ -2,8 +2,36 @@
 # SuperPILOT Interpreter - Complete Implementation
 # For integration with SuperPILOT II IDE
 
-import tkinter as tk
-from tkinter import ttk, scrolledtext, messagebox, simpledialog
+# Tkinter (GUI) is optional at import time so headless environments can still
+# use the interpreter and run tests. When unavailable, TK_AVAILABLE is False
+# and attempting to invoke GUI features will raise a clear error.
+try:  # Graceful optional import for headless environments / minimal containers
+    import tkinter as tk  # type: ignore
+    from tkinter import (  # type: ignore
+        ttk,
+        scrolledtext,
+        messagebox,
+        simpledialog,
+    )
+    TK_AVAILABLE = True
+except Exception:  # pragma: no cover - environment-specific
+    tk = None  # type: ignore
+    TK_AVAILABLE = False
+
+    class _TkUnavailable:
+        def __getattr__(self, name):
+            raise RuntimeError(
+                "Tkinter is not available (missing system libtk). "
+                "Install your OS package for python3-tk to use the GUI."
+            )
+
+    # Provide placeholder objects so module import succeeds; any GUI usage will
+    # raise a clear RuntimeError via _TkUnavailable.
+    _tk_unavailable = _TkUnavailable()
+    ttk = _tk_unavailable  # type: ignore
+    scrolledtext = _tk_unavailable  # type: ignore
+    messagebox = _tk_unavailable  # type: ignore
+    simpledialog = _tk_unavailable  # type: ignore
 import random
 import math
 import re
@@ -121,9 +149,9 @@ class SuperPILOTInterpreter:
         self.data_list = []  # List of data values
         self.data_pointer = 0  # Current position in data list
 
-        # Turtle graphics state
-        self.turtle_x = 200  # canvas x
-        self.turtle_y = 200  # canvas y
+        # Turtle graphics state (logical coordinates)
+        self.turtle_x = 0  # logical x (0 = center)
+        self.turtle_y = 0  # logical y (0 = center)
         self.turtle_heading = 90  # degrees, 90 = up
         self.pen_down = True
         self.pen_color = "black"
@@ -131,8 +159,8 @@ class SuperPILOTInterpreter:
         self.graphics_widget = None
         self.canvas_width = 400
         self.canvas_height = 400
-        self.origin_x = 200
-        self.origin_y = 200
+        self.origin_x = 200  # canvas center x
+        self.origin_y = 200  # canvas center y
 
         # Color palette for SETCOLOR numbers
         self.colors = [
@@ -287,8 +315,8 @@ class SuperPILOTInterpreter:
         self.reset_turtle()
 
     def reset_turtle(self):
-        self.turtle_x = 200
-        self.turtle_y = 200
+        self.turtle_x = 0
+        self.turtle_y = 0
         self.turtle_heading = 90
         self.pen_down = True
         self.pen_color = "black"
@@ -2579,7 +2607,7 @@ class SuperPILOTInterpreter:
                         movement_logged = True
                     except Exception:
                         pass
-            elif cmd in ["PENCOLOR", "PC"]:
+            elif cmd in ["SETCOLOR", "PENCOLOR", "PC"]:
                 if arg_text:
                     color_arg = arg_text.strip()
                     if color_arg.isdigit():
@@ -2650,6 +2678,41 @@ class SuperPILOTInterpreter:
                         self.log_output(f"Profile: {keys}")
                     except Exception:
                         pass
+            elif cmd == "TO":
+                # TO NAME [PARAM1 PARAM2 ...] - Define Logo procedure with parameters
+                try:
+                    parts = arg_text.strip().split()
+                    if not parts:
+                        raise ValueError("TO requires procedure name")
+                    name = parts[0].upper()
+                    params = [p.upper() for p in parts[1:]]  # Parameter names
+                    
+                    # Collect lines until END
+                    proc_lines = []
+                    self.program_counter += 1
+                    while self.program_counter < len(self.program_lines):
+                        line = self.program_lines[self.program_counter]
+                        # Handle both line number format and plain text
+                        if isinstance(line, tuple):
+                            line_text = line[1]
+                        else:
+                            line_text = line
+                        
+                        # Check if this is END command
+                        if line_text.strip().upper() == "END":
+                            break
+                        proc_lines.append(line_text)
+                        self.program_counter += 1
+                    
+                    # Store procedure with parameters
+                    if not hasattr(self, "logo_procedures"):
+                        self.logo_procedures = {}
+                    self.logo_procedures[name] = {"params": params, "body": proc_lines}
+                except Exception as e:
+                    self.log_output(f"TO error: {e}")
+            elif cmd == "END":
+                # END is handled by TO, but allow standalone END as no-op
+                pass
             elif cmd == "DEFINE":
                 # DEFINE NAME [ commands ]
                 try:
@@ -2803,6 +2866,8 @@ class SuperPILOTInterpreter:
             "CS",
             "HOME",
             "REPEAT",
+            "TO",
+            "END",
             "SETXY",
             "SETX",
             "SETY",
@@ -2917,7 +2982,8 @@ class SuperPILOTInterpreter:
             args = parts[1:]
             if len(args) != len(proc["params"]):
                 self.log_output(
-                    f"Procedure {parts[0]} expects {len(proc['params'])} args, got {len(args)}"
+                    f"Procedure {parts[0]} expects {len(proc['params'])} "
+                    f"args, got {len(args)}"
                 )
                 return "continue"
             old_vars = self.variables.copy()
@@ -2925,6 +2991,27 @@ class SuperPILOTInterpreter:
                 self.variables[param] = self.evaluate_expression(arg)
             for body_line in proc["body"]:
                 result = self.execute_line(body_line)
+                if result == "end":
+                    break
+            self.variables = old_vars
+            return "continue"
+        
+        # Check Logo procedures defined with TO...END
+        if (parts and hasattr(self, "logo_procedures") and 
+            parts[0].upper() in self.logo_procedures):
+            proc = self.logo_procedures[parts[0].upper()]
+            args = parts[1:]
+            if len(args) != len(proc["params"]):
+                self.log_output(
+                    f"Procedure {parts[0]} expects {len(proc['params'])} "
+                    f"args, got {len(args)}"
+                )
+                return "continue"
+            old_vars = self.variables.copy()
+            for param, arg in zip(proc["params"], args):
+                self.variables[param] = self.evaluate_expression(arg)
+            for body_line in proc["body"]:
+                result = self.execute_logo_command(body_line)
                 if result == "end":
                     break
             self.variables = old_vars
@@ -5785,7 +5872,31 @@ def main():
     root.mainloop()
 
 
+__all__ = [
+    "SuperPILOTInterpreter",
+    "SuperPILOTII",
+    "TK_AVAILABLE",
+    "create_demo_program",
+]
+
+
 if __name__ == "__main__":
     # You can run either the test or the full IDE
     # test_interpreter()  # For command-line testing
+    if not TK_AVAILABLE:
+        print("ERROR: Tkinter (GUI) is not available on this system.")
+        print()
+        print("The SuperPILOT IDE requires Tk to run.")
+        print("Install the system package for your Linux distribution:")
+        print()
+        print("  Arch Linux:       sudo pacman -Syu tk")
+        print("  Debian/Ubuntu:    sudo apt install python3-tk tk")
+        print("  Fedora/RHEL:      sudo dnf install python3-tkinter tk")
+        print()
+        print("After installing, run this script again.")
+        print()
+        print("For headless use, import SuperPILOTInterpreter directly:")
+        print("  from Super_PILOT import SuperPILOTInterpreter")
+        import sys
+        sys.exit(1)
     main()  # For full GUI IDE

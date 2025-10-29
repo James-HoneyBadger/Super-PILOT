@@ -15,11 +15,50 @@ SuperPILOT is a comprehensive educational programming environment that integrate
 git clone https://github.com/James-HoneyBadger/SuperPILOT.git
 cd SuperPILOT
 
-# Install dependencies
-python -m pip install -r requirements-dev.txt
+# Install basic dependencies
+python3 -m pip install -r requirements.txt
+
+# For development (includes testing tools)
+python3 -m pip install -r requirements-dev.txt
 
 # Run the IDE
 python3 Super_PILOT.py
+```
+
+## Linux prerequisites (Tk GUI)
+
+SuperPILOT’s IDE uses Tk. If you see an error like `ImportError: libtk8.6.so: cannot open shared object file`, install your distro’s Tk packages:
+
+- Debian/Ubuntu
+  ```bash
+  sudo apt update
+  sudo apt install python3-tk tk
+  ```
+- Fedora / RHEL / CentOS (dnf)
+  ```bash
+  sudo dnf install python3-tkinter tk
+  ```
+- openSUSE
+  ```bash
+  sudo zypper install python3-tk tk
+  ```
+- Arch Linux (including ARM64/aarch64)
+  ```bash
+  sudo pacman -Syu tk
+  ```
+
+Verify Tk is available:
+
+```bash
+python3 -c "import tkinter as tk; print('Tk ok, version=', tk.TkVersion)"
+```
+
+Headless/CI hint: to run GUI smoke checks without a display, use a virtual X server:
+
+```bash
+sudo pacman -S --needed xorg-server-xvfb  # Arch
+# or: sudo apt-get install xvfb           # Debian/Ubuntu
+xvfb-run -a python3 Super_PILOT.py
 ```
 
 ### Your First Program

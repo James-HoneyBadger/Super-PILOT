@@ -1,0 +1,20 @@
+# SuperPILOT Runtime Dependencies
+# Minimal requirements for running SuperPILOT
+
+# Core graphics dependency
+pillow>=9.0.0
+
+# GUI Framework: Tkinter (bundled with Python but requires system libraries)
+# Tkinter is included in Python but needs system-level Tk/Tcl libraries.
+# If you see "ImportError: libtk8.6.so", install your OS package:
+#   Arch Linux:       sudo pacman -Syu tk
+#   Debian/Ubuntu:    sudo apt install python3-tk tk
+#   Fedora/RHEL:      sudo dnf install python3-tkinter tk
+#   openSUSE:         sudo zypper install python3-tk tk
+
+# Optional: Enhanced audio support (uncomment if needed)
+# pygame>=2.0.0
+
+# Optional: Hardware integration (uncomment if using Arduino/RPi)
+# pyserial>=3.5
+# RPi.GPIO>=0.7.0  # Raspberry Pi only
