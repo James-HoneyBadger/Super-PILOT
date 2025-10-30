@@ -46,7 +46,10 @@ class TestGWBASICCore(unittest.TestCase):
         self.assertIn("111", out)
 
     def test_line_input_and_print_hash(self):
-        tmp = "/tmp/templecode_io_test.txt"
+        import tempfile
+
+        # Use cross-platform temporary directory
+        tmp = os.path.join(tempfile.gettempdir(), "templecode_io_test.txt")
         try:
             if os.path.exists(tmp):
                 os.remove(tmp)

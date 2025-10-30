@@ -32,10 +32,34 @@ class AudioMixer:
         path = self.registry.get(name)
         if not path:
             return
+        # Prefer system players on Unix-like systems
         if self.has_play:
             os.system(f"play -q {path}")
-        elif self.has_aplay and path.lower().endswith(".wav"):
+            return
+        if self.has_aplay and path.lower().endswith(".wav"):
             os.system(f"aplay -q {path}")
-        else:
-            # Fallback: system bell
+            return
+
+        # Windows support: use winsound for .wav files when available
+        try:
+            import os as _os
+
+            if _os.name == "nt" and path.lower().endswith(".wav"):
+                try:
+                    import winsound
+
+                    flags = winsound.SND_FILENAME | winsound.SND_ASYNC
+                    winsound.PlaySound(path, flags)
+                    return
+                except Exception:
+                    # Fall through to fallback behaviour
+                    pass
+        except Exception:
+            pass
+
+        # Generic fallback: system bell
+        try:
             print("\a", end="", flush=True)
+        except Exception:
+            # Last resort: silently ignore
+            pass

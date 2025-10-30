@@ -90,14 +90,18 @@ R: HOME TEMP kitchen 22.5
 T:Home automation: Living room light ON, bedroom light OFF
 T:Kitchen temperature set to 22.5°C
 
-# Arduino simulation (if connected)
+# Arduino simulation (cross-platform)
 L:ARDUINO_DEMO
 T:🔌 Testing Arduino connection...
+# Linux/Unix: /dev/ttyUSB0, /dev/ttyACM0
+# Windows: COM3, COM4, or just "3", "4" 
+# The system auto-detects and normalizes the port name
 R: ARDUINO CONNECT /dev/ttyUSB0 9600
-R: ARDUINO SEND LED_ON
+R: ARDUINO SEND LED_ON  
 R: ARDUINO READ SENSOR_VALUE
 T:Arduino command sent: LED_ON
 T:Arduino sensor reading: *SENSOR_VALUE*
+T:💡 Tip: On Windows, use "COM3" or just "3" for port names
 
 T:🎉 Hardware integration demo complete!
 T:TempleCode now supports:

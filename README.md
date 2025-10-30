@@ -28,9 +28,11 @@ python3 TempleCode.py
 python3 TempleCode.py
 ```
 
-## Linux prerequisites (Tk GUI)
+## GUI prerequisites (Linux / Windows)
 
-TempleCode’s IDE uses Tk. If you see an error like `ImportError: libtk8.6.so: cannot open shared object file`, install your distro’s Tk packages:
+TempleCode’s IDE uses Tk. On Linux you may need to install system Tk packages; on Windows the official Python installer typically includes Tk support.
+
+If you see an error like `ImportError: libtk8.6.so: cannot open shared object file` on Linux, install your distro’s Tk packages:
 
 - Debian/Ubuntu
   ```bash
@@ -55,6 +57,18 @@ Verify Tk is available:
 ```bash
 python3 -c "import tkinter as tk; print('Tk ok, version=', tk.TkVersion)"
 ```
+
+Windows 11 quick checks
+
+1. Install Python 3.10+ from https://python.org (choose the installer and enable "Add Python to PATH").
+2. Verify Tkinter and Pillow are available:
+
+```powershell
+python -c "import tkinter as tk; print('Tk ok, version=', tk.TkVersion)"
+python -m pip install --user -r requirements.txt
+```
+
+If the Tk import fails on Windows, reinstall Python using the official installer and ensure the "tcl/tk and IDLE" option is selected.
 
 Headless/CI hint: to run GUI smoke checks without a display, use a virtual X server:
 
