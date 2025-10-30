@@ -7,7 +7,7 @@ This repository now distributes TempleCode as a Windows-only, binary application
 1) Download or clone this repo
 2) Launch the executable:
 
-  - dist/windows/TempleCode.exe
+  - bin/TempleCode.exe
 
 You can also create a desktop/start menu installer using the NSIS script included in this repo (see below).
 
@@ -18,8 +18,8 @@ Requirements:
 - NSIS (Nullsoft Scriptable Install System) installed and added to PATH
 
 Steps:
-1) Ensure the executable exists at `dist/windows/TempleCode.exe`
-2) Open NSIS and compile `templecode_installer.nsi`
+1) Ensure the executable exists at `bin/TempleCode.exe`
+2) Open NSIS and compile `installer/templecode_installer.nsi`
 3) Run the generated installer
 
 ## What changed?

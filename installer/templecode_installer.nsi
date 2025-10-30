@@ -1,13 +1,13 @@
 ; TempleCode IDE Windows Installer Script
 ; Uses NSIS (Nullsoft Scriptable Install System)
-; Build with: makensis templecode_installer.nsi
+; Build with: makensis installer\templecode_installer.nsi
 
 !define APP_NAME "TempleCode IDE"
 !define APP_VERSION "1.0.0"
 !define APP_PUBLISHER "TempleCode Team"
 !define APP_URL "https://github.com/James-HoneyBadger/Super-PILOT"
 !define APP_EXE "TempleCode.exe"
-!define APP_ICON "assets\templecode.ico"
+!define APP_ICON "..\assets\templecode.ico"
 
 ; Main installer settings
 Name "${APP_NAME}"
@@ -24,13 +24,14 @@ RequestExecutionLevel admin
 !define MUI_ABORTWARNING
 !define MUI_ICON "${APP_ICON}"
 !define MUI_UNICON "${APP_ICON}"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "assets\installer_banner.bmp"
-!define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "assets\installer_header.bmp"
+; Optional UI bitmaps (commented out if not present)
+;!define MUI_WELCOMEFINISHPAGE_BITMAP "..\assets\installer_banner.bmp"
+;!define MUI_HEADERIMAGE
+;!define MUI_HEADERIMAGE_BITMAP "..\assets\installer_header.bmp"
 
 ; Pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "LICENSE.txt"
+!insertmacro MUI_PAGE_LICENSE "..\LICENSE.txt"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !define MUI_FINISHPAGE_RUN "$INSTDIR\${APP_EXE}"
@@ -67,14 +68,10 @@ Section "Core Application" SecCore
   SetOutPath "$INSTDIR"
   
   ; Main executable
-  File "dist\windows\${APP_EXE}"
+  File "..\bin\${APP_EXE}"
   
   ; Documentation and examples
-  File "README.md"
-  File "VERSION"
-  File /r "examples"
-  File /r "sample_programs"
-  File /r "docs"
+  File "..\README.md"
   
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -111,7 +108,7 @@ Section "Start Menu Shortcuts" SecStartMenu
   CreateDirectory "$SMPROGRAMS\${APP_NAME}"
   CreateShortcut "$SMPROGRAMS\${APP_NAME}\${APP_NAME}.lnk" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}" 0
   CreateShortcut "$SMPROGRAMS\${APP_NAME}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-  CreateShortcut "$SMPROGRAMS\${APP_NAME}\Documentation.lnk" "$INSTDIR\docs\README.md"
+  ; No documentation directory in binary-only distribution
 SectionEnd
 
 Section "File Associations" SecFileAssoc
