@@ -1,7 +1,0 @@
-10 PRINT "SuperPILOT BASIC Example"
-20 INPUT "Enter your name: "; NAME$
-30 PRINT "Hello "; NAME$
-40 FOR I = 1 TO 10
-50 PRINT "Count: "; I
-60 NEXT I
-70 END

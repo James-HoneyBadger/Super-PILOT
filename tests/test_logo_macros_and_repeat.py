@@ -1,5 +1,5 @@
 import pytest
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 class DummyOut:
     def __init__(self):
@@ -10,7 +10,7 @@ class DummyOut:
         pass
 
 def run(prog):
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.output_widget = DummyOut()
     interp.run_program(prog)
     return interp

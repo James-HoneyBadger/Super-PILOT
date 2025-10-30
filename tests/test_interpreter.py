@@ -1,5 +1,5 @@
 import unittest
-from Super_PILOT import SuperPILOTInterpreter, create_demo_program
+from Super_PILOT import TempleCodeInterpreter, create_demo_program
 
 
 class InterpreterTests(unittest.TestCase):
@@ -8,7 +8,7 @@ class InterpreterTests(unittest.TestCase):
 U:Y=20
 U:SUM=*X*+*Y*
 END'''
-        interp = SuperPILOTInterpreter()
+        interp = TempleCodeInterpreter()
         interp.output_widget = None
         interp.run_program(prog)
         self.assertEqual(interp.variables.get('X'), 10)
@@ -16,7 +16,7 @@ END'''
         self.assertEqual(interp.variables.get('SUM'), 30)
 
     def test_demo_program_runs(self):
-        interp = SuperPILOTInterpreter()
+        interp = TempleCodeInterpreter()
         interp.output_widget = None
         ok = interp.run_program(create_demo_program())
         self.assertTrue(ok)

@@ -1,4 +1,4 @@
-# SuperPILOT Technical Reference Manual
+# TempleCode Technical Reference Manual
 
 **Version 2.0**  
 **Last Updated: October 27, 2025**
@@ -20,7 +20,7 @@
 
 ### 1.1 Overview
 
-SuperPILOT is a multi-language educational programming environment that integrates three programming paradigms:
+TempleCode is a multi-language educational programming environment that integrates three programming paradigms:
 
 - **PILOT**: Text-based educational language with simple command syntax
 - **BASIC**: Classic procedural programming with line numbers
@@ -37,9 +37,9 @@ SuperPILOT is a multi-language educational programming environment that integrat
 ### 1.3 Architecture Overview
 
 ```
-SuperPILOT/
-├── Super_PILOT.py          # Main application and interpreter
-├── superpilot/             # Modular components
+TempleCode/
+├── TempleCode.py          # Main application and interpreter
+├── templecode/             # Modular components
 │   ├── runtime/            # Runtime systems
 │   │   ├── templecode.py   # Animation (Tween, Timer, Particle)
 │   │   ├── hardware.py     # Hardware controllers (Arduino, RPi)
@@ -56,7 +56,7 @@ SuperPILOT/
 
 ### 2.1 Core Components
 
-#### SuperPILOTInterpreter
+#### TempleCodeInterpreter
 
 The central execution engine that processes all three language types.
 
@@ -180,7 +180,7 @@ The `Y:` command sets an internal match flag. The immediately following `T:` or 
 
 ```pilot
 L:START
-T:Welcome to SuperPILOT!
+T:Welcome to TempleCode!
 A:NAME
 T:Hello, *NAME*!
 
@@ -300,12 +300,12 @@ SQUARE 50
 
 ## 4. API Reference
 
-### 4.1 SuperPILOTInterpreter Class
+### 4.1 TempleCodeInterpreter Class
 
 #### Constructor
 
 ```python
-SuperPILOTInterpreter(output_widget=None)
+TempleCodeInterpreter(output_widget=None)
 ```
 
 **Parameters:**
@@ -313,9 +313,9 @@ SuperPILOTInterpreter(output_widget=None)
 
 **Example:**
 ```python
-from Super_PILOT import SuperPILOTInterpreter
+from TempleCode import TempleCodeInterpreter
 
-interp = SuperPILOTInterpreter()
+interp = TempleCodeInterpreter()
 ```
 
 #### Methods
@@ -441,7 +441,7 @@ interp.on_breakpoint_hit.append(lambda line: print(f"Breakpoint at {line}"))
 #### Tween (Animation)
 
 ```python
-from superpilot.runtime.templecode import Tween
+from templecode.runtime.templecode import Tween
 
 # Create smooth transition
 tween = Tween(
@@ -459,7 +459,7 @@ value = tween.update(dt_ms)
 #### Timer (Delayed Actions)
 
 ```python
-from superpilot.runtime.templecode import Timer
+from templecode.runtime.templecode import Timer
 
 def on_timer():
     print("Timer fired!")
@@ -473,7 +473,7 @@ timer.update(dt_ms)
 #### Hardware Controllers
 
 ```python
-from superpilot.runtime.hardware import ArduinoController, RPiController
+from templecode.runtime.hardware import ArduinoController, RPiController
 
 # Arduino (simulation mode)
 arduino = ArduinoController(simulation_mode=True)
@@ -497,7 +497,7 @@ The event system uses the Observer pattern to decouple the interpreter from UI:
 
 ```
 ┌─────────────────────┐
-│  SuperPILOT        │
+│  TempleCode        │
 │  Interpreter       │
 └──────┬──────────────┘
        │ Fires Events
@@ -591,7 +591,7 @@ if command.startswith('R:'):
 ### 6.2 Creating Hardware Controllers
 
 ```python
-from superpilot.runtime.hardware import HardwareController
+from templecode.runtime.hardware import HardwareController
 
 class MyController:
     def __init__(self, simulation_mode=True):
@@ -618,7 +618,7 @@ class MyController:
 ### 6.3 Settings Integration
 
 ```python
-from superpilot.ide.settings import Settings
+from templecode.ide.settings import Settings
 
 # Create custom settings
 settings = Settings()

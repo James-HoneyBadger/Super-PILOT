@@ -1,7 +1,7 @@
 import pytest
 import random
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class DummyOut:
@@ -16,7 +16,7 @@ class DummyOut:
 
 
 def run_capture(program, inputs=None, seed=None):
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
     # simulate inputs if provided
@@ -35,7 +35,7 @@ def run_capture(program, inputs=None, seed=None):
 
 
 def test_parse_line_and_labels():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     # parse_line via load_program and labels collection
     program = 'L:FOO\n10 PRINT "X"\nL:BAR\n'
     interp.load_program(program)
@@ -55,7 +55,7 @@ T:Nope
 L:ENDLBL
 T:Bye
 END'''
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
     # simulate A:NAME input
@@ -94,7 +94,7 @@ def test_for_next_nested_and_errors():
     interp, out = run_capture(prog)
     assert '1' in out
     # NEXT without FOR should not throw, test graceful handling
-    interp2 = SuperPILOTInterpreter()
+    interp2 = TempleCodeInterpreter()
     out2 = DummyOut()
     interp2.output_widget = out2
     interp2.run_program('10 NEXT\nEND')
@@ -117,7 +117,7 @@ C:
 
 
 def test_variable_name_collision():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     # A and AB variable collision test
     interp.variables['A'] = 1
     interp.variables['AB'] = 2
@@ -131,7 +131,7 @@ def test_variable_name_collision():
 
 
 def test_evaluate_expression_edge_cases():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     # division by zero should be handled gracefully (via evaluate_expression catching errors)
     val = interp.evaluate_expression('1/0')
     # if error, interpreter's evaluate_expression returns 0 per implementation
@@ -139,7 +139,7 @@ def test_evaluate_expression_edge_cases():
 
 
 def test_max_iterations_guard():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
     # infinite loop via GOTO to self
@@ -150,7 +150,7 @@ def test_max_iterations_guard():
 
 
 def test_debugger_step_and_breakpoints():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
     # program with multiple lines

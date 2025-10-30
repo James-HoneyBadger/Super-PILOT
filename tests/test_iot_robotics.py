@@ -5,7 +5,7 @@ Tests hardware simulation, device management, and advanced robotics
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from conftest import TestCase
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class TestIoTRoboticsIntegration(TestCase):

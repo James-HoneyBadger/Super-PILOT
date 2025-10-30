@@ -1,5 +1,5 @@
 """
-Hardware integration for SuperPILOT
+Hardware integration for TempleCode
 Provides Arduino, Raspberry Pi, IoT, and Smart Home controllers
 """
 

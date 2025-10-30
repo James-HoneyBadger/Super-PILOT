@@ -1,5 +1,5 @@
 """
-Audio playback system for SuperPILOT
+Audio playback system for TempleCode
 Supports play/aplay for sound effects and music
 """
 

@@ -1,6 +1,6 @@
 import pytest
 
-from Super_PILOT import SuperPILOTInterpreter, create_demo_program
+from Super_PILOT import TempleCodeInterpreter, create_demo_program
 
 
 class DummyOut:
@@ -24,7 +24,7 @@ def run_demo():
     """Return a helper that runs the demo with the provided user input value."""
 
     def _run(value):
-        interp = SuperPILOTInterpreter()
+        interp = TempleCodeInterpreter()
         out = DummyOut()
         interp.output_widget = out
         interp.get_user_input = lambda prompt='': str(value)

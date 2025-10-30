@@ -1,7 +1,7 @@
-# SuperPILOT Hardware Integration Demo
+# TempleCode Hardware Integration Demo
 # This program demonstrates robot control, sensor reading, and game controller input
 
-T:🤖 SuperPILOT Hardware Demo Starting...
+T:🤖 TempleCode Hardware Demo Starting...
 
 # Initialize systems
 R: CONTROLLER UPDATE
@@ -100,7 +100,7 @@ T:Arduino command sent: LED_ON
 T:Arduino sensor reading: *SENSOR_VALUE*
 
 T:🎉 Hardware integration demo complete!
-T:SuperPILOT now supports:
+T:TempleCode now supports:
 T:  • Robot control and sensor reading
 T:  • Game controller input
 T:  • Sensor data visualization  

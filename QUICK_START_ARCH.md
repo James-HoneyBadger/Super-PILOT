@@ -1,4 +1,4 @@
-# SuperPILOT Quick Start - Arch Linux (ARM64)
+# TempleCode Quick Start - Arch Linux (ARM64)
 
 This guide is specifically for Arch Linux ARM64 (aarch64) systems.
 
@@ -17,18 +17,18 @@ sudo pacman -Syu tk
 python3 -c "import tkinter as tk; print('Tk version:', tk.TkVersion)"
 ```
 
-## Run SuperPILOT
+## Run TempleCode
 
 ### With GUI (after installing Tk)
 ```bash
-python3 Super_PILOT.py
+python3 TempleCode.py
 ```
 
 ### Headless Mode (no Tk needed)
 ```python
-from Super_PILOT import SuperPILOTInterpreter
+from TempleCode import TempleCodeInterpreter
 
-interp = SuperPILOTInterpreter()
+interp = TempleCodeInterpreter()
 program = """
 T:Hello, World!
 U:X=42
@@ -41,7 +41,7 @@ interp.run_program(program)
 ## Check GUI Availability Programmatically
 
 ```python
-from Super_PILOT import TK_AVAILABLE
+from TempleCode import TK_AVAILABLE
 
 if TK_AVAILABLE:
     print("GUI is available")
@@ -58,7 +58,7 @@ else:
 sudo pacman -S --needed xorg-server-xvfb
 
 # Run with virtual display
-xvfb-run -a python3 Super_PILOT.py
+xvfb-run -a python3 TempleCode.py
 ```
 
 ## Troubleshooting
@@ -66,11 +66,11 @@ xvfb-run -a python3 Super_PILOT.py
 ### Error: `ImportError: libtk8.6.so`
 **Solution**: Install Tk with `sudo pacman -Syu tk`
 
-### Error when running `python3 Super_PILOT.py`
+### Error when running `python3 TempleCode.py`
 The script now detects missing Tk and shows installation instructions automatically.
 
 ### Want to use headless mode only?
-No Tk installation needed! Just import and use `SuperPILOTInterpreter` directly in your Python code.
+No Tk installation needed! Just import and use `TempleCodeInterpreter` directly in your Python code.
 
 ## What Changed
 

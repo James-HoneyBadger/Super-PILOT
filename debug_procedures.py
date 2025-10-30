@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 program = """
 TO SQUARE SIZE
@@ -8,7 +8,7 @@ END
 SQUARE 100
 """
 
-interp = SuperPILOTInterpreter()
+interp = TempleCodeInterpreter()
 interp.run_program(program)
 
 print(f"\nDEBUG: logo_procedures attribute exists: {hasattr(interp, 'logo_procedures')}")

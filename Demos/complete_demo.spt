@@ -2,13 +2,13 @@ L:START
 T:========================================
 T:   SUPER PILOT COMPLETE DEMO PROGRAM
 T:========================================
-T:This program showcases all SuperPILOT abilities:
+T:This program showcases all TempleCode abilities:
 T:PILOT commands, BASIC programming, Logo graphics,
 T:procedures, loops, and advanced features!
 T:
 T:Let's start with some PILOT basics...
 A:NAME
-T:Hello *NAME*! Welcome to the SuperPILOT demo.
+T:Hello *NAME*! Welcome to the TempleCode demo.
 T:
 T:=== PILOT COMMANDS DEMO ===
 U:SCORE=0
@@ -123,11 +123,11 @@ T:• Custom procedures (TO/END)
 T:• Color and pen control
 T:Your final score: *SCORE*
 Y:*SCORE* >= 10
-T:Excellent work! You mastered SuperPILOT!
+T:Excellent work! You mastered TempleCode!
 N:*SCORE* < 10
 T:Great effort! Try again to explore more features.
 T:
-T:Thank you for using SuperPILOT!
+T:Thank you for using TempleCode!
 T:========================================
 END
 

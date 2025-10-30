@@ -5,7 +5,7 @@ Quick smoke test to verify the IDE can be imported and instantiated
 
 try:
     import tkinter as tk
-    from Super_PILOT import SuperPILOTII
+    from Super_PILOT import TempleCodeII
     
     print("✓ Imports successful")
     
@@ -13,7 +13,7 @@ try:
     root = tk.Tk()
     
     # Create IDE instance
-    ide = SuperPILOTII(root)
+    ide = TempleCodeII(root)
     
     print("✓ IDE instantiation successful")
     print("✓ Event callbacks registered:", len(ide.interpreter.on_output), "output callbacks")

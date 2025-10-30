@@ -1,6 +1,6 @@
-# SuperPILOT Developer Handbook
+# TempleCode Developer Handbook
 
-**Contributing to and Extending SuperPILOT**
+**Contributing to and Extending TempleCode**
 
 Version 2.0 | Last Updated: October 27, 2025
 
@@ -28,8 +28,8 @@ Version 2.0 | Last Updated: October 27, 2025
 python3 --version
 
 # Clone repository
-git clone https://github.com/yourusername/SuperPILOT.git
-cd SuperPILOT
+git clone https://github.com/yourusername/TempleCode.git
+cd TempleCode
 
 # Create virtual environment (recommended)
 python3 -m venv venv
@@ -141,15 +141,15 @@ git push origin feature/your-feature-name
 ### Core Components
 
 ```
-SuperPILOT Architecture
+TempleCode Architecture
 │
 ├─ Presentation Layer (IDE)
-│  ├─ SuperPILOTII (Main Window)
+│  ├─ TempleCodeII (Main Window)
 │  ├─ AdvancedDebugger (Debug Panel)
 │  └─ Settings (Configuration)
 │
 ├─ Business Logic Layer
-│  ├─ SuperPILOTInterpreter (Execution Engine)
+│  ├─ TempleCodeInterpreter (Execution Engine)
 │  ├─ Language Executors
 │  │  ├─ execute_pilot_command()
 │  │  ├─ execute_basic_command()
@@ -162,12 +162,12 @@ SuperPILOT Architecture
    └─ audio.py (Sound)
 ```
 
-### SuperPILOTInterpreter Class
+### TempleCodeInterpreter Class
 
 #### Core Data Structures
 
 ```python
-class SuperPILOTInterpreter:
+class TempleCodeInterpreter:
     def __init__(self, output_widget=None):
         # Execution state
         self.program_lines = []        # [(line_num, command), ...]
@@ -428,7 +428,7 @@ def get_variable(self, name: str, default: Any = None) -> Any:
 # Use type hints for complex structures
 from typing import List, Dict, Tuple, Optional, Callable
 
-class SuperPILOTInterpreter:
+class TempleCodeInterpreter:
     program_lines: List[Tuple[int, str]]
     variables: Dict[str, Any]
     labels: Dict[str, int]
@@ -455,7 +455,7 @@ def evaluate_expression(self, expr: str) -> Any:
         No exceptions are raised. Errors are logged and 0 is returned.
     
     Examples:
-        >>> interp = SuperPILOTInterpreter()
+        >>> interp = TempleCodeInterpreter()
         >>> interp.variables['X'] = 10
         >>> interp.evaluate_expression("X * 2")
         20
@@ -528,8 +528,8 @@ Include apt package names for different distributions.
 
 1. **Fork and branch**
    ```bash
-   git clone https://github.com/yourusername/SuperPILOT.git
-   cd SuperPILOT
+   git clone https://github.com/yourusername/TempleCode.git
+   cd TempleCode
    git checkout -b feat/my-new-feature
    ```
 
@@ -543,7 +543,7 @@ Include apt package names for different distributions.
    black .
    isort .
    flake8
-   mypy Super_PILOT.py
+   mypy TempleCode.py
    ```
 
 4. **Update changelog**
@@ -615,7 +615,7 @@ tests/
 ```python
 def test_pilot_output():
     """Test PILOT T: command outputs text."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     output = []
     interp.on_output.append(lambda text: output.append(text))
     
@@ -627,7 +627,7 @@ def test_pilot_output():
 
 def test_pilot_variable_assignment():
     """Test PILOT U: command sets variables."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     program = "U:NAME=Alice"
     interp.run_program(program)
@@ -637,7 +637,7 @@ def test_pilot_variable_assignment():
 
 def test_basic_let_statement():
     """Test BASIC LET command."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     program = "10 LET X = 42"
     interp.run_program(program)
@@ -646,7 +646,7 @@ def test_basic_let_statement():
 
 def test_logo_forward():
     """Test Logo FORWARD command moves turtle."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     program = """
     CS
@@ -665,7 +665,7 @@ def test_logo_forward():
 ```python
 def test_variable_changed_callback():
     """Test on_variable_changed fires when variables are set."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     changes = []
     def track_change(name, value):
@@ -686,7 +686,7 @@ def test_variable_changed_callback():
 ```python
 def test_infinite_loop_protection():
     """Test max iterations prevents infinite loops."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Infinite loop program
     program = """
@@ -706,7 +706,7 @@ def test_infinite_loop_protection():
 ```python
 def test_pilot_basic_logo_integration():
     """Test program using all three languages."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     program = """
     T:Drawing a square
@@ -741,7 +741,7 @@ from unittest.mock import Mock, patch
 
 def test_arduino_simulation():
     """Test Arduino in simulation mode."""
-    from superpilot.runtime.hardware import ArduinoController
+    from templecode.runtime.hardware import ArduinoController
     
     arduino = ArduinoController(simulation_mode=True)
     arduino.connect('/dev/ttyUSB0', 9600)
@@ -772,7 +772,7 @@ import pytest
 
 def test_execution_speed():
     """Ensure interpreter executes quickly."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Program with 100 simple commands
     program = "\n".join([f"10{i} LET X = {i}" for i in range(100)])
@@ -787,7 +787,7 @@ def test_execution_speed():
 @pytest.mark.benchmark
 def test_expression_evaluation_performance(benchmark):
     """Benchmark expression evaluation."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.variables = {'X': 10, 'Y': 20, 'Z': 30}
     
     result = benchmark(interp.evaluate_expression, "X * Y + Z ** 2")
@@ -855,7 +855,7 @@ pytest -n auto
 
 def test_while_loop_basic():
     """Test simple WHILE loop."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     program = """
     10 LET X = 0
@@ -879,7 +879,7 @@ def test_while_loop_basic():
 
 def test_while_loop_skip():
     """Test WHILE loop that doesn't execute."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     program = """
     10 LET X = 10
@@ -901,7 +901,7 @@ def test_while_loop_skip():
 
 def test_nested_while_loops():
     """Test nested WHILE loops."""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     program = """
     10 LET I = 0
@@ -928,7 +928,7 @@ def test_nested_while_loops():
 #### Step 3: Implement Feature
 
 ```python
-# In SuperPILOTInterpreter class
+# In TempleCodeInterpreter class
 
 def __init__(self, ...):
     # ... existing init code ...
@@ -1083,7 +1083,7 @@ Run in IDE and verify output.
 #### Using cProfile
 
 ```bash
-python3 -m cProfile -o profile.stats Super_PILOT.py
+python3 -m cProfile -o profile.stats TempleCode.py
 ```
 
 Analyze results:
@@ -1102,7 +1102,7 @@ p.print_stats(20)  # Top 20 functions
 pip install line_profiler
 
 # Add @profile decorator to functions
-kernprof -l -v Super_PILOT.py
+kernprof -l -v TempleCode.py
 ```
 
 ### Optimization Strategies
@@ -1112,7 +1112,7 @@ kernprof -l -v Super_PILOT.py
 ```python
 from functools import lru_cache
 
-class SuperPILOTInterpreter:
+class TempleCodeInterpreter:
     @lru_cache(maxsize=128)
     def _parse_expression(self, expr: str) -> Any:
         """Cache parsed expressions to avoid re-parsing."""
@@ -1214,20 +1214,20 @@ Create web API for headless execution:
 # api/server.py
 
 from flask import Flask, request, jsonify
-from Super_PILOT import SuperPILOTInterpreter
+from TempleCode import TempleCodeInterpreter
 import threading
 
 app = Flask(__name__)
 
 @app.route('/execute', methods=['POST'])
 def execute_program():
-    """Execute SuperPILOT program and return output."""
+    """Execute TempleCode program and return output."""
     try:
         data = request.json
         program = data.get('program', '')
         
         # Create interpreter
-        interp = SuperPILOTInterpreter()
+        interp = TempleCodeInterpreter()
         
         # Capture output
         output = []
@@ -1274,7 +1274,7 @@ curl -X POST http://localhost:5000/execute \
 
 from flask import Flask
 from flask_socketio import SocketIO, emit
-from Super_PILOT import SuperPILOTInterpreter
+from TempleCode import TempleCodeInterpreter
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -1284,7 +1284,7 @@ def handle_execute(data):
     """Execute program with real-time output updates."""
     program = data.get('program', '')
     
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Send output in real-time
     def send_output(text):
@@ -1341,13 +1341,13 @@ socket.emit('execute', {
 pip install pyinstaller
 
 # Create spec file
-pyi-makespec --windowed --name SuperPILOT Super_PILOT.py
+pyi-makespec --windowed --name TempleCode TempleCode.py
 
-# Edit SuperPILOT.spec to include data files
+# Edit TempleCode.spec to include data files
 # Then build:
-pyinstaller SuperPILOT.spec
+pyinstaller TempleCode.spec
 
-# Executable will be in dist/SuperPILOT/
+# Executable will be in dist/TempleCode/
 ```
 
 ### Docker Container
@@ -1381,23 +1381,23 @@ CMD ["python", "api/server.py"]
 
 Build and run:
 ```bash
-docker build -t superpilot:latest .
-docker run -p 5000:5000 superpilot:latest
+docker build -t templecode:latest .
+docker run -p 5000:5000 templecode:latest
 ```
 
 ### Raspberry Pi Deployment
 
 ```bash
 # On Raspberry Pi
-git clone https://github.com/yourusername/SuperPILOT.git
-cd SuperPILOT
+git clone https://github.com/yourusername/TempleCode.git
+cd TempleCode
 
 # Install dependencies
 sudo apt-get install python3-tk python3-pil python3-pip
 pip3 install -r requirements-dev.txt
 
 # Run
-python3 Super_PILOT.py
+python3 TempleCode.py
 ```
 
 ### Cloud Deployment (AWS Lambda)
@@ -1406,14 +1406,14 @@ python3 Super_PILOT.py
 # lambda_handler.py
 
 import json
-from Super_PILOT import SuperPILOTInterpreter
+from TempleCode import TempleCodeInterpreter
 
 def lambda_handler(event, context):
-    """AWS Lambda handler for SuperPILOT execution."""
+    """AWS Lambda handler for TempleCode execution."""
     try:
         program = event.get('program', '')
         
-        interp = SuperPILOTInterpreter()
+        interp = TempleCodeInterpreter()
         
         output = []
         interp.on_output.append(lambda text: output.append(text))
@@ -1481,9 +1481,9 @@ def lambda_handler(event, context):
 
 ## Contact & Support
 
-- **GitHub**: https://github.com/yourusername/SuperPILOT
-- **Issues**: https://github.com/yourusername/SuperPILOT/issues
-- **Discussions**: https://github.com/yourusername/SuperPILOT/discussions
-- **Email**: dev@superpilot.org
+- **GitHub**: https://github.com/yourusername/TempleCode
+- **Issues**: https://github.com/yourusername/TempleCode/issues
+- **Discussions**: https://github.com/yourusername/TempleCode/discussions
+- **Email**: dev@templecode.org
 
 **Happy coding!** 🚀

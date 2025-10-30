@@ -13,12 +13,12 @@ Implemented thread-safe input mechanism using the same pattern as the graphics q
 
 ## Changes Made
 
-### SuperPILOTInterpreter (lines 883-906)
+### TempleCodeInterpreter (lines 883-906)
 - Modified `get_user_input()` to detect threading context
 - Routes GUI input requests through `_ide_input_request` callback when in background thread
 - Maintains backward compatibility with console mode and main-thread execution
 
-### SuperPILOTII IDE (lines 4118-4144)
+### TempleCodeII IDE (lines 4118-4144)
 - Added `_request_user_input(prompt)` method that:
   - Creates result container and threading event
   - Schedules `simpledialog.askstring()` on main thread

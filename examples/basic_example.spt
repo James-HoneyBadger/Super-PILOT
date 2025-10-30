@@ -1,4 +1,4 @@
-10 PRINT "SuperPILOT BASIC Example"
+10 PRINT "TempleCode BASIC Example"
 20 INPUT "Enter your name: "; NAME$
 30 PRINT "Hello "; NAME$
 40 FOR I = 1 TO 10

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Quick test to verify A: command works with thread-safe input mechanism"""
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 from unittest.mock import Mock, patch
 
 def test_a_command_in_console_mode():
     """Test A: command in console mode (no GUI)"""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Mock console input
     with patch('builtins.input', return_value='TestUser'):
@@ -25,7 +25,7 @@ T:Hello, *NAME*!
 
 def test_a_command_with_ide_callback():
     """Test A: command with IDE input callback (simulated threading context)"""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Simulate IDE environment by setting output_widget
     interp.output_widget = Mock()

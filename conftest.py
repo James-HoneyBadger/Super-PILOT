@@ -1,5 +1,5 @@
 """
-pytest configuration and fixtures for SuperPILOT testing framework
+pytest configuration and fixtures for TempleCode testing framework
 """
 
 import pytest
@@ -10,17 +10,17 @@ import shutil
 from unittest.mock import Mock, patch
 from pathlib import Path
 
-# Add SuperPILOT to Python path
+# Add TempleCode to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from Super_PILOT import SuperPILOTInterpreter, SuperPILOTII
+from Super_PILOT import TempleCodeInterpreter, TempleCodeII
 import tkinter as tk
 
 
 @pytest.fixture
 def interpreter():
-    """Create a clean SuperPILOT interpreter instance for testing"""
-    interp = SuperPILOTInterpreter()
+    """Create a clean TempleCode interpreter instance for testing"""
+    interp = TempleCodeInterpreter()
     interp.output_widget = None  # Disable GUI output for testing
     return interp
 
@@ -51,15 +51,15 @@ def headless_ide():
         mock_root.clipboard_clear = Mock()
         mock_root.clipboard_append = Mock()
 
-        with patch("SuperPILOT.ttk.Style"):
-            ide = SuperPILOTII(mock_root)
+        with patch("TempleCode.ttk.Style"):
+            ide = TempleCodeII(mock_root)
             return ide
 
 
 @pytest.fixture
 def temp_project_dir():
     """Create a temporary directory for testing file operations"""
-    temp_dir = tempfile.mkdtemp(prefix="superpilot_test_")
+    temp_dir = tempfile.mkdtemp(prefix="templecode_test_")
     yield Path(temp_dir)
     shutil.rmtree(temp_dir, ignore_errors=True)
 
@@ -67,7 +67,7 @@ def temp_project_dir():
 @pytest.fixture
 def sample_pilot_program():
     """Sample PILOT program for testing"""
-    return """T:Welcome to SuperPILOT!
+    return """T:Welcome to TempleCode!
 T:What's your name?
 A:NAME
 T:Hello *NAME*!

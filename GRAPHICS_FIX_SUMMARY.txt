@@ -1,4 +1,4 @@
-SuperPILOT Graphics Fix - October 28, 2025
+TempleCode Graphics Fix - October 28, 2025
 ==========================================
 
 PROBLEM REPORTED
@@ -67,4 +67,4 @@ AFTER FIX:
 Square drawn at coords [200-300] - centered and visible!
 
 STATUS: ✅ FIXED
-Graphics now display correctly in SuperPILOT IDE.
+Graphics now display correctly in TempleCode IDE.

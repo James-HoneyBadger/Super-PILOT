@@ -6,13 +6,13 @@ All tests run without requiring actual audio/graphics hardware.
 
 import unittest
 import time
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class TemplecodeIntegrationTests(unittest.TestCase):
     def setUp(self):
         """Set up interpreter for each test"""
-        self.interp = SuperPILOTInterpreter()
+        self.interp = TempleCodeInterpreter()
         self.interp.output_widget = None
         
     def test_tween_system_initialization(self):
@@ -257,14 +257,14 @@ END'''
     def test_templecode_constants_defined(self):
         """Test that required constants are defined"""
         # Check for MIN_DELTA_TIME_MS constant that was causing errors
-        import SuperPILOT
-        self.assertTrue(hasattr(SuperPILOT, 'MIN_DELTA_TIME_MS'))
-        self.assertEqual(SuperPILOT.MIN_DELTA_TIME_MS, 1)
+        import TempleCode
+        self.assertTrue(hasattr(TempleCode, 'MIN_DELTA_TIME_MS'))
+        self.assertEqual(TempleCode.MIN_DELTA_TIME_MS, 1)
         
     def test_cross_system_integration(self):
-        """Test that templecode integrates properly with SuperPILOT variables"""
+        """Test that templecode integrates properly with TempleCode variables"""
         prog = '''
-# Use SuperPILOT variables in templecode
+# Use TempleCode variables in templecode
 U:START_POS=50
 U:END_POS=150
 U:DURATION=1000

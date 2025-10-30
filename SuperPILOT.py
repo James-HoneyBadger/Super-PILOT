@@ -1,15 +1,15 @@
 """
 Compatibility shim module.
 
-Some tests and external code import `SuperPILOT` (without the underscore).
-This thin wrapper re-exports the public API from the main module `Super_PILOT`.
-Also exposes tkinter.ttk at module scope so tests can patch SuperPILOT.ttk.Style.
+Some tests and external code import `TempleCode` (without the underscore).
+This thin wrapper re-exports the public API from the main module `TempleCode`.
+Also exposes tkinter.ttk at module scope so tests can patch TempleCode.ttk.Style.
 """
-# Compatibility shim for tests and external imports expecting `SuperPILOT`
-# Re-export the main implementation from Super_PILOT.py
+# Compatibility shim for tests and external imports expecting `TempleCode`
+# Re-export the main implementation from TempleCode.py
 from Super_PILOT import *  # noqa: F401,F403
 
-# Expose tkinter and ttk for tests that patch SuperPILOT.ttk.Style
+# Expose tkinter and ttk for tests that patch TempleCode.ttk.Style
 import tkinter as tk  # noqa: F401
 from tkinter import ttk  # noqa: F401
 

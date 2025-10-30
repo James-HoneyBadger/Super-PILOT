@@ -1,7 +1,7 @@
-; SuperPILOT Modern UI Demo
+; TempleCode Modern UI Demo
 ; This program demonstrates the new modern UI features
 
-T:Welcome to SuperPILOT's Modern Interface! 🎨
+T:Welcome to TempleCode's Modern Interface! 🎨
 T:
 T:Try the following features:
 T:1. Switch themes using the dropdown in the toolbar
@@ -14,7 +14,7 @@ T:
 ; Test some interactive features
 T:What's your name?
 A:NAME
-T:Hello *NAME*! Enjoy the modern SuperPILOT experience!
+T:Hello *NAME*! Enjoy the modern TempleCode experience!
 T:
 
 ; Demo some graphics with modern canvas

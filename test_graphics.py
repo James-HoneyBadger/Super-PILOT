@@ -11,14 +11,14 @@ if not TK_AVAILABLE:
     sys.exit(1)
 
 import tkinter as tk
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 def test_graphics():
     """Test graphics display with a simple square"""
     print("Creating test window...")
     
     root = tk.Tk()
-    root.title("SuperPILOT Graphics Test")
+    root.title("TempleCode Graphics Test")
     root.geometry("500x500")
     
     # Create canvas
@@ -26,7 +26,7 @@ def test_graphics():
     canvas.pack(padx=10, pady=10)
     
     # Create interpreter
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Connect canvas to interpreter
     interp.graphics_widget = canvas

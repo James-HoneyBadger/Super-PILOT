@@ -1,6 +1,6 @@
 import pytest
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class DummyOut:
@@ -16,7 +16,7 @@ class DummyOut:
 
 
 def test_evaluate_basic_expressions():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
 
     assert interp.evaluate_expression('2+3*4') == 14
     assert interp.evaluate_expression('INT(3.9)') == 3
@@ -33,7 +33,7 @@ def test_evaluate_basic_expressions():
 
 
 def test_rnd_range_is_0_to_1():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     # Test multiple samples to reduce flakiness
     for _ in range(50):
         v = interp.evaluate_expression('RND()')
@@ -42,7 +42,7 @@ def test_rnd_range_is_0_to_1():
 
 
 def test_basic_if_then_assignment_and_print():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
 
@@ -60,7 +60,7 @@ END'''
 
 
 def test_if_then_with_goto_changes_flow():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
 
@@ -79,7 +79,7 @@ END'''
 
 
 def test_print_string_and_expression():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
 
@@ -94,7 +94,7 @@ END'''
 
 
 def test_variable_expression_binding():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
 
@@ -109,7 +109,7 @@ END'''
 
 
 def test_t_token_expression_evaluation():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
     # Use a T: with *RND(1)* token and ensure it gets evaluated
@@ -125,7 +125,7 @@ def test_t_token_expression_evaluation():
 
 
 def test_mt_conditional_text():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = DummyOut()
     interp.output_widget = out
     program = '''Y:1==1

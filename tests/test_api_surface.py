@@ -1,11 +1,11 @@
 import os
 import pytest
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 def test_determine_command_type_samples():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     assert interp.determine_command_type('T:Hello') == 'pilot'
     assert interp.determine_command_type('FORWARD 10') == 'logo'
     assert interp.determine_command_type('LET X = 5') == 'basic'
@@ -13,14 +13,14 @@ def test_determine_command_type_samples():
 
 
 def test_parse_line_edge_cases():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     assert interp.parse_line('') == (None, '')
     assert interp.parse_line('   ') == (None, '')
     assert interp.parse_line('10 PRINT X') == (10, 'PRINT X')
 
 
 def test_toggle_breakpoint_and_debug_flags():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     assert interp.debug_mode is False
     interp.set_debug_mode(True)
     assert interp.debug_mode is True
@@ -31,7 +31,7 @@ def test_toggle_breakpoint_and_debug_flags():
 
 
 def test_stop_program_and_step_on_empty():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.stop_program()
     # step on empty program should not raise
     interp.step()
@@ -40,7 +40,7 @@ def test_stop_program_and_step_on_empty():
 @pytest.mark.skipif('DISPLAY' not in os.environ, reason='Requires DISPLAY for Tk GUI')
 def test_gui_smoke_methods(monkeypatch):
     import tkinter as tk
-    from Super_PILOT import SuperPILOTII as SuperPILOTIDE
+    from Super_PILOT import TempleCodeII as TempleCodeIDE
 
     root = tk.Tk()
     # don't show window
@@ -54,12 +54,12 @@ def test_gui_smoke_methods(monkeypatch):
     except Exception:
         pass
 
-    app = SuperPILOTIDE(root)
+    app = TempleCodeIDE(root)
     # exercise methods that don't require dialogs
     app.setup_theme()
     app.create_menu()
     txt = app.get_help_text()
-    assert 'SUPERPILOT' in txt.upper()
+    assert 'TEMPLECODE' in txt.upper()
     app.load_demo()
     app.load_hello_world()
     app.load_math_demo()

@@ -3,7 +3,7 @@
 **Status**: ✅ **COMPLETE** (2 of 4 features implemented)  
 **Tests**: 278/278 passing  
 **Lines Added**: 421 lines  
-**Files Modified**: `Super_PILOT.py`  
+**Files Modified**: `TempleCode.py`  
 **Demo**: `phase5_demo.spt`
 
 ---
@@ -38,7 +38,7 @@ A color-coded visual overview of the entire program displayed in a 100px canvas 
 
 ### Implementation Details
 
-**Location**: Lines 3683-3697, 5530-5595 in `Super_PILOT.py`
+**Location**: Lines 3683-3697, 5530-5595 in `TempleCode.py`
 
 **Key Methods**:
 ```python
@@ -81,7 +81,7 @@ Automatic background saving with crash recovery to prevent data loss. Saves ever
 - **User Feedback**: Status bar shows "Auto-saved" for 2 seconds
 
 #### 2. Recovery Directory
-- **Location**: `.superpilot_recovery/` in current working directory
+- **Location**: `.templecode_recovery/` in current working directory
 - **Files**:
   - `autosave.spt` - Program code
   - `autosave.json` - Metadata (timestamp, filename, size)
@@ -95,7 +95,7 @@ Automatic background saving with crash recovery to prevent data loss. Saves ever
 
 ### Implementation Details
 
-**Location**: Lines 3487-3497, 5597-5685 in `Super_PILOT.py`
+**Location**: Lines 3487-3497, 5597-5685 in `TempleCode.py`
 
 **Key Methods**:
 ```python
@@ -282,7 +282,7 @@ VIEWPORT_WIDTH = 2
 ### Auto-save Settings
 ```python
 AUTOSAVE_INTERVAL = 60000      # 60 seconds
-RECOVERY_DIR = ".superpilot_recovery"
+RECOVERY_DIR = ".templecode_recovery"
 STATUS_DISPLAY_TIME = 2000     # 2 seconds
 ```
 
@@ -356,7 +356,7 @@ STATUS_DISPLAY_TIME = 2000     # 2 seconds
 
 ## 🔗 Related Files
 
-- `Super_PILOT.py` - Main implementation (lines 3683-5685)
+- `TempleCode.py` - Main implementation (lines 3683-5685)
 - `phase5_demo.spt` - Feature demonstration
 - `PHASE4_SUMMARY.md` - Previous phase
 - `PHASES_1_2_3_COMPLETE.md` - Foundation phases
@@ -388,4 +388,4 @@ Potential areas for further enhancement:
 
 ---
 
-**Phase 5 Complete**: SuperPILOT now offers a professional-grade IDE experience with essential productivity features that prevent data loss and improve code navigation. The foundation is set for any future enhancements users may request.
+**Phase 5 Complete**: TempleCode now offers a professional-grade IDE experience with essential productivity features that prevent data loss and improve code navigation. The foundation is set for any future enhancements users may request.

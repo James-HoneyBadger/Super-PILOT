@@ -1,5 +1,5 @@
 """
-Comprehensive test runner for SuperPILOT testing framework
+Comprehensive test runner for TempleCode testing framework
 Provides advanced testing capabilities, reporting, and CI/CD integration
 """
 import pytest
@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 
 
-class SuperPILOTTestRunner:
+class TempleCodeTestRunner:
     """Advanced test runner with comprehensive reporting and analysis"""
     
     def __init__(self):
@@ -23,7 +23,7 @@ class SuperPILOTTestRunner:
         
     def run_basic_tests(self) -> int:
         """Run basic test suite"""
-        print("🧪 Running SuperPILOT Basic Test Suite...")
+        print("🧪 Running TempleCode Basic Test Suite...")
         
         cmd = [
             sys.executable, "-m", "pytest",
@@ -35,7 +35,7 @@ class SuperPILOTTestRunner:
     
     def run_comprehensive_tests(self) -> int:
         """Run comprehensive test suite with coverage"""
-        print("🧪 Running SuperPILOT Comprehensive Test Suite...")
+        print("🧪 Running TempleCode Comprehensive Test Suite...")
         
         coverage_file = self.reports_dir / ".coverage"
         html_report = self.reports_dir / "coverage_html"
@@ -43,7 +43,7 @@ class SuperPILOTTestRunner:
         cmd = [
             sys.executable, "-m", "pytest",
             str(self.test_dir),
-            f"--cov=Super_PILOT",
+            f"--cov=TempleCode",
             f"--cov-report=html:{html_report}",
             f"--cov-report=term-missing",
             f"--cov-fail-under=80",
@@ -56,7 +56,7 @@ class SuperPILOTTestRunner:
     
     def run_performance_tests(self) -> int:
         """Run performance and benchmark tests"""
-        print("⚡ Running SuperPILOT Performance Tests...")
+        print("⚡ Running TempleCode Performance Tests...")
         
         cmd = [
             sys.executable, "-m", "pytest",
@@ -70,7 +70,7 @@ class SuperPILOTTestRunner:
     
     def run_parallel_tests(self, num_workers: int = 4) -> int:
         """Run tests in parallel for faster execution"""
-        print(f"⚡ Running SuperPILOT Tests in Parallel ({num_workers} workers)...")
+        print(f"⚡ Running TempleCode Tests in Parallel ({num_workers} workers)...")
         
         cmd = [
             sys.executable, "-m", "pytest",
@@ -84,7 +84,7 @@ class SuperPILOTTestRunner:
     
     def run_integration_tests(self) -> int:
         """Run integration tests for hardware and IoT components"""
-        print("🔗 Running SuperPILOT Integration Tests...")
+        print("🔗 Running TempleCode Integration Tests...")
         
         cmd = [
             sys.executable, "-m", "pytest",
@@ -97,7 +97,7 @@ class SuperPILOTTestRunner:
     
     def run_ui_tests(self) -> int:
         """Run UI and interface tests"""
-        print("🖥️ Running SuperPILOT UI Tests...")
+        print("🖥️ Running TempleCode UI Tests...")
         
         cmd = [
             sys.executable, "-m", "pytest",
@@ -109,7 +109,7 @@ class SuperPILOTTestRunner:
     
     def run_stress_tests(self) -> int:
         """Run stress tests with large programs and edge cases"""
-        print("💪 Running SuperPILOT Stress Tests...")
+        print("💪 Running TempleCode Stress Tests...")
         
         cmd = [
             sys.executable, "-m", "pytest", 
@@ -123,7 +123,7 @@ class SuperPILOTTestRunner:
     
     def run_regression_tests(self) -> int:
         """Run regression tests to catch breaking changes"""
-        print("🔄 Running SuperPILOT Regression Tests...")
+        print("🔄 Running TempleCode Regression Tests...")
         
         cmd = [
             sys.executable, "-m", "pytest",
@@ -136,30 +136,30 @@ class SuperPILOTTestRunner:
     
     def check_code_quality(self) -> Dict[str, int]:
         """Run code quality checks"""
-        print("📏 Checking SuperPILOT Code Quality...")
+        print("📏 Checking TempleCode Code Quality...")
         
         results = {}
         
         # Run flake8 for style checking
         print("  Running flake8...")
-        flake8_cmd = ["flake8", "SuperPILOT.py", "--max-line-length=120", "--ignore=E203,W503"]
+        flake8_cmd = ["flake8", "TempleCode.py", "--max-line-length=120", "--ignore=E203,W503"]
         results['flake8'] = subprocess.call(flake8_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
         # Run black for formatting check
         print("  Checking code formatting...")
-        black_cmd = ["black", "--check", "--line-length=120", "SuperPILOT.py"]
+        black_cmd = ["black", "--check", "--line-length=120", "TempleCode.py"]
         results['black'] = subprocess.call(black_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
         # Run isort for import sorting
         print("  Checking import sorting...")
-        isort_cmd = ["isort", "--check-only", "SuperPILOT.py"]
+        isort_cmd = ["isort", "--check-only", "TempleCode.py"]
         results['isort'] = subprocess.call(isort_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
         return results
     
     def run_security_tests(self) -> int:
         """Run security tests to check for vulnerabilities"""
-        print("🔒 Running SuperPILOT Security Tests...")
+        print("🔒 Running TempleCode Security Tests...")
         
         # Test for eval() security, file access, etc.
         cmd = [
@@ -178,7 +178,7 @@ class SuperPILOTTestRunner:
         report_file = self.reports_dir / "test_summary.md"
         
         with open(report_file, 'w') as f:
-            f.write("# SuperPILOT Test Report\n\n")
+            f.write("# TempleCode Test Report\n\n")
             f.write(f"Generated: {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             
             f.write("## Test Suite Coverage\n\n")
@@ -226,7 +226,7 @@ class SuperPILOTTestRunner:
     
     def run_ci_pipeline(self) -> int:
         """Run complete CI/CD pipeline"""
-        print("🚀 Running SuperPILOT CI/CD Pipeline...")
+        print("🚀 Running TempleCode CI/CD Pipeline...")
         
         results = []
         
@@ -266,7 +266,7 @@ class SuperPILOTTestRunner:
 
 def main():
     """Main entry point for test runner"""
-    parser = argparse.ArgumentParser(description="SuperPILOT Advanced Test Runner")
+    parser = argparse.ArgumentParser(description="TempleCode Advanced Test Runner")
     parser.add_argument("--basic", action="store_true", help="Run basic tests only")
     parser.add_argument("--comprehensive", action="store_true", help="Run comprehensive tests with coverage")
     parser.add_argument("--performance", action="store_true", help="Run performance benchmarks")
@@ -282,7 +282,7 @@ def main():
     
     args = parser.parse_args()
     
-    runner = SuperPILOTTestRunner()
+    runner = TempleCodeTestRunner()
     
     if args.ci:
         return runner.run_ci_pipeline()

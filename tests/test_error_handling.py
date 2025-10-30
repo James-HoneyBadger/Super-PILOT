@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-Test error handling and edge cases for the latest SuperPILOT changes.
+Test error handling and edge cases for the latest TempleCode changes.
 Focus on robustness and graceful failure modes.
 """
 
 import unittest
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class ErrorHandlingTests(unittest.TestCase):
     def setUp(self):
         """Set up interpreter for each test"""
-        self.interp = SuperPILOTInterpreter()
+        self.interp = TempleCodeInterpreter()
         self.interp.output_widget = None
         
     def test_hardware_import_failures(self):

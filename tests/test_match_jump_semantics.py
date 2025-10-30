@@ -1,4 +1,4 @@
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class Out:
@@ -11,7 +11,7 @@ class Out:
 
 
 def run(prog):
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = Out()
     interp.output_widget = out
     interp.run_program(prog)

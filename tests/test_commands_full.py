@@ -1,10 +1,10 @@
 import re
 import pytest
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 def run_program(program, inputs=None):
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.output_widget = None
     inputs = list(inputs or [])
     interp.get_user_input = lambda prompt="": (inputs.pop(0) if inputs else "")
@@ -84,7 +84,7 @@ def test_basic_let_print_if_goto(capsys):
 70 PRINT "NO"
 80 PRINT "END"
 END'''
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.output_widget = None
     interp.get_user_input = lambda prompt="": '7'
     interp.run_program(prog)
@@ -108,7 +108,7 @@ END'''
 
 
 def test_expression_functions_direct():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     r = interp.evaluate_expression('RND()')
     assert isinstance(r, float) and 0.0 <= r <= 1.0
     assert interp.evaluate_expression('INT(3.7)') == 3

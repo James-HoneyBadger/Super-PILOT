@@ -4,13 +4,13 @@
 import os
 import json
 import time
-from Super_PILOT import SuperPILOTInterpreter, SuperPILOTII
+from Super_PILOT import TempleCodeInterpreter, TempleCodeII
 from unittest.mock import Mock
 
 
 def test_performance_tracking():
     """Test that performance metrics are tracked during execution"""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     program = """
 T:Starting test
@@ -39,7 +39,7 @@ T:Sum is *Z*
 def test_persistent_watches():
     """Test that watch expressions can be saved and loaded"""
     # Create temp directory for test
-    test_dir = "/tmp/superpilot_test"
+    test_dir = "/tmp/templecode_test"
     os.makedirs(test_dir, exist_ok=True)
     original_dir = os.getcwd()
     
@@ -53,14 +53,14 @@ def test_persistent_watches():
         root.after = Mock()
         root.__module__ = "unittest.mock"
         
-        ide = SuperPILOTII(root)
+        ide = TempleCodeII(root)
         
         # Add some watches
         ide.watch_expressions = ["X + Y", "Z * 2", "NAME"]
         ide._save_watches()
         
         # Check file was created
-        watches_file = os.path.join(test_dir, ".superpilot_watches.json")
+        watches_file = os.path.join(test_dir, ".templecode_watches.json")
         assert os.path.exists(watches_file), "Watches file should be created"
         
         # Load and verify
@@ -84,7 +84,7 @@ def test_persistent_watches():
         os.chdir(original_dir)
         # Cleanup
         try:
-            os.remove(os.path.join(test_dir, ".superpilot_watches.json"))
+            os.remove(os.path.join(test_dir, ".templecode_watches.json"))
             os.rmdir(test_dir)
         except Exception:
             pass
@@ -92,7 +92,7 @@ def test_persistent_watches():
 
 def test_error_context_tracking():
     """Test that errors track line numbers correctly"""
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Set up exception callback
     exceptions = []

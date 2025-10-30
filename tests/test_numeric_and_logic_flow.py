@@ -1,7 +1,7 @@
 import random
 import pytest
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class DummyOut:
@@ -23,7 +23,7 @@ def run_and_capture(interp, program):
 
 
 def test_arithmetic_and_precedence():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     assert interp.evaluate_expression('2 + 3 * 4') == 14
     assert interp.evaluate_expression('(2 + 3) * 4') == 20
     assert interp.evaluate_expression('-5 + 10') == 5
@@ -32,7 +32,7 @@ def test_arithmetic_and_precedence():
 
 
 def test_comparisons_numeric():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     assert interp.evaluate_expression('5 > 3') is True
     assert interp.evaluate_expression('5 < 3') is False
     assert interp.evaluate_expression('5 >= 5') is True
@@ -42,7 +42,7 @@ def test_comparisons_numeric():
 
 
 def test_comparisons_between_numeric_and_string_using_val():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     # assign a string variable via U: syntax
     interp.execute_pilot_command('U:STR=\"5\"')
     # STR replaced as a string in expressions, so 'STR == 5' is false
@@ -52,7 +52,7 @@ def test_comparisons_between_numeric_and_string_using_val():
 
 
 def test_rnd_deterministic_with_seed_and_range():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     random.seed(12345)
     v1 = interp.evaluate_expression('RND()')
     random.seed(12345)
@@ -62,7 +62,7 @@ def test_rnd_deterministic_with_seed_and_range():
 
 
 def test_basic_if_then_various_comparisons():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     program = '''10 LET X = 3
 20 IF X < 5 THEN LET A = 1
 30 IF X > 5 THEN LET A = 2
@@ -83,7 +83,7 @@ END'''
 
 
 def test_pilot_y_n_m_jumps():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     program = '''L:START
 Y:2 > 1
 M:SKIP
@@ -97,7 +97,7 @@ END'''
 
 def test_for_next_positive_and_negative_steps():
     # Positive step
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     prog = '''10 FOR I = 1 TO 3
 20 PRINT I
 30 NEXT I
@@ -108,7 +108,7 @@ END'''
     assert vars.get('I') == 4 or '999' in out
 
     # Negative step
-    interp2 = SuperPILOTInterpreter()
+    interp2 = TempleCodeInterpreter()
     prog2 = '''10 FOR J = 3 TO 1 STEP -1
 20 PRINT J
 30 NEXT J
@@ -118,7 +118,7 @@ END'''
 
 
 def test_pilot_gosub_and_return():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     prog = '''L:START
 R:SUB
 T:AFTER

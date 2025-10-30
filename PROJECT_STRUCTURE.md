@@ -1,12 +1,12 @@
-# SuperPILOT Project Structure
+# TempleCode Project Structure
 
-This document describes the organization of the SuperPILOT project.
+This document describes the organization of the TempleCode project.
 
 ## Directory Layout
 
 ```
 Super-PILOT/
-├── Super_PILOT.py              # Main application entry point
+├── TempleCode.py              # Main application entry point
 ├── templecode.py               # Animation and effects engine
 ├── conftest.py                 # Pytest configuration
 ├── pytest.ini                  # Pytest settings
@@ -25,7 +25,7 @@ Super-PILOT/
 │   ├── DEVELOPER_HANDBOOK.md   # Contributing guide
 │   └── DOCUMENTATION_SUMMARY.md # Documentation overview
 │
-├── superpilot/                 # 📦 Core package (modular)
+├── templecode/                 # 📦 Core package (modular)
 │   ├── __init__.py             # Package initialization
 │   ├── core/                   # Core interpreter (planned)
 │   ├── ide/                    # IDE components
@@ -96,8 +96,8 @@ Super-PILOT/
 │   │   ├── IOT_ROBOTICS_GUIDE.md
 │   │   ├── TESTING_SUMMARY.md
 │   │   └── USER_GUIDE.md
-│   ├── SuperPILOT.py           # Old implementation
-│   ├── SuperPILOT.archive      # Archived code
+│   ├── TempleCode.py           # Old implementation
+│   ├── TempleCode.archive      # Archived code
 │   └── pilot.py.bak            # Backup file
 │
 ├── GW-BASIC/                   # 📖 BASIC language reference
@@ -115,7 +115,7 @@ Super-PILOT/
 
 | File | Purpose |
 |------|---------|
-| `Super_PILOT.py` | Main application - launches the IDE |
+| `TempleCode.py` | Main application - launches the IDE |
 | `templecode.py` | Standalone animation engine |
 | `test_runner.py` | Run all tests with reporting |
 
@@ -144,10 +144,10 @@ Super-PILOT/
 
 ## Module Organization
 
-### superpilot Package
+### templecode Package
 
 ```
-superpilot/
+templecode/
 ├── __init__.py              # Package exports
 ├── core/                    # Core interpreter (planned refactor)
 │   ├── interpreter.py       # Main interpreter class
@@ -202,7 +202,7 @@ pytest -v
 
 | Extension | Type | Example |
 |-----------|------|---------|
-| `.spt` | SuperPILOT (multi-language) | `demo.spt` |
+| `.spt` | TempleCode (multi-language) | `demo.spt` |
 | `.pil` | PILOT only | `quiz.pil` |
 | `.bas` | BASIC only | `calculator.bas` |
 | `.logo` | Logo only | `turtle.logo` |
@@ -211,7 +211,7 @@ pytest -v
 
 | Pattern | Type | Example |
 |---------|------|---------|
-| `Super_PILOT.py` | Main application | Entry point |
+| `TempleCode.py` | Main application | Entry point |
 | `test_*.py` | Unit tests | `test_interpreter.py` |
 | `*_demo.py` | Demonstrations | `hardware_demo.py` |
 | `conftest.py` | Test fixtures | pytest config |
@@ -262,7 +262,7 @@ See `.gitignore` for complete list.
 ### New Feature
 
 ```
-1. Add code to Super_PILOT.py or superpilot/
+1. Add code to TempleCode.py or templecode/
 2. Add tests to tests/test_*.py
 3. Update docs/TECHNICAL_REFERENCE.md
 4. Add example to sample_programs/ or examples/
@@ -301,7 +301,7 @@ The following reorganization was done:
 
 ### Preserved Locations
 
-- `Super_PILOT.py` - Main entry point (kept at root)
+- `TempleCode.py` - Main entry point (kept at root)
 - `examples/` - Quick start examples (kept for compatibility)
 - `Demos/` - Demo programs (kept as showcase)
 - `GW-BASIC/` - Reference materials (educational value)

@@ -1,10 +1,10 @@
-# SuperPILOT
+# TempleCode IDE (formerly TempleCode)
 
-![CI](https://github.com/James-HoneyBadger/SuperPILOT/actions/workflows/ci.yml/badge.svg?branch=main)
+![CI](https://github.com/James-HoneyBadger/TempleCode/actions/workflows/ci.yml/badge.svg?branch=main)
 
-**Multi-Language Educational Programming Environment**
+**Educational Programming Environment with BASIC and Logo**
 
-SuperPILOT is a comprehensive educational programming environment that integrates three classic programming languages: PILOT, BASIC, and Logo. Perfect for teaching programming fundamentals with visual feedback through turtle graphics.
+TempleCode IDE is a comprehensive educational programming environment that focuses on BASIC programming with integrated Logo turtle graphics and advanced animation tools. Perfect for teaching programming fundamentals with visual feedback.
 
 ## 🚀 Quick Start
 
@@ -12,8 +12,8 @@ SuperPILOT is a comprehensive educational programming environment that integrate
 
 ```bash
 # Clone repository
-git clone https://github.com/James-HoneyBadger/SuperPILOT.git
-cd SuperPILOT
+git clone https://github.com/James-HoneyBadger/TempleCode.git
+cd TempleCode
 
 # Install basic dependencies
 python3 -m pip install -r requirements.txt
@@ -21,13 +21,16 @@ python3 -m pip install -r requirements.txt
 # For development (includes testing tools)
 python3 -m pip install -r requirements-dev.txt
 
-# Run the IDE
-python3 Super_PILOT.py
+# Run the IDE (new)
+python3 TempleCode.py
+
+# Legacy entrypoint (still works)
+python3 TempleCode.py
 ```
 
 ## Linux prerequisites (Tk GUI)
 
-SuperPILOT’s IDE uses Tk. If you see an error like `ImportError: libtk8.6.so: cannot open shared object file`, install your distro’s Tk packages:
+TempleCode’s IDE uses Tk. If you see an error like `ImportError: libtk8.6.so: cannot open shared object file`, install your distro’s Tk packages:
 
 - Debian/Ubuntu
   ```bash
@@ -58,7 +61,7 @@ Headless/CI hint: to run GUI smoke checks without a display, use a virtual X ser
 ```bash
 sudo pacman -S --needed xorg-server-xvfb  # Arch
 # or: sudo apt-get install xvfb           # Debian/Ubuntu
-xvfb-run -a python3 Super_PILOT.py
+xvfb-run -a python3 TempleCode.py
 ```
 
 ### Your First Program
@@ -93,11 +96,11 @@ Comprehensive documentation for all users:
 
 ## ✨ Features
 
-### Three Languages in One
+### BASIC with Logo Graphics
 
-- **PILOT**: Simple text-based programming with easy input/output
 - **BASIC**: Classic programming with line numbers and mathematical operations
 - **Logo**: Visual turtle graphics for creative programming
+- **Text Commands**: Simple T: commands for output
 
 ### Professional IDE
 
@@ -128,10 +131,9 @@ Comprehensive documentation for all users:
 
 Start with the [Student Guide](docs/STUDENT_GUIDE.md) for step-by-step tutorials:
 
-1. **PILOT Language** (Lessons 1-5): Output, input, variables, conditionals, loops
-2. **BASIC Language** (Lessons 6-10): Math, IF statements, FOR loops, functions
-3. **Logo Graphics** (Lessons 11-16): Turtle drawing, patterns, procedures
-4. **Projects**: Mad Libs, quiz programs, drawing gallery, text adventures
+1. **BASIC Language** (Lessons 1-5): Math, IF statements, FOR loops, functions
+2. **Logo Graphics** (Lessons 6-10): Turtle drawing, patterns, procedures
+3. **Projects**: Quiz programs, drawing gallery, text adventures
 
 ### For Teachers
 
@@ -148,10 +150,10 @@ The [Teacher Guide](docs/TEACHER_GUIDE.md) includes:
 ### Using as a Library
 
 ```python
-from Super_PILOT import SuperPILOTInterpreter
+from TempleCode import TempleCodeInterpreter
 
 # Create interpreter
-interp = SuperPILOTInterpreter()
+interp = TempleCodeInterpreter()
 
 # Register callbacks
 interp.on_output.append(lambda text: print(text))
@@ -191,15 +193,10 @@ isort .
 
 ## 📋 Language Quick Reference
 
-### PILOT Commands
+### Text Output Commands
 
-```pilot
+```templecode
 T:text          Output text
-A:var           Accept input
-U:var=value     Set variable
-Y:condition     Test condition (if true, run next)
-J:label         Jump to label
-L:label         Define label
 ```
 
 ### BASIC Commands
@@ -226,13 +223,13 @@ CS              Clear screen
 
 ## 🎯 Example Programs
 
-### Hello World (PILOT)
+### Hello World
 
-```pilot
-T:What is your name?
-A:NAME
-T:Hello, *NAME*!
-T:Welcome to SuperPILOT!
+```basic
+10 PRINT "What is your name?"
+20 INPUT NAME$
+30 PRINT "Hello, "; NAME$
+40 PRINT "Welcome to TempleCode!"
 ```
 
 ### Number Guessing Game (BASIC)
@@ -360,8 +357,8 @@ Contributions are welcome! Please read the [Developer Handbook](docs/DEVELOPER_H
 
 ```bash
 # 1. Fork and clone
-git clone https://github.com/yourusername/SuperPILOT.git
-cd SuperPILOT
+git clone https://github.com/yourusername/TempleCode.git
+cd TempleCode
 
 # 2. Create feature branch
 git checkout -b feature/your-feature-name
@@ -385,30 +382,30 @@ git push origin feature/your-feature-name
 
 ## 📜 License
 
-SuperPILOT is released under the MIT License. See [LICENSE](LICENSE) file for details.
+TempleCode IDE is released under the MIT License. See [LICENSE](LICENSE) file for details.
 
 Documentation is licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
 
 ## 🙏 Acknowledgments
 
-SuperPILOT builds on decades of educational programming language research:
+TempleCode builds on decades of educational programming language research:
 
 - **PILOT** - Developed by John Starkweather (1968)
 - **BASIC** - Developed by John Kemeny and Thomas Kurtz (1964)
 - **Logo** - Developed by Seymour Papert and colleagues (1967)
 
-Special thanks to all contributors and educators using SuperPILOT in classrooms worldwide.
+Special thanks to all contributors and educators using TempleCode in classrooms worldwide.
 
 ## 📞 Support & Community
 
 - **📖 Documentation**: [docs/README.md](docs/README.md)
-- **🐛 Bug Reports**: [GitHub Issues](https://github.com/James-HoneyBadger/SuperPILOT/issues)
-- **💬 Discussions**: [GitHub Discussions](https://github.com/James-HoneyBadger/SuperPILOT/discussions)
-- **✉️ Email**: support@superpilot.org
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/James-HoneyBadger/TempleCode/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/James-HoneyBadger/TempleCode/discussions)
+- **✉️ Email**: support@templecode.org
 
 ## ⭐ Star History
 
-If you find SuperPILOT useful, please consider giving it a star on GitHub!
+If you find TempleCode IDE useful, please consider giving it a star on GitHub!
 
 ---
 
@@ -416,17 +413,16 @@ If you find SuperPILOT useful, please consider giving it a star on GitHub!
 
 ## Version 3 Highlights (3.0.0)
 
-Turtle / Logo Extensions:
-
+**Turtle / Logo Extensions:**
 - New commands: `COLOR`, `TRACE`, `KEEP_CANVAS`, `CENTER`, `PENSTYLE`, `DEBUGLINES`, `FIT`, aliases (`SETCOLOR/SETCOLOUR`, `SETPENSIZE`).
 - Pen style customization: `PENSTYLE solid|dashed|dotted` (teaching different stroke semantics).
 - Auto color cycle per shape (each PENUP→PENDOWN transition advances palette).
 - Pen-down start markers (small dots) + optional tracing (movement, heading, pen state).
-- Auto-pan and dynamic scrollregion (shapes no longer appear to “disappear” off canvas).
+- Auto-pan and dynamic scrollregion (shapes no longer appear to "disappear" off canvas).
 - Canvas preservation toggle via command or Turtle menu.
 - Geometry inspection: `DEBUGLINES` prints first N line segments & metadata; `FIT` recenters viewport to drawing bounds.
 
-Interpreter / Core:
+**Interpreter / Core:**
 
 - Conditional jump sentinel consumption (`Y:`/`N:` + subsequent `J:` / `T:` logic stabilized).
 - Compute assignment form: `C:VAR=EXPR`.

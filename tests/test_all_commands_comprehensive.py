@@ -1,5 +1,5 @@
 import pytest
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class MockOutput:
@@ -17,7 +17,7 @@ class MockOutput:
 
 
 def run_program_capture(prog, inputs=None):
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = MockOutput()
     interp.output_widget = out
     inputs_iter = iter(inputs or [])

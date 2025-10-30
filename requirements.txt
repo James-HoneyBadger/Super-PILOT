@@ -1,5 +1,5 @@
-# SuperPILOT Runtime Dependencies
-# Minimal requirements for running SuperPILOT
+# TempleCode Runtime Dependencies
+# Minimal requirements for running TempleCode
 
 # Core graphics dependency
 pillow>=9.0.0

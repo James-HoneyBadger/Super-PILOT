@@ -189,7 +189,7 @@ Auto-scroll to latest
 
 ## File Changes
 
-### Super_PILOT.py
+### TempleCode.py
 
 **Lines 3698-3706**: Syntax highlighting tags configured
 **Lines 3880-3918**: Timeline tab UI
@@ -361,7 +361,7 @@ Phase 4 successfully delivers:
 ## Quick Start
 
 ```bash
-python3 Super_PILOT.py
+python3 TempleCode.py
 ```
 
 Try Phase 4 features:

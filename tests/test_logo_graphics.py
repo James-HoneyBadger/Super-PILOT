@@ -5,7 +5,7 @@ Tests movement commands, drawing, macros, and repeat structures
 import pytest
 import math
 from conftest import TestCase
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class TestLogoTurtleGraphics(TestCase):

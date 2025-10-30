@@ -1,4 +1,4 @@
-"""Benchmark each SuperPILOT command by calling interpreter command handlers directly.
+"""Benchmark each TempleCode command by calling interpreter command handlers directly.
 
 Usage:
     python tools/bench_commands.py
@@ -8,7 +8,7 @@ Produces simple per-command timings (avg microseconds per call).
 import time
 import contextlib
 import io
-from pilot import SuperPILOTInterpreter
+from pilot import TempleCodeInterpreter
 
 REPEATS_FAST = 50000
 REPEATS_MED = 5000
@@ -101,8 +101,8 @@ def bench_expr(interp, name, expr, repeats):
 
 
 def main():
-    print("SuperPILOT command benchmark — running quick microbenchmarks")
-    interp = SuperPILOTInterpreter()
+    print("TempleCode command benchmark — running quick microbenchmarks")
+    interp = TempleCodeInterpreter()
     interp.output_widget = None
 
     print("\n-- PILOT / BASIC / LOGO commands --")

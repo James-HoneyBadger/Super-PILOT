@@ -1,9 +1,17 @@
-# TempleCode IDE - Complete Implementation
-# This file was renamed from Super_PILOT.py as part of the rebranding.
-# For integration with TempleCode IDE
+#!/usr/bin/env python3
+"""
+TempleCode IDE launcher (alternative entrypoint)
 
-from .Super_PILOT import TempleCodeInterpreter, TempleCodeIDE, TK_AVAILABLE, create_demo_program
+This provides an alternative name for launching the IDE.
+Use TempleCode.py for the primary entrypoint.
+"""
+
+from Super_PILOT import TempleCodeInterpreter, TempleCodeIDE, TK_AVAILABLE, main_templecode
 
 # Legacy alias for compatibility
 TempleCode_IDE = TempleCodeIDE
 TempleCode_Interpreter = TempleCodeInterpreter
+
+
+if __name__ == "__main__":
+    main_templecode()

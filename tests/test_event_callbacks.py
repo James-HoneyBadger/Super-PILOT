@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Test the event callback system in SuperPILOTInterpreter
+Test the event callback system in TempleCodeInterpreter
 """
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 def test_event_callbacks():
     """Test all event callbacks fire correctly"""
     
     # Create interpreter
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Track events
     events = {

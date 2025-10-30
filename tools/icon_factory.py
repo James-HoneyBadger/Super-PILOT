@@ -1,5 +1,5 @@
 """
-Icon factory for SuperPILOT toolbar buttons.
+Icon factory for TempleCode toolbar buttons.
 Generates small PNG icons at runtime using Pillow (if available) and returns
 Tk PhotoImage objects. If Pillow is not installed, returns an empty dict so
 `pilot.py` can gracefully fall back to text-only buttons.

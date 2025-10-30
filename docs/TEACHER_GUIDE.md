@@ -1,12 +1,12 @@
-# SuperPILOT Teacher Guide
+# TempleCode Teacher Guide
 
-**Teaching Programming with SuperPILOT**
+**Teaching Programming with TempleCode**
 
 ---
 
 ## Overview
 
-This guide helps educators effectively teach programming using SuperPILOT's multi-language environment. It includes curriculum suggestions, assessment strategies, and classroom management tips.
+This guide helps educators effectively teach programming using TempleCode's multi-language environment. It includes curriculum suggestions, assessment strategies, and classroom management tips.
 
 ---
 
@@ -719,12 +719,12 @@ T:Hello, *NAMES*!    REM Looking for NAMES (typo)
 
 ### Technical Issues
 
-#### **SuperPILOT Won't Start**
+#### **TempleCode Won't Start**
 
 **Checks:**
 1. Python version: `python3 --version` (need 3.8+)
 2. Tkinter installed: `python3 -c "import tkinter"`
-3. File permissions: Check Super_PILOT.py is readable
+3. File permissions: Check TempleCode.py is readable
 4. Dependencies: `pip install -r requirements-dev.txt`
 
 #### **Slow Performance**
@@ -872,7 +872,7 @@ A: Use rubric with multiple criteria. A program with bugs can still show good pr
 
 **Q: Can students work on this at home?**
 
-A: Yes, SuperPILOT runs on Windows, Mac, Linux, and Raspberry Pi. Share Super_PILOT.py or have students clone from GitHub.
+A: Yes, TempleCode runs on Windows, Mac, Linux, and Raspberry Pi. Share TempleCode.py or have students clone from GitHub.
 
 **Q: How do I prevent students from accessing solutions online?**
 
@@ -882,7 +882,7 @@ A: Create unique project requirements, require documentation of process, check u
 
 A: Introduce procedures/functions, teach modular design, encourage breaking into multiple files.
 
-**Q: Can SuperPILOT connect to real hardware?**
+**Q: Can TempleCode connect to real hardware?**
 
 A: Yes! It supports Arduino and Raspberry Pi GPIO with simulation mode for testing without hardware.
 
@@ -890,7 +890,7 @@ A: Yes! It supports Arduino and Raspberry Pi GPIO with simulation mode for testi
 
 ## Conclusion
 
-SuperPILOT provides a rich, multi-paradigm environment for teaching programming fundamentals. Its three languages offer different entry points and teaching opportunities:
+TempleCode provides a rich, multi-paradigm environment for teaching programming fundamentals. Its three languages offer different entry points and teaching opportunities:
 
 - **PILOT**: Simplicity, text processing, decision making
 - **BASIC**: Classic programming, numerical computation, algorithms

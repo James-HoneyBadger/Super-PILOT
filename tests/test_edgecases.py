@@ -1,10 +1,10 @@
 import re
 import pytest
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 def run_and_capture(program, inputs=None):
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.output_widget = None
     if inputs:
         vals = list(inputs)
@@ -36,7 +36,7 @@ END'''
 
 
 def test_rnd_and_val_and_mid():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     r1 = interp.evaluate_expression('RND()')
     r2 = interp.evaluate_expression('RND(1)')
     r3 = interp.evaluate_expression('RND(5)')

@@ -1,12 +1,12 @@
-# SuperPILOT Demo Programs
+# TempleCode Demo Programs
 
-This folder contains comprehensive demo programs showcasing all the capabilities of SuperPILOT.
+This folder contains comprehensive demo programs showcasing all the capabilities of TempleCode.
 
 ## complete_demo.spt
 
-**SuperPILOT Complete Demo Program**
+**TempleCode Complete Demo Program**
 
-This is the ultimate demonstration of SuperPILOT's full feature set, including:
+This is the ultimate demonstration of TempleCode's full feature set, including:
 
 ### PILOT Language Features:
 - Text output with variable interpolation (`T:`)
@@ -40,7 +40,7 @@ This is the ultimate demonstration of SuperPILOT's full feature set, including:
 - Interactive user experience
 
 ### How to Run:
-1. Open SuperPILOT IDE
+1. Open TempleCode IDE
 2. Load `Demos/complete_demo.spt`
 3. Click "Run"
 4. Follow the prompts and watch the graphics!
@@ -57,4 +57,4 @@ The demo will guide you through each feature category and create beautiful graph
 - Procedure demonstrations
 - Final summary with score
 
-This demo serves as both a tutorial and a comprehensive test of SuperPILOT's capabilities.
+This demo serves as both a tutorial and a comprehensive test of TempleCode's capabilities.

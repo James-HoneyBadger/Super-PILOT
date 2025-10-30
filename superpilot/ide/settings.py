@@ -1,5 +1,5 @@
 """
-Settings management for SuperPILOT IDE
+Settings management for TempleCode IDE
 Provides JSON-based persistence of user preferences
 """
 
@@ -30,10 +30,10 @@ class Settings:
         
         Args:
             config_path: Path to settings file. 
-                        Defaults to ~/.superpilot/settings.json
+                        Defaults to ~/.templecode/settings.json
         """
         if config_path is None:
-            config_dir = Path.home() / ".superpilot"
+            config_dir = Path.home() / ".templecode"
             config_dir.mkdir(exist_ok=True)
             config_path = config_dir / "settings.json"
         

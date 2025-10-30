@@ -1,12 +1,12 @@
-# SuperPILOT Student Guide
+# TempleCode Student Guide
 
-**Learning to Program with SuperPILOT**
+**Learning to Program with TempleCode**
 
 ---
 
 ## Welcome to Programming! 🚀
 
-SuperPILOT is your friendly environment for learning three different programming languages. This guide will take you from complete beginner to confident programmer.
+TempleCode is your friendly environment for learning three different programming languages. This guide will take you from complete beginner to confident programmer.
 
 ---
 
@@ -18,11 +18,11 @@ SuperPILOT is your friendly environment for learning three different programming
 - **BASIC**: Classic programming with numbers and logic
 - **Logo**: Drawing pictures with turtle graphics
 
-### Opening SuperPILOT
+### Opening TempleCode
 
-1. Double-click `Super_PILOT.py` or run from terminal:
+1. Double-click `TempleCode.py` or run from terminal:
    ```bash
-   python3 Super_PILOT.py
+   python3 TempleCode.py
    ```
 
 2. You'll see three areas:
@@ -641,7 +641,7 @@ REPEAT 4 [
 
 ### Getting Help
 
-**In SuperPILOT:**
+**In TempleCode:**
 - Press `F1` for help menu
 - Check the OUTPUT panel for error messages
 - Look at the VARIABLES panel to see what's stored

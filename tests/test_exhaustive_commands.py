@@ -1,7 +1,7 @@
 import re
 import pytest
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class Out:
@@ -11,7 +11,7 @@ class Out:
 
 
 def run(prog, inputs=None):
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     out = Out()
     interp.output_widget = out
     it = iter(inputs or [])

@@ -3,16 +3,16 @@
 Comprehensive test suite to verify interpreter functionality before/after extraction
 """
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 import time
 
 
 def test_interpreter_comprehensive():
     """Test all major interpreter features"""
     
-    print("Testing SuperPILOT Interpreter...")
+    print("Testing TempleCode Interpreter...")
     
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Test 1: Basic PILOT commands
     print("  Test 1: PILOT commands (T:, U:)...", end=" ")
@@ -30,7 +30,7 @@ T:X is *X* and Y is *Y*
     
     # Test 2: BASIC commands
     print("  Test 2: BASIC commands (LET, PRINT)...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     program2 = """
 10 LET A = 100
 20 LET B = 200
@@ -46,7 +46,7 @@ T:X is *X* and Y is *Y*
     
     # Test 3: Logo commands
     print("  Test 3: Logo commands (FORWARD, RIGHT)...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     program3 = """
 FORWARD 50
 RIGHT 90
@@ -60,7 +60,7 @@ FORWARD 50
     
     # Test 4: Conditionals (Y:, N:)
     print("  Test 4: Conditionals (Y:, N:)...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     program4 = """
 U:X=5
 Y:X == 5
@@ -74,7 +74,7 @@ U:FLAG=1
     
     # Test 5: Variable operations
     print("  Test 5: Variable operations...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     program5 = """
 U:A=10
 U:B=20
@@ -89,7 +89,7 @@ U:C=30
     
     # Test 6: Labels and jumps
     print("  Test 6: Labels (L:)...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     program6 = """
 L:START
 U:X=100
@@ -103,7 +103,7 @@ T:At label START
     
     # Test 7: Event callbacks
     print("  Test 7: Event callbacks...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     events = {'started': 0, 'finished': 0, 'lines': 0}
     
     interp.on_program_started.append(lambda: events.update({'started': events['started'] + 1}))
@@ -120,7 +120,7 @@ T:At label START
     
     # Test 8: Expression evaluation
     print("  Test 8: Expression evaluation...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     assert interp.evaluate_expression("2 + 3") == 5
     assert interp.evaluate_expression("10 * 5") == 50
     interp.variables['X'] = 10
@@ -129,7 +129,7 @@ T:At label START
     
     # Test 9: String operations
     print("  Test 9: String operations...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.variables['NAME'] = "Alice"
     text = interp.interpolate_text("Hello *NAME*!")
     assert "Alice" in text
@@ -137,7 +137,7 @@ T:At label START
     
     # Test 10: Hardware stubs
     print("  Test 10: Hardware stubs...", end=" ")
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     assert interp.arduino is not None
     assert interp.rpi is not None
     assert interp.iot_devices is not None

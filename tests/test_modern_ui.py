@@ -1,5 +1,5 @@
 """
-Test suite for SuperPILOT UI components and modern interface
+Test suite for TempleCode UI components and modern interface
 Tests theme system, widgets, and user interface functionality
 """
 import pytest
@@ -87,7 +87,7 @@ class TestModernUI(TestCase):
         assert headless_ide.current_theme_name == original_theme
         assert headless_ide.colors == original_colors
     
-    @patch('SuperPILOT.ttk.Style')
+    @patch('TempleCode.ttk.Style')
     def test_modern_styling_application(self, mock_style_class, headless_ide):
         """Test that modern styling is applied correctly"""
         mock_style = Mock()
@@ -263,7 +263,7 @@ class TestModernUI(TestCase):
         headless_ide.root.geometry.assert_called_with("1200x800")
         
         # Should have proper title
-        headless_ide.root.title.assert_called_with("SuperPILOT II - Advanced Educational IDE")
+        headless_ide.root.title.assert_called_with("TempleCode II - Advanced Educational IDE")
     
     def test_accessibility_features(self, headless_ide):
         """Test accessibility and contrast features"""

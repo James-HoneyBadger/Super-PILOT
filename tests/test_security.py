@@ -1,5 +1,5 @@
 """
-Security and safety tests for SuperPILOT
+Security and safety tests for TempleCode
 Tests for code injection, eval security, and safe execution
 """
 
@@ -7,7 +7,7 @@ import pytest
 import os
 import tempfile
 from conftest import TestCase
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class TestSecuritySafety(TestCase):

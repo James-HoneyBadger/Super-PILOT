@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Quick test to verify input mechanism works"""
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 # Create a simple program that uses INPUT
 test_program = """
@@ -12,7 +12,7 @@ END
 """
 
 print("Testing INPUT command with headless interpreter...")
-interp = SuperPILOTInterpreter()
+interp = TempleCodeInterpreter()
 
 # Mock user input
 original_input = input
@@ -33,7 +33,7 @@ except Exception as e:
 finally:
     builtins.input = original_input
 
-print("\nTo test with GUI, run: python3 Super_PILOT.py input_field_test.spt")
+print("\nTo test with GUI, run: python3 TempleCode.py input_field_test.spt")
 print("You should see:")
 print("1. NO minimap (middle screen)")
 print("2. Prompt text in output area")

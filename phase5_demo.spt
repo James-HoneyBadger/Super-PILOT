@@ -29,7 +29,7 @@ U:level
 
 R: COMMENT Output section (BLUE in minimap)
 T:This is a sample program that demonstrates
-T:the various command types in SuperPILOT.
+T:the various command types in TempleCode.
 T:
 T:Each line appears in a different color
 T:in the minimap to the right.
@@ -78,14 +78,14 @@ T:Auto-save Demo
 T:===========================================
 T:
 T:This file will be auto-saved every 60 seconds
-T:to .superpilot_recovery/autosave.spt
+T:to .templecode_recovery/autosave.spt
 T:
 T:Try this:
 T:1. Make changes to this file
 T:2. Wait 60 seconds
 T:3. Check the status bar for "Auto-saved" message
 T:4. Close without saving
-T:5. Restart SuperPILOT
+T:5. Restart TempleCode
 T:6. You'll be prompted to recover!
 T:
 

@@ -1,6 +1,6 @@
-# SuperPILOT Documentation
+# TempleCode Documentation
 
-**Complete Documentation for SuperPILOT Multi-Language Programming Environment**
+**Complete Documentation for TempleCode Multi-Language Programming Environment**
 
 Version 2.0 | Last Updated: October 27, 2025
 
@@ -8,7 +8,7 @@ Version 2.0 | Last Updated: October 27, 2025
 
 ## 📚 Documentation Library
 
-This documentation suite provides comprehensive resources for students, teachers, and developers working with SuperPILOT.
+This documentation suite provides comprehensive resources for students, teachers, and developers working with TempleCode.
 
 ### For Students
 
@@ -21,12 +21,12 @@ This documentation suite provides comprehensive resources for students, teachers
   - Debugging tips and troubleshooting
   - Challenge projects for skill mastery
   - Quick reference card for commands
-- **Start here if**: You're new to programming or new to SuperPILOT
+- **Start here if**: You're new to programming or new to TempleCode
 
 ### For Teachers
 
 **[Teacher Guide](TEACHER_GUIDE.md)** 👩‍🏫
-- **Audience**: Educators teaching programming with SuperPILOT
+- **Audience**: Educators teaching programming with TempleCode
 - **Content**:
   - 16-week curriculum plan with learning objectives
   - Teaching strategies (scaffolding, pair programming, live coding)
@@ -36,12 +36,12 @@ This documentation suite provides comprehensive resources for students, teachers
   - 20+ project ideas categorized by difficulty
   - Troubleshooting common student issues
   - Assessment bank with quick checks and longer tests
-- **Start here if**: You're teaching a programming course using SuperPILOT
+- **Start here if**: You're teaching a programming course using TempleCode
 
 ### For Developers
 
 **[Technical Reference Manual](TECHNICAL_REFERENCE.md)** 🔧
-- **Audience**: Developers using SuperPILOT as a library or extending it
+- **Audience**: Developers using TempleCode as a library or extending it
 - **Content**:
   - Complete system architecture documentation
   - Language specifications (PILOT, BASIC, Logo)
@@ -51,10 +51,10 @@ This documentation suite provides comprehensive resources for students, teachers
   - Hardware integration (Arduino, Raspberry Pi)
   - Performance considerations
   - Error messages and troubleshooting
-- **Start here if**: You're integrating SuperPILOT into another application
+- **Start here if**: You're integrating TempleCode into another application
 
 **[Developer Handbook](DEVELOPER_HANDBOOK.md)** 💻
-- **Audience**: Contributors to the SuperPILOT project
+- **Audience**: Contributors to the TempleCode project
 - **Content**:
   - Development environment setup
   - Architecture deep dive with code examples
@@ -64,7 +64,7 @@ This documentation suite provides comprehensive resources for students, teachers
   - Performance optimization techniques
   - API integration examples (REST, WebSocket)
   - Deployment guides (Desktop, Docker, Cloud, Raspberry Pi)
-- **Start here if**: You're contributing code to SuperPILOT
+- **Start here if**: You're contributing code to TempleCode
 
 ---
 
@@ -90,7 +90,7 @@ This documentation suite provides comprehensive resources for students, teachers
 
 **Estimated prep time**: 2-3 hours for first lesson
 
-### I'm Using SuperPILOT as a Library
+### I'm Using TempleCode as a Library
 
 1. Review **[Technical Reference Manual](TECHNICAL_REFERENCE.md)** architecture
 2. Check API Reference section
@@ -100,7 +100,7 @@ This documentation suite provides comprehensive resources for students, teachers
 
 **Estimated time**: 1-2 hours to get started
 
-### I'm Contributing to SuperPILOT
+### I'm Contributing to TempleCode
 
 1. Read **[Developer Handbook](DEVELOPER_HANDBOOK.md)** setup instructions
 2. Set up development environment
@@ -168,9 +168,9 @@ Legend: ✅ Comprehensive | ➖ Partial | ❌ Not covered
 5. **Day 5**: Set up classroom lab
 6. **Week 2+**: Teach using lesson plans
 
-**Outcome**: Ready to teach programming with SuperPILOT
+**Outcome**: Ready to teach programming with TempleCode
 
-### Path 3: Developer → SuperPILOT Integration Expert
+### Path 3: Developer → TempleCode Integration Expert
 
 1. **Hour 1**: Technical Reference - Architecture Overview
 2. **Hour 2**: Technical Reference - API Reference
@@ -178,7 +178,7 @@ Legend: ✅ Comprehensive | ➖ Partial | ❌ Not covered
 4. **Hour 4**: Write test integration code
 5. **Hour 5**: Read Extension Development section
 
-**Outcome**: Can integrate SuperPILOT into applications
+**Outcome**: Can integrate TempleCode into applications
 
 ### Path 4: Contributor → Core Developer
 
@@ -188,7 +188,7 @@ Legend: ✅ Comprehensive | ➖ Partial | ❌ Not covered
 4. **Day 4**: Make small contribution (docs, tests, bugfix)
 5. **Week 2+**: Tackle larger features
 
-**Outcome**: Can contribute code to SuperPILOT project
+**Outcome**: Can contribute code to TempleCode project
 
 ---
 
@@ -202,10 +202,10 @@ Legend: ✅ Comprehensive | ➖ Partial | ❌ Not covered
 **...teach a programming class?**
 → [Teacher Guide](TEACHER_GUIDE.md) - Review curriculum plan
 
-**...use SuperPILOT in my application?**
+**...use TempleCode in my application?**
 → [Technical Reference](TECHNICAL_REFERENCE.md) - API Reference section
 
-**...add a new feature to SuperPILOT?**
+**...add a new feature to TempleCode?**
 → [Developer Handbook](DEVELOPER_HANDBOOK.md) - Adding New Features section
 
 **...understand how the interpreter works?**
@@ -217,7 +217,7 @@ Legend: ✅ Comprehensive | ➖ Partial | ❌ Not covered
 **...fix a bug?**
 → [Developer Handbook](DEVELOPER_HANDBOOK.md) - Contributing Guidelines section
 
-**...deploy SuperPILOT to production?**
+**...deploy TempleCode to production?**
 → [Developer Handbook](DEVELOPER_HANDBOOK.md) - Deployment section
 
 **...help a struggling student?**
@@ -257,9 +257,9 @@ RIGHT 90
 
 **Python API usage:**
 ```python
-from Super_PILOT import SuperPILOTInterpreter
+from TempleCode import TempleCodeInterpreter
 
-interp = SuperPILOTInterpreter()
+interp = TempleCodeInterpreter()
 interp.run_program("T:Hello")
 ```
 
@@ -338,13 +338,13 @@ See [Developer Handbook](DEVELOPER_HANDBOOK.md) for full contributing guidelines
 
 - **GitHub Issues**: Bug reports and feature requests
 - **GitHub Discussions**: Questions and community help
-- **Email**: support@superpilot.org (for private inquiries)
+- **Email**: support@templecode.org (for private inquiries)
 
 ---
 
 ## 📄 License
 
-SuperPILOT is released under the MIT License. See LICENSE file for details.
+TempleCode is released under the MIT License. See LICENSE file for details.
 
 Documentation is licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
 
@@ -352,16 +352,16 @@ Documentation is licensed under Creative Commons Attribution 4.0 International (
 
 ## 🙏 Acknowledgments
 
-SuperPILOT builds on decades of educational programming language research:
+TempleCode builds on decades of educational programming language research:
 
 - **PILOT**: Developed by John Starkweather (1968)
 - **BASIC**: Developed by John Kemeny and Thomas Kurtz (1964)
 - **Logo**: Developed by Seymour Papert and colleagues (1967)
 
 Special thanks to:
-- All contributors to the SuperPILOT project
-- Educators using SuperPILOT in classrooms
-- Students learning to program with SuperPILOT
+- All contributors to the TempleCode project
+- Educators using TempleCode in classrooms
+- Students learning to program with TempleCode
 
 ---
 
@@ -371,7 +371,7 @@ Choose your path:
 
 - **[Student Guide](STUDENT_GUIDE.md)** - Learn to program
 - **[Teacher Guide](TEACHER_GUIDE.md)** - Teach programming
-- **[Technical Reference](TECHNICAL_REFERENCE.md)** - Integrate SuperPILOT
+- **[Technical Reference](TECHNICAL_REFERENCE.md)** - Integrate TempleCode
 - **[Developer Handbook](DEVELOPER_HANDBOOK.md)** - Contribute code
 
 **Happy coding!** 💻✨

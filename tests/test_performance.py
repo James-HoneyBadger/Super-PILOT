@@ -1,5 +1,5 @@
 """
-Performance and benchmark tests for SuperPILOT
+Performance and benchmark tests for TempleCode
 Tests execution speed, memory usage, and scalability
 """
 import pytest
@@ -7,7 +7,7 @@ import time
 import psutil
 import os
 from conftest import TestCase
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 class TestPerformanceBenchmarks(TestCase):
@@ -18,7 +18,7 @@ class TestPerformanceBenchmarks(TestCase):
     def test_interpreter_startup_time(self, benchmark):
         """Benchmark interpreter initialization time"""
         def setup_interpreter():
-            interp = SuperPILOTInterpreter()
+            interp = TempleCodeInterpreter()
             interp.output_widget = None
             return interp
         
@@ -248,7 +248,7 @@ END'''
         results = []
         for program in programs:
             # Create fresh interpreter for each program
-            interp = SuperPILOTInterpreter()
+            interp = TempleCodeInterpreter()
             interp.output_widget = None
             result = interp.run_program(program)
             results.append(result)
@@ -267,7 +267,7 @@ END'''
         
         # Create and destroy many interpreter instances
         for i in range(100):
-            interp = SuperPILOTInterpreter()
+            interp = TempleCodeInterpreter()
             interp.output_widget = None
             interp.run_program('T:Test\nEND')
             del interp

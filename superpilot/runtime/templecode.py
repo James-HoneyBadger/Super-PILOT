@@ -1,5 +1,5 @@
 """
-Runtime templecode animation system for SuperPILOT
+Runtime templecode animation system for TempleCode
 Provides tweens, timers, and particle effects
 """
 

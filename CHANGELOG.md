@@ -41,7 +41,7 @@ All notable changes to this project will be documented in this file.
   - Documented Arch Linux (ARM64/aarch64) package installation via pacman
   - Added verification steps and headless/CI guidance with Xvfb
 - **Improved CLI experience**:
-  - Running `Super_PILOT.py` without Tk now shows helpful installation instructions
+  - Running `TempleCode.py` without Tk now shows helpful installation instructions
   - Clear error messages guide users to install system packages
 - **Updated requirements.txt**: Added comprehensive comments explaining Tk system dependency
 
@@ -56,8 +56,8 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes & Maintenance
 
 - **Fixed version inconsistency**: Synchronized version numbers between VERSION file and package (`3.0.0`)
-- **Fixed duplicate import**: Removed duplicate import statement in SuperPILOT.py compatibility shim
-- **Fixed test coverage**: Updated test runner to use correct module name (`Super_PILOT`) for coverage reporting
+- **Fixed duplicate import**: Removed duplicate import statement in TempleCode.py compatibility shim
+- **Fixed test coverage**: Updated test runner to use correct module name (`TempleCode`) for coverage reporting
 - **Cleaned up TODO comments**: Updated module extraction comments to reflect current architecture
 - **Added basic requirements.txt**: Added minimal requirements file for end users (separate from dev requirements)
 - **Updated installation instructions**: README now shows correct installation steps with both basic and dev requirements

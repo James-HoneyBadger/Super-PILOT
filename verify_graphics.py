@@ -4,10 +4,10 @@
 import sys
 sys.path.insert(0, '/home/james/Super-PILOT')
 
-from Super_PILOT import SuperPILOTInterpreter, TK_AVAILABLE
+from Super_PILOT import TempleCodeInterpreter, TK_AVAILABLE
 
 print("="*60)
-print("SuperPILOT Graphics Verification")
+print("TempleCode Graphics Verification")
 print("="*60)
 print()
 
@@ -24,7 +24,7 @@ else:
 # Test 2: Headless turtle state
 print()
 print("2. Testing headless turtle state (no display)...")
-interp = SuperPILOTInterpreter()
+interp = TempleCodeInterpreter()
 print(f"   Initial position: ({interp.turtle_x}, {interp.turtle_y})")
 print(f"   Initial heading: {interp.turtle_heading}°")
 
@@ -60,7 +60,7 @@ if TK_AVAILABLE:
     canvas.pack(padx=10, pady=10)
     
     # New interpreter with canvas
-    interp2 = SuperPILOTInterpreter()
+    interp2 = TempleCodeInterpreter()
     interp2.graphics_widget = canvas
     interp2.canvas_width = 400
     interp2.canvas_height = 400

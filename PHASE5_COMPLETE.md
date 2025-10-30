@@ -39,7 +39,7 @@ Timeline:
 ...   → Every 60s thereafter
 
 Files:
-.superpilot_recovery/
+.templecode_recovery/
 ├── autosave.spt     ← Your code
 └── autosave.json    ← Metadata (timestamp, filename, size)
 
@@ -81,7 +81,7 @@ $ python -m pytest tests/ -q
 
 ## Code Changes
 
-**File:** `SuperPILOT.py`  
+**File:** `TempleCode.py`  
 **Lines before:** 5,358  
 **Lines after:** 5,785  
 **Lines added:** +427
@@ -95,7 +95,7 @@ $ python -m pytest tests/ -q
 
 ### Test Minimap:
 ```bash
-python SuperPILOT.py
+python TempleCode.py
 # Load phase5_demo.spt
 # Observe colors in minimap
 # Scroll and watch viewport move
@@ -104,7 +104,7 @@ python SuperPILOT.py
 
 ### Test Auto-save:
 ```bash
-python SuperPILOT.py
+python TempleCode.py
 # Type some code
 # Wait 60 seconds
 # See "Auto-saved" in status bar

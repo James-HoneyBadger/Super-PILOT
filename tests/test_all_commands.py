@@ -4,11 +4,11 @@ import pytest
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 
 def run_program_and_get_output(program, input_values=None):
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.output_widget = None
     # Provide canned inputs if requested (for A: and INPUT)
     inputs = list(input_values or [])
@@ -32,7 +32,7 @@ def test_pilot_A_sets_variable_and_input_conversion(capsys):
     prog = '''A:NAME
 T:Hello *NAME*
 END'''
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.output_widget = None
     interp.get_user_input = lambda prompt="": 'Alice'
     interp.run_program(prog)
@@ -81,7 +81,7 @@ def test_basic_LET_PRINT_INPUT_GOTO_IF_REM(capsys):
 70 PRINT "NO"
 80 PRINT "END"
 END'''
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     interp.output_widget = None
     interp.get_user_input = lambda prompt="": '7'
     interp.run_program(prog)
@@ -108,7 +108,7 @@ END'''
 
 
 def test_expression_functions_direct():
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     # RND
     r = interp.evaluate_expression('RND()')
     assert isinstance(r, float)

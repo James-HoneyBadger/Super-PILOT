@@ -3,13 +3,13 @@
 Quick test to verify threading doesn't break the interpreter
 """
 
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 import time
 
 def test_threaded_execution():
     """Test that interpreter works correctly (even though we can't test UI threading here)"""
     
-    interp = SuperPILOTInterpreter()
+    interp = TempleCodeInterpreter()
     
     # Track if program completes
     completed = []

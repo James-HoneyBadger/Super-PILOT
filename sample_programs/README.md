@@ -1,6 +1,6 @@
-# SuperPILOT Sample Programs
+# TempleCode Sample Programs
 
-This directory contains example programs demonstrating SuperPILOT's capabilities across different domains.
+This directory contains example programs demonstrating TempleCode's capabilities across different domains.
 
 ## Directory Structure
 
@@ -47,14 +47,14 @@ Hardware control examples:
 ## Running Examples
 
 ### From IDE
-1. Open SuperPILOT: `python3 Super_PILOT.py`
+1. Open TempleCode: `python3 TempleCode.py`
 2. File → Open
 3. Navigate to desired sample program
 4. Press F5 to run
 
 ### From Command Line
 ```bash
-python3 Super_PILOT.py sample_programs/games/game_pong_demo.spt
+python3 TempleCode.py sample_programs/games/game_pong_demo.spt
 ```
 
 ## Contributing Examples

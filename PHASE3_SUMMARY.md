@@ -15,7 +15,7 @@ Phase 3 builds on Phase 1 (thread-safe output, editor breakpoints) and Phase 2 (
 
 **Problem**: Watch expressions were lost when closing the IDE, requiring manual re-entry every session.
 
-**Solution**: Automatic save/load of watch expressions to `.superpilot_watches.json` in the project directory.
+**Solution**: Automatic save/load of watch expressions to `.templecode_watches.json` in the project directory.
 
 **Implementation Details**:
 - `_save_watches()`: Saves current watch list to JSON file
@@ -24,13 +24,13 @@ Phase 3 builds on Phase 1 (thread-safe output, editor breakpoints) and Phase 2 (
 - Graceful handling of missing/corrupt files
 
 **Files Modified**:
-- `Super_PILOT.py` lines 5190-5215: Save/load methods
-- `Super_PILOT.py` line 3480-3484: Load watches on startup
-- `Super_PILOT.py` lines 5130, 5144: Auto-save on changes
+- `TempleCode.py` lines 5190-5215: Save/load methods
+- `TempleCode.py` line 3480-3484: Load watches on startup
+- `TempleCode.py` lines 5130, 5144: Auto-save on changes
 
 **Usage**:
 ```python
-# Watches automatically saved to .superpilot_watches.json
+# Watches automatically saved to .templecode_watches.json
 {
   "watches": [
     "X + Y",
@@ -53,7 +53,7 @@ Phase 3 builds on Phase 1 (thread-safe output, editor breakpoints) and Phase 2 (
 - Truncates gracefully for long lines
 
 **Files Modified**:
-- `Super_PILOT.py` lines 4205-4223: Enhanced exception handler
+- `TempleCode.py` lines 4205-4223: Enhanced exception handler
 
 **Example**:
 ```
@@ -75,7 +75,7 @@ After:  Runtime error at line 3: division by zero | Code: U:Y=X/0
 
 **Implementation Details**:
 
-**Interpreter Changes** (`Super_PILOT.py`):
+**Interpreter Changes** (`TempleCode.py`):
 - Lines 198-201: Added performance tracking fields
   - `perf_start_time`: Program start timestamp
   - `perf_lines_executed`: Counter for executed lines
@@ -84,7 +84,7 @@ After:  Runtime error at line 3: division by zero | Code: U:Y=X/0
 - Line 3036: Track iteration count
 - Line 3052: Increment lines executed counter
 
-**IDE Changes** (`Super_PILOT.py`):
+**IDE Changes** (`TempleCode.py`):
 - Lines 3865-3897: Performance tab UI with metrics display
 - Lines 5217-5233: `_update_performance_display()` method
 - Line 4221: Update performance on each line execution
@@ -186,7 +186,7 @@ All Phase 3 features maintain thread-safety:
 1. **Watch Expressions**:
    - Add expressions in Variables tab → Watches section
    - Watches automatically persist between sessions
-   - Delete `.superpilot_watches.json` to reset
+   - Delete `.templecode_watches.json` to reset
 
 2. **Performance Monitoring**:
    - Switch to Performance tab during/after execution
@@ -224,7 +224,7 @@ with open(filename, "w") as f:
 
 - **Memory**: Negligible (<1KB for tracking)
 - **CPU**: <1% overhead for metric updates
-- **Disk**: .superpilot_watches.json typically <500 bytes
+- **Disk**: .templecode_watches.json typically <500 bytes
 
 ## Future Enhancements
 
@@ -248,7 +248,7 @@ No breaking changes! Phase 3 is fully backward compatible:
 ### Configuration
 
 Optional configuration files:
-- `.superpilot_watches.json`: Watch expressions (auto-created)
+- `.templecode_watches.json`: Watch expressions (auto-created)
 - Trace exports: User-specified location
 
 ## Known Issues
@@ -266,14 +266,14 @@ Phase 3 successfully implements:
 - ✅ Thread-safe implementation
 - ✅ Graceful error handling
 
-The IDE now provides professional-grade development tools while maintaining the simplicity and educational focus of SuperPILOT.
+The IDE now provides professional-grade development tools while maintaining the simplicity and educational focus of TempleCode.
 
 ## Quick Start
 
 Try Phase 3 features:
 ```bash
 # Run the IDE
-python3 Super_PILOT.py
+python3 TempleCode.py
 
 # Load the demo
 # File → Open → phase3_demo.spt

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-from Super_PILOT import SuperPILOTInterpreter
+from Super_PILOT import TempleCodeInterpreter
 
 # Mock input function to simulate user input
 original_input = input
@@ -28,7 +28,7 @@ T:Hello *NAME*!
 T:Done
 """
 
-interp = SuperPILOTInterpreter()
+interp = TempleCodeInterpreter()
 try:
     interp.run_program(program)
     print("\n=== Variables ===")

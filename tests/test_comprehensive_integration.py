@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-Integration test that exercises all major SuperPILOT features together.
+Integration test that exercises all major TempleCode features together.
 This serves as a comprehensive smoke test for the latest changes.
 """
 
 import unittest
-from Super_PILOT import SuperPILOTInterpreter, create_demo_program
+from Super_PILOT import TempleCodeInterpreter, create_demo_program
 
 
 class ComprehensiveIntegrationTest(unittest.TestCase):
     def setUp(self):
         """Set up interpreter for each test"""
-        self.interp = SuperPILOTInterpreter()
+        self.interp = TempleCodeInterpreter()
         self.interp.output_widget = None
         
     def test_comprehensive_feature_integration(self):
@@ -19,7 +19,7 @@ class ComprehensiveIntegrationTest(unittest.TestCase):
         prog = '''
 # Test PILOT commands
 L:START
-T:🚀 SuperPILOT Comprehensive Integration Test
+T:🚀 TempleCode Comprehensive Integration Test
 U:TEST_COUNT=0
 U:SUCCESS_COUNT=0
 
