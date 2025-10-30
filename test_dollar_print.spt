@@ -1,0 +1,5 @@
+10 REM Test $ variable in PRINT
+20 LET NAME$ = "John"
+30 PRINT "Hello "; NAME$
+40 PRINT "Name is: "; NAME$
+50 END

@@ -1,0 +1,163 @@
+L:START
+T:========================================
+T:   SUPER PILOT COMPLETE DEMO PROGRAM
+T:========================================
+T:This program showcases all TempleCode abilities:
+T:PILOT commands, BASIC programming, Logo graphics,
+T:procedures, loops, and advanced features!
+T:
+T:Let's start with some PILOT basics...
+A:NAME
+T:Hello *NAME*! Welcome to the TempleCode demo.
+T:
+T:=== PILOT COMMANDS DEMO ===
+U:SCORE=0
+U:X=15
+U:Y=25
+T:Math example: *X* + *Y* = *X*+*Y*
+U:SUM=*X*+*Y*
+T:Calculated sum: *SUM*
+T:
+T:=== CONDITIONAL LOGIC ===
+Y:*SUM* > 30
+T:Sum is greater than 30 - Excellent!
+U:SCORE=*SCORE*+10
+N:*SUM* <= 30
+T:Sum is 30 or less - Keep going!
+T:
+T:Random number demo: *RND(1)*
+T:
+T:=== BASIC PROGRAMMING ===
+LET A = 10
+LET B = 20
+PRINT "BASIC: A =", A, "B =", B
+LET PRODUCT = A * B
+PRINT "Product:", PRODUCT
+T:
+INPUT "Enter a number for factorial calculation: "; FACTORIAL_NUM
+LET FACT_RESULT = 1
+FOR I = 1 TO FACTORIAL_NUM
+LET FACT_RESULT = FACT_RESULT * I
+NEXT I
+PRINT "Factorial of", FACTORIAL_NUM, "is", FACT_RESULT
+T:
+T:=== ADVANCED CONTROL FLOW ===
+LET TEST_NUM = 7
+IF TEST_NUM > 5 THEN PRINT "Number is greater than 5"
+IF TEST_NUM < 10 THEN PRINT "Number is less than 10"
+T:
+T:=== SUBROUTINES ===
+GOSUB DRAW_BOX
+T:Back from subroutine!
+T:
+T:=== LOGO GRAPHICS DEMO ===
+T:Now let's create some amazing graphics!
+T:Watch the Logo turtle draw patterns...
+T:
+T:Drawing a colorful spiral...
+SETX 0
+SETY 0
+PENCOLOR red
+PENSIZE 2
+REPEAT 8 [
+  REPEAT 4 [
+    FORWARD 50
+    RIGHT 90
+  ]
+  RIGHT 45
+  SETCOLOR 1 + REPCOUNT
+]
+T:
+T:Drawing a star pattern...
+SETX -100
+SETY 50
+PENCOLOR blue
+REPEAT 5 [
+  FORWARD 80
+  RIGHT 144
+]
+T:
+T:Complex nested pattern...
+SETX 100
+SETY -50
+PENCOLOR green
+REPEAT 3 [
+  REPEAT 6 [
+    FORWARD 30
+    RIGHT 60
+  ]
+  RIGHT 120
+]
+T:
+T:=== PROCEDURES DEMO ===
+T:Now demonstrating custom procedures...
+T:
+T:Drawing a flower using procedures...
+SETX 0
+SETY -100
+PENCOLOR magenta
+REPEAT 6 [
+  PETAL
+  RIGHT 60
+]
+T:
+T:Drawing a house...
+SETX -150
+SETY -150
+PENCOLOR brown
+HOUSE
+T:
+T:=== FINAL SUMMARY ===
+T:========================================
+T:   DEMO COMPLETE!
+T:========================================
+T:*NAME*, you explored:
+T:• PILOT text and input commands
+T:• Variable operations and expressions
+T:• Conditional logic (Y:/N:)
+T:• BASIC programming (LET, PRINT, INPUT, FOR/NEXT)
+T:• Subroutines (GOSUB/RETURN)
+T:• Logo turtle graphics
+T:• Nested REPEAT loops
+T:• Custom procedures (TO/END)
+T:• Color and pen control
+T:Your final score: *SCORE*
+Y:*SCORE* >= 10
+T:Excellent work! You mastered TempleCode!
+N:*SCORE* < 10
+T:Great effort! Try again to explore more features.
+T:
+T:Thank you for using TempleCode!
+T:========================================
+END
+
+TO PETAL
+  REPEAT 4 [
+    FORWARD 20
+    RIGHT 90
+  ]
+  FORWARD 30
+END
+
+TO HOUSE
+  PENDOWN
+  REPEAT 4 [
+    FORWARD 60
+    RIGHT 90
+  ]
+  PENUP
+  FORWARD 20
+  RIGHT 90
+  FORWARD 40
+  PENDOWN
+  REPEAT 3 [
+    FORWARD 20
+    RIGHT 120
+  ]
+END
+
+DRAW_BOX:
+T:╔══════════════╗
+T:║   SUB BOX    ║
+T:╚══════════════╝
+RETURN

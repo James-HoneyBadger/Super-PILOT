@@ -1,0 +1,22 @@
+T:TempleCode Graphics Demo
+T:Drawing a colorful pattern...
+
+CS
+PU
+BACK 50
+PD
+
+U:SIDES=8
+U:SIZE=80
+U:ANGLE=360/SIDES
+
+T:Drawing *SIDES*-sided polygon
+
+L:LOOP
+FORWARD SIZE
+RIGHT ANGLE
+C:SIDES=SIDES-1
+IF SIDES>0 THEN GOTO LOOP
+
+T:Pattern complete!
+END

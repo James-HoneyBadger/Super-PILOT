@@ -1,0 +1,20 @@
+T:This program has syntax errors for testing
+A:NAME
+T:Hello *NAME*
+
+# This should cause errors:
+X:Invalid PILOT command
+FORWRD 100
+10 PRONT "Hello"
+FOR I = 1 TO 10
+# Missing NEXT
+
+GOTO
+IF AGE > 18
+# Missing THEN
+
+Z:Another invalid command
+CIRCLE 10 20
+# CIRCLE takes only 1 parameter
+
+T:End of error test

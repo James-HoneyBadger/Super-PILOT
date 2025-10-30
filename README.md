@@ -1,38 +1,3 @@
-# TempleCode for Windows (Binary Distribution)
-
-This repository now distributes TempleCode as a Windows-only, binary application.
-
-## Run the app
-
-1) Download or clone this repo
-2) Launch the executable:
-
-  - bin/TempleCode.exe
-
-You can also create a desktop/start menu installer using the NSIS script included in this repo (see below).
-
-## Optional: Build an installer (NSIS)
-
-Requirements:
-- Windows 10/11
-- NSIS (Nullsoft Scriptable Install System) installed and added to PATH
-
-Steps:
-1) Ensure the executable exists at `bin/TempleCode.exe`
-2) Open NSIS and compile `installer/templecode_installer.nsi`
-3) Run the generated installer
-
-## What changed?
-
-- The Python source and tests were removed from this branch to deliver a lightweight, Windows-only distribution.
-- The development repository (Python sources, tests, build scripts) is maintained separately.
-
-## Support
-
-Please open issues for bugs or feature requests. When reporting issues, include your Windows version and steps to reproduce.
-# Super-PILOT / TempleCode
-
-TempleCode is a cross-platform, Python-based IDE and interpreter supporting PILOT/BASIC/Logo, hardware integration, and a modern GUI. See docs for development setup and testing.
 # TempleCode IDE (formerly TempleCode)
 
 ![CI](https://github.com/James-HoneyBadger/TempleCode/actions/workflows/ci.yml/badge.svg?branch=main)

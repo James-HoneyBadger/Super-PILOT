@@ -1,0 +1,19 @@
+T:Turtle graphics test - restored functionality!
+CLEARSCREEN
+PENDOWN
+SETCOLOR red
+10 FOR I = 1 TO 4
+20   FORWARD 60
+30   RIGHT 90
+40 NEXT I
+T:Red square complete!
+
+SETCOLOR blue
+PENUP
+FORWARD 80
+PENDOWN
+CIRCLE 30
+T:Blue circle added!
+
+HOME
+T:Turtle graphics working! Check the turtle graphics tab!

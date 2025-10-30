@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "TempleCode-IDE"
+description = "Educational Programming Environment for Windows 11"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "TempleCode Team", email = "support@templecode.edu"}]
+keywords = ["education", "programming", "basic", "logo", "pilot", "ide", "windows"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Win32 (MS Windows)", 
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9", 
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Software Development :: Interpreters",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "Pillow>=8.0.0",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+build = [
+    "pyinstaller>=4.10",
+    "auto-py-to-exe>=2.0.0", 
+    "cx-freeze>=6.0",
+]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+    "black>=21.0",
+    "isort>=5.0", 
+    "flake8>=3.8",
+    "psutil>=5.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/James-HoneyBadger/Super-PILOT"
+Documentation = "https://github.com/James-HoneyBadger/Super-PILOT/docs"
+Repository = "https://github.com/James-HoneyBadger/Super-PILOT"
+Issues = "https://github.com/James-HoneyBadger/Super-PILOT/issues"
+
+[project.scripts]
+templecode = "templecode_app:main"
+templecode-cli = "templecode_app:main"
+
+[project.gui-scripts]
+TempleCode = "templecode_app:main"
+
+[tool.setuptools]
+packages = ["superpilot", "superpilot.core", "superpilot.ide", "superpilot.runtime"]
+py-modules = ["Super_PILOT", "templecode", "templecode_app"]
+
+[tool.setuptools.package-data]
+"*" = ["*.md", "*.txt", "*.spt", "*.pil", "*.ico", "*.png"]
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
