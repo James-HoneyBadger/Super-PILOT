@@ -1,5 +1,0 @@
-T:Simple test of SIZE variable
-U:SIZE=100
-T:SIZE is *SIZE*
-FD SIZE
-T:Done
