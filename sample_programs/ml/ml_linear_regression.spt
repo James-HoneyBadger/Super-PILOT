@@ -1,0 +1,39 @@
+L:START
+T:🤖 Linear Regression Machine Learning Demo
+T:This program demonstrates linear regression with TempleCode
+T:
+
+T:Step 1: Creating sample dataset for linear regression
+ML:DATA house_prices linear
+T:✅ Sample housing price dataset created
+
+T:Step 2: Loading linear regression model
+ML:LOAD price_predictor linear_regression
+T:✅ Linear regression model loaded
+
+T:Step 3: Training the model with our data
+ML:TRAIN price_predictor house_prices
+T:✅ Model training complete!
+
+T:Step 4: Making predictions
+T:Let's predict house prices for different sizes:
+
+T:Predicting price for 1000 sq ft house:
+ML:PREDICT price_predictor 1000 PRICE1
+T:🏠 1000 sq ft house predicted price: $*PRICE1*
+
+T:Predicting price for 1500 sq ft house:
+ML:PREDICT price_predictor 1500 PRICE2
+T:🏠 1500 sq ft house predicted price: $*PRICE2*
+
+T:Predicting price for 2000 sq ft house:
+ML:PREDICT price_predictor 2000 PRICE3
+T:🏠 2000 sq ft house predicted price: $*PRICE3*
+
+T:Step 5: Evaluating model performance
+ML:EVALUATE price_predictor house_prices ACCURACY
+T:📊 Model accuracy score: *ACCURACY*
+
+T:🎉 Linear regression demo complete!
+T:The model learned to predict prices based on house size.
+END

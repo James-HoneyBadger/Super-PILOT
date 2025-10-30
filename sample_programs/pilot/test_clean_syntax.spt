@@ -1,0 +1,26 @@
+T:This program has correct syntax
+A:NAME
+T:Hello *NAME*!
+A:AGE
+J(AGE >= 18):ADULT
+T:You are a minor.
+J:END
+L:ADULT
+T:You are an adult.
+L:END
+
+# BASIC section with line numbers
+10 FOR I = 1 TO 5
+20 PRINT "Count: " + I
+30 NEXT I
+40 END
+
+# Logo turtle graphics
+PENDOWN
+FORWARD 100
+RIGHT 90
+FORWARD 100
+PENUP
+HOME
+
+T:Program complete!

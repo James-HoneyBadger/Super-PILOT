@@ -1,0 +1,36 @@
+T:🌍 TempleCode Physics Playground
+T:Demonstrating gravity and physics simulation
+
+T:Setting up physics world...
+GAME:PHYSICS GRAVITY 9.8
+
+T:Creating ground platform...
+GAME:CREATE ground rectangle 400 550 800 50
+
+T:Creating falling objects...
+GAME:CREATE box1 rectangle 200 100 50 50
+GAME:CREATE box2 rectangle 400 50 40 40
+GAME:CREATE ball circle 600 100 30 30
+
+T:Setting initial velocities...
+GAME:PHYSICS box1 VELOCITY 2 0
+GAME:PHYSICS box2 VELOCITY -1 2
+GAME:PHYSICS ball VELOCITY 3 -1
+
+U:STEPS=0
+L:SIMULATE
+U:STEPS=STEPS+1
+T:--- Physics Step *STEPS* ---
+
+GAME:UPDATE 0.016
+
+T:Object positions:
+T:Box1: X=*GAME_BOX1_X* Y=*GAME_BOX1_Y*
+T:Box2: X=*GAME_BOX2_X* Y=*GAME_BOX2_Y*
+T:Ball: X=*GAME_BALL_X* Y=*GAME_BALL_Y*
+
+Y:STEPS < 100
+J:SIMULATE
+
+T:Physics simulation complete!
+T:All objects should have fallen due to gravity

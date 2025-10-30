@@ -1,0 +1,23 @@
+T:Testing Logo TO...END procedure definitions with parameters
+CLEARSCREEN
+HOME
+
+T:Define SQUARE procedure with SIZE parameter
+TO SQUARE SIZE
+REPEAT 4 [FD SIZE RT 90]
+END
+
+T:Drawing small red square
+SETCOLOR 1
+SQUARE 50
+
+T:Moving to new position
+PENUP
+SETXY 100 100
+PENDOWN
+
+T:Drawing larger green square
+SETCOLOR 2
+SQUARE 80
+
+T:Test complete - you should see red and green squares!

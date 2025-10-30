@@ -1,0 +1,11 @@
+T:Drawing a simple square
+PENDOWN
+FORWARD 100
+RIGHT 90
+FORWARD 100
+RIGHT 90
+FORWARD 100
+RIGHT 90
+FORWARD 100
+RIGHT 90
+T:Square complete! Graphics should stay visible.

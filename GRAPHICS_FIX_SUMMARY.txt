@@ -1,0 +1,70 @@
+TempleCode Graphics Fix - October 28, 2025
+==========================================
+
+PROBLEM REPORTED
+----------------
+Graphics not working - nothing shows even for valid commands
+
+ROOT CAUSE IDENTIFIED
+---------------------
+Turtle graphics were initializing at position (200, 200) in logical 
+coordinates instead of (0, 0). Since the coordinate transform adds
+origin_x + turtle_x, this resulted in:
+  - Canvas X = 200 + 200 = 400
+  - Canvas Y = 200 + 200 = 400
+
+With a 400x400 canvas, drawings started at the edge/outside the visible area.
+
+FIX APPLIED
+-----------
+Changed turtle initialization from (200, 200) to (0, 0) in logical coordinates:
+
+1. Updated reset_turtle() method:
+   - turtle_x = 0 (was 200)
+   - turtle_y = 0 (was 200)
+
+2. Updated __init__ default values:
+   - turtle_x = 0 (was 200)  
+   - turtle_y = 0 (was 200)
+
+The origin_x and origin_y remain at (200, 200) for canvas center mapping.
+
+COORDINATE SYSTEM EXPLAINED
+----------------------------
+Logical coordinates (turtle space):
+  - (0, 0) = center of canvas
+  - Positive X = right
+  - Positive Y = up
+  - Heading 90° = up (north)
+
+Canvas coordinates (tkinter space):
+  - (0, 0) = top-left corner
+  - Positive X = right
+  - Positive Y = down
+
+Transform: canvas_x = origin_x + turtle_x
+          canvas_y = origin_y - turtle_y  (note the minus)
+
+VERIFICATION RESULTS
+--------------------
+✓ Tk installed and available
+✓ Turtle movement calculations correct
+✓ Graphics display working
+✓ All 4 sides of square drawn
+✓ All lines within visible canvas area
+✓ Window shows square correctly
+
+TEST PROGRAMS
+-------------
+1. test_graphics.py - Basic canvas test
+2. verify_graphics.py - Comprehensive verification
+3. graphics_demo.spt - Sample PILOT program with graphics
+
+BEFORE FIX:
+Square drawn at coords [400-500] - outside visible 0-400 range
+
+AFTER FIX:
+Square drawn at coords [200-300] - centered and visible!
+
+STATUS: ✅ FIXED
+Graphics now display correctly in TempleCode IDE.
