@@ -115,6 +115,41 @@ Launch-TimeWarp.cmd
 
 ---
 
+## 📁 Project Structure
+
+```
+Time_Warp/
+├── 🚀 Core Implementations
+│   ├── Time_Warp_Rust/      # Native performance (egui UI)
+│   ├── Time_Warp_Python/    # Educational & development
+│   ├── Time_Warp_Web/       # Browser-based IDE
+│   ├── Time_Warp_DOS/       # Retro computing (MS-DOS)
+│   ├── Time_Warp_Windows/   # Legacy Windows binary
+│   └── Time_Warp_Apple/     # macOS/iOS development
+│
+├── 📚 Documentation & Examples  
+│   ├── docs/                # All documentation
+│   │   ├── CONTRIBUTING.md  # Development guidelines
+│   │   ├── SECURITY.md      # Security policies
+│   │   ├── USER_GUIDE.md    # Complete user documentation
+│   │   └── CHANGELOG.md     # Version history
+│   └── examples/            # Sample TempleCode programs
+│
+├── 🛠️ Development & Tools
+│   ├── dev/                 # Development utilities
+│   │   ├── tools/          # Build scripts and utilities
+│   │   ├── tests/          # Cross-platform test suite
+│   │   └── target/         # Rust build artifacts
+│   └── .github/            # GitHub workflows and templates
+│
+└── 📋 Project Files
+    ├── README.md           # This file
+    ├── run.sh             # Universal launcher script
+    └── CODE_OF_CONDUCT.md # Community guidelines
+```
+
+---
+
 ## ✨ Key Features
 
 ### Language Features
@@ -381,7 +416,7 @@ Contributions are welcome! Both implementations are actively maintained:
 6. **Push to branch** (`git push origin feature/amazing-feature`)
 7. **Open a Pull Request**
 
-See [CONTRIBUTING.md](Time_Warp_Rust/CONTRIBUTING.md) for detailed guidelines.
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
