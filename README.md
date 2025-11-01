@@ -8,6 +8,8 @@
 [![TempleCode](https://img.shields.io/badge/Language-TempleCode-purple.svg)](docs/TEMPLECODE_SPECIFICATION.md)
 [![Platform](https://img.shields.io/badge/Platform-Cross%20Platform-orange.svg)](#-implementations)
 
+> **📚 [Complete Documentation System Available](docs/DOCUMENTATION_INDEX.md)** - Navigate our comprehensive guides for students, educators, developers, and administrators.
+
 ---
 
 ## 🌟 Welcome to Time Warp IDE
@@ -100,7 +102,7 @@ A:$CONTINUE
 - **✨ Features**: Full TempleCode support, async execution, PNG export, experimental compiler
 - **🌍 Platforms**: Linux, macOS, Windows (x86_64, ARM64)
 - **🎯 Best For**: Production use, advanced projects, performance-critical applications
-- **📖 Documentation**: [Rust User Guide](Time_Warp_Rust/docs/USER_GUIDE.md) | [Developer Guide](Time_Warp_Rust/docs/DEVELOPER_GUIDE.md)
+- **📖 Documentation**: [Rust Implementation Guide](Time_Warp_Rust/README.md)
 
 ```bash
 cd Time_Warp_Rust
@@ -115,7 +117,7 @@ cargo run --release
 - **📚 Features**: Full TempleCode support, interactive debugging, code analysis tools
 - **🌍 Platforms**: Cross-platform (Python 3.8+)
 - **🎯 Best For**: Learning, teaching, curriculum development, experimentation
-- **📖 Documentation**: [Python User Guide](Time_Warp_Python/docs/USER_GUIDE.md) | [Quick Start](Time_Warp_Python/docs/QUICKSTART.md)
+- **📖 Documentation**: [Python Implementation Guide](Time_Warp_Python/README.md)
 
 ```bash
 cd Time_Warp_Python
@@ -130,7 +132,7 @@ python time_warp_ide.py
 - **🔄 Real-Time**: Working turtle graphics, comprehensive debugging tools
 - **☁️ Features**: Full TempleCode support, shareable programs, cloud-ready
 - **🎯 Best For**: Classroom computers, BYOD environments, quick demonstrations
-- **📖 Documentation**: [Web User Guide](Time_Warp_Web/docs/USER_GUIDE.md) | [Deployment Guide](Time_Warp_Web/docs/DEPLOYMENT.md)
+- **📖 Documentation**: [Web Implementation Guide](Time_Warp_Web/README.md)
 
 ```bash
 cd Time_Warp_Web
@@ -146,7 +148,7 @@ python -m http.server 8080
 - **🎮 Retro Gaming**: Perfect for DOSBox, vintage hardware, and retro programming
 - **📟 Features**: Text-mode interface, full BASIC/PILOT/Logo support
 - **🎯 Best For**: Computer history education, retro programming, minimal systems
-- **📖 Documentation**: [DOS User Guide](Time_Warp_DOS/docs/USER_GUIDE.md) | [Build Instructions](Time_Warp_DOS/docs/BUILD_GUIDE.md)
+- **📖 Documentation**: [DOS Implementation Guide](Time_Warp_DOS/README.md)
 
 ```bash
 cd Time_Warp_DOS
@@ -161,7 +163,7 @@ dosbox -conf dosbox-timewarp.conf
 - **🔧 Legacy Support**: Compatible with Windows 95 through Windows 11
 - **📊 Integration**: Windows-specific features, file associations, system integration
 - **🎯 Best For**: Windows-only environments, legacy systems, enterprise deployment
-- **📖 Documentation**: [Windows User Guide](Time_Warp_Windows/docs/USER_GUIDE.md) | [Deployment Guide](Time_Warp_Windows/docs/DEPLOYMENT.md)
+- **📖 Documentation**: [Windows Implementation Guide](Time_Warp_Windows/README.md)
 
 ### 🍎 **Apple Implementation** (macOS/iOS Development)
 **Native Apple ecosystem implementation with modern Swift/SwiftUI**
@@ -171,7 +173,7 @@ dosbox -conf dosbox-timewarp.conf
 - **🎨 Modern Design**: Follows Apple Human Interface Guidelines
 - **☁️ Integration**: iCloud sync, Handoff, and Apple ecosystem features
 - **🎯 Best For**: Apple-centric classrooms, iOS development education, modern UX
-- **📖 Documentation**: [Apple User Guide](Time_Warp_Apple/docs/USER_GUIDE.md) | [App Store Guide](Time_Warp_Apple/docs/APPSTORE.md)
+- **📖 Documentation**: [Apple Implementation Guide](Time_Warp_Apple/README.md)
 
 ---
 
@@ -305,43 +307,36 @@ cd Time_Warp
 
 ---
 
-## 📚 Documentation Library
+## 📚 Documentation & Learning Resources
 
-### 👥 **For Users**
-- **📖 [Complete User Guide](docs/USER_GUIDE.md)** - Comprehensive usage instructions for all implementations
-- **⚡ [Quick Start Guide](docs/QUICKSTART.md)** - Get up and running in 5 minutes
-- **🛠️ [Installation Guide](docs/INSTALLATION.md)** - Platform-specific setup instructions
-- **❓ [FAQ & Troubleshooting](docs/FAQ.md)** - Common questions and solutions
-- **🎨 [TempleCode Tutorial](docs/TEMPLECODE_TUTORIAL.md)** - Interactive language learning
+> **�️ [Complete Documentation Index](docs/DOCUMENTATION_INDEX.md)** - Navigate our comprehensive documentation system organized by audience and use case.
 
-### 🎓 **For Educators** 
-- **👨‍🏫 [Teacher Guide](docs/TEACHER_GUIDE.md)** - Complete curriculum and lesson plans
-- **📋 [Assessment Tools](docs/ASSESSMENT.md)** - Rubrics, tests, and evaluation methods
-- **🎯 [Learning Objectives](docs/LEARNING_OBJECTIVES.md)** - Standards alignment and outcomes
-- **💡 [Activity Library](docs/ACTIVITIES.md)** - Ready-to-use classroom activities
-- **🔧 [Classroom Setup](docs/CLASSROOM_SETUP.md)** - Technical setup for educational environments
+### 🎓 **Start Here - New Users & Educators**
 
-### 📖 **For Students**
-- **📚 [Student Lesson Book](docs/STUDENT_GUIDE.md)** - Progressive learning materials
-- **🏆 [Project Gallery](docs/PROJECT_GALLERY.md)** - Inspiring student project examples
-- **🤝 [Collaboration Guide](docs/COLLABORATION.md)** - Working together on programming projects
-- **🎮 [Game Development Guide](docs/GAME_DEVELOPMENT.md)** - Creating interactive games
-- **🎨 [Graphics & Art Guide](docs/GRAPHICS_GUIDE.md)** - Digital art with turtle graphics
+| Document | Audience | Purpose | Reading Time |
+|----------|----------|---------|--------------|
+| **[🎯 User Guide](docs/USER_GUIDE.md)** | End Users | Complete usage manual for all platforms | 30 minutes |
+| **[� Installation Guide](docs/INSTALLATION_GUIDE.md)** | IT/Setup | Detailed deployment procedures | 45 minutes |
+| **[👨‍🏫 Teacher Guide](docs/TEACHER_GUIDE.md)** | Educators | Complete teaching framework | 60 minutes |
 
-### 🛠️ **For Developers**
-- **🏗️ [Architecture Overview](docs/ARCHITECTURE.md)** - System design and component interaction
-- **🤝 [Contributing Guide](docs/CONTRIBUTING.md)** - How to contribute code and documentation
-- **📋 [API Reference](docs/API_REFERENCE.md)** - Complete programming interface documentation
-- **🧪 [Testing Guide](docs/TESTING.md)** - Test suite organization and best practices
-- **🔒 [Security Guide](docs/SECURITY.md)** - Security policies and vulnerability reporting
+### � **Educational Resources**
 
-### 📋 **Technical References**
-- **🔤 [TempleCode Language Specification](docs/TEMPLECODE_SPECIFICATION.md)** - Complete language reference
-- **🐢 [Turtle Graphics Reference](docs/TURTLE_REFERENCE.md)** - All graphics commands and examples
-- **⚙️ [Configuration Guide](docs/CONFIGURATION.md)** - Customization and advanced settings
-- **🔧 [Build Instructions](docs/BUILD.md)** - Compiling from source for all platforms
-- **📊 [Performance Guide](docs/PERFORMANCE.md)** - Optimization tips and benchmarking
-- **[Programming Challenges](Time_Warp_Rust/docs/PROGRAMMING_CHALLENGES.md)** - 12 challenges with solutions
+| Resource | Audience | Content | Learning Path |
+|----------|----------|---------|---------------|
+| **[� Student Lesson Book](docs/STUDENT_LESSON_BOOK.md)** | Students | 24 progressive lessons across 5 skill levels | Structured curriculum |
+| **[🏗️ Contributing Guide](docs/CONTRIBUTING.md)** | Community | Development and contribution framework | Open source participation |
+
+### � **Technical Documentation**
+
+| Document | Audience | Focus | Technical Depth |
+|----------|----------|-------|-----------------|
+| **[⚙️ Technical Reference](docs/TECHNICAL_REFERENCE.md)** | Developers | Architecture, APIs, language specification | Deep technical |
+| **[🚀 Rust Implementation](Time_Warp_Rust/README.md)** | Performance Focus | Native speed, cross-platform binary | Advanced |
+| **[� Python Implementation](Time_Warp_Python/README.md)** | Education Focus | Accessibility, universal compatibility | Intermediate |
+| **[🌐 Web Implementation](Time_Warp_Web/README.md)** | Zero Install | Browser-based, mobile-friendly | Beginner |
+| **[💾 DOS Implementation](Time_Warp_DOS/README.md)** | Retro Computing | Vintage hardware, computer history | Historical |
+| **[🪟 Windows Implementation](Time_Warp_Windows/README.md)** | Enterprise | MSI deployment, Active Directory | IT Professional |
+| **[🍎 Apple Implementation](Time_Warp_Apple/README.md)** | Apple Ecosystem | iOS/macOS Universal App, Apple Pencil | Modern Mobile |
 
 ### For Developers
 
