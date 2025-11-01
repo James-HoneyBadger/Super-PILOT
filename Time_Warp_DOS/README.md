@@ -1,6 +1,23 @@
-# Time Warp DOS
+# 💾 Time Warp IDE - DOS Implementation
 
-A full-featured, text-mode multi-language interpreter (BASIC, PILOT, and Logo) designed to run on MS-DOS and in DOSBox using only standard C89. This interpreter provides a complete programming environment with interactive mode, perfect for retro computing enthusiasts and education.
+**🕹️ Authentic Retro Computing Experience - MS-DOS & DOSBox Compatible**
+
+[![MS-DOS](https://img.shields.io/badge/MS--DOS-Compatible-blue.svg)](https://en.wikipedia.org/wiki/MS-DOS)
+[![DOSBox](https://img.shields.io/badge/DOSBox-Tested-green.svg)](https://www.dosbox.com/)
+[![C89](https://img.shields.io/badge/C89-Standard-orange.svg)](https://en.wikipedia.org/wiki/ANSI_C)
+
+> **🎯 Part of the Time Warp Educational Platform** — See [main documentation](../docs/) for complete guides and curriculum materials.
+
+The **DOS implementation** of Time Warp IDE delivers an authentic **retro computing experience** using pure C89. Perfect for **vintage computer labs**, **computer history courses**, and **nostalgic programming adventures** on original hardware or modern DOSBox emulation.
+
+## 🎯 Why Choose the DOS Version?
+
+- **🕹️ Authentic Experience**: True-to-era MS-DOS computing on original hardware
+- **📚 Computer History**: Perfect for teaching computing evolution and constraints  
+- **⚡ Minimal Requirements**: Runs on 8086 processors with 64KB RAM
+- **🏛️ Educational Value**: Understand programming without modern abstractions
+- **💾 Single File**: Complete interpreter in one portable executable
+- **🔧 No Dependencies**: Pure C89 with no external libraries required
 
 ## Features (v1.0)
 
@@ -233,13 +250,36 @@ See `examples/` directory:
 - `logo_line_text_demo.spt` — LINE + TEXT + DUMP demo
 - `logo_shapes_demo.spt` — RECT/BOX/CIRCLE/DISC shapes
 
-## Notes
+## 📚 Learning & Documentation
 
-- This DOS edition is fully-featured with interactive mode, FOR loops, subroutines, and string variables
-- Text-only (no graphics or sound)
-- Integer math only (no floating point)
-- For advanced graphics and modern features, use the main Windows Time Warp IDE
-- License: Same as repository root `LICENSE.txt`
+### 🎓 **For Students & Beginners**
+- **[📖 Student Lesson Book](../docs/STUDENT_LESSON_BOOK.md)** — Progressive curriculum adapted for text-mode constraints
+- **[🎯 User Guide](../docs/USER_GUIDE.md)** — Complete DOS setup and DOSBox configuration  
+- **[💾 DOS-Specific Guide](../docs/USER_GUIDE.md#dos-version)** — Vintage hardware setup and limitations
+
+### 👨‍🏫 **For Educators**  
+- **[🍎 Teacher Guide & Curriculum](../docs/TEACHER_GUIDE.md)** — Educational framework with retro computing context
+- **[🏛️ Computer History Lessons](../docs/TEACHER_GUIDE.md#historical-computing)** — Teaching computing evolution
+- **[⚡ Constraint-Based Learning](../docs/TEACHER_GUIDE.md#minimal-resources)** — Working within DOS limitations
+
+### 🔧 **For Developers & Historians**
+- **[⚙️ Technical Reference](../docs/TECHNICAL_REFERENCE.md)** — C89 implementation details and constraints
+- **[💾 Historical Context](../docs/TECHNICAL_REFERENCE.md#dos-era-computing)** — Understanding 16-bit programming
+- **[🏗️ Contributing Guide](../docs/CONTRIBUTING.md)** — Maintaining C89 compatibility
+
+## 🕹️ Educational Value
+
+### **Understanding Computing Constraints**
+- **Memory Limits**: Work within 64KB program space like original computers
+- **Text-Only Interface**: Focus on logic without visual distractions  
+- **Integer Math**: Understand precision limitations and optimization
+- **Command-Line Mastery**: Build essential terminal skills
+
+### **Historical Programming Experience**
+- **Authentic Environment**: Experience programming as it was in the 1980s-90s
+- **Essential Skills**: Learn core concepts without modern conveniences
+- **Problem-Solving**: Develop creativity within strict limitations
+- **Appreciation**: Understand how far computing has advanced
 
 ## Quick Start Examples
 

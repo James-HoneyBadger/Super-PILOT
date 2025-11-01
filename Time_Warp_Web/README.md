@@ -1,34 +1,40 @@
-# Time Warp Web Edition
+# 🌐 Time Warp IDE - Web Implementation
 
-A comprehensive web-based IDE for educational programming languages including PILOT, BASIC, and Logo.
+**🚀 Zero-Install Browser-Based Educational Programming Platform**
+
+[![HTML5](https://img.shields.io/badge/HTML5-Ready-orange.svg)](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+> **🎯 Part of the Time Warp Educational Platform** — See [main documentation](../docs/) for complete guides and curriculum materials.
+
+The **Web implementation** of Time Warp IDE brings TempleCode programming directly to any modern web browser. Perfect for **Chromebooks**, **1:1 device programs**, and **remote learning**, this version requires no installation and works on any device with internet access.
 
 ## Features
 
-- **Multi-Language Support**: 
-  - PILOT (Programmed Inquiry, Learning, Or Teaching)
-  - BASIC (Beginner's All-purpose Symbolic Instruction Code)
-  - Logo (turtle graphics programming)
-  
-- **Professional IDE Features**:
-  - Syntax highlighting and line numbers
-  - Interactive debugging with breakpoints
-  - Variable inspection and watches
-  - Performance monitoring and metrics
-  - Execution timeline tracking
-  - Code snippets library
-  - Comprehensive help system
+## 🎯 Why Choose the Web Version?
 
-- **Graphics Engine**:
-  - Full turtle graphics implementation
-  - HTML5 Canvas-based rendering
-  - Interactive graphics with export capabilities
-  - Grid overlay and coordinate system
+- **🚫 Zero Installation**: Works instantly in any modern web browser
+- **📱 Universal Access**: Perfect for Chromebooks, tablets, and mobile devices
+- **🏫 School-Friendly**: No admin rights needed, works behind firewalls
+- **☁️ Always Updated**: Latest features without manual updates
+- **🤝 Easy Sharing**: Share programs with simple URLs
+- **💾 Auto-Save**: Never lose your work with automatic local storage
 
-- **Modern Web Technologies**:
-  - Responsive design for desktop and mobile
-  - Local storage for program persistence
-  - Professional UI with tabbed interface
-  - Error handling and user feedback
+## ✨ Features
+
+### 🎓 **Educational Excellence**
+- **Complete TempleCode Support**: BASIC, PILOT, and Logo in one unified language
+- **Interactive Turtle Graphics**: Full HTML5 Canvas implementation with smooth animations
+- **Professional IDE Features**: Syntax highlighting, line numbers, and error detection
+- **Mobile-Responsive Design**: Perfect for tablets and Chromebooks
+
+### 🛠️ **Advanced Development Tools**
+- **Interactive Debugging**: Step-through execution with breakpoints
+- **Variable Inspector**: Real-time variable monitoring and watches
+- **Performance Metrics**: Execution timing and optimization insights
+- **Code Snippets Library**: Pre-built examples for quick learning
+- **Export Capabilities**: Save graphics and share programs easily
 
 ## Getting Started
 
@@ -116,44 +122,57 @@ Time Warp Web is designed for:
 - Historical programming language exploration
 - Turtle graphics and computational thinking
 
-## Technical Details
+## 📚 Learning & Documentation
 
-### Architecture
-- Pure client-side application (no server required)
-- Modular JavaScript ES6+ with classes
-- HTML5 Canvas for graphics rendering
-- CSS3 with responsive design principles
+### 🎓 **For Students & Beginners**
+- **[📖 Student Lesson Book](../docs/STUDENT_LESSON_BOOK.md)** — Progressive 24-lesson curriculum with hands-on projects
+- **[🎯 User Guide](../docs/USER_GUIDE.md)** — Complete installation and usage guide for all platforms  
+- **[🌐 Web-Specific Guide](../docs/USER_GUIDE.md#web-version)** — Browser setup and mobile optimization
 
-### Performance
-- Efficient interpreter with configurable execution limits
-- Real-time performance monitoring
-- Memory usage tracking
-- Execution timeline for debugging
+### 👨‍🏫 **For Educators**  
+- **[🍎 Teacher Guide & Curriculum](../docs/TEACHER_GUIDE.md)** — Complete educational framework with lesson plans
+- **[🏫 Classroom Setup](../docs/TEACHER_GUIDE.md#classroom-technology)** — Chromebook and 1:1 device deployment
+- **[📱 Mobile Learning](../docs/TEACHER_GUIDE.md#mobile-considerations)** — Tablet and phone optimization
 
-### Features
-- Complete PILOT, BASIC, and Logo language implementations
-- Variable interpolation and expression evaluation
-- Debugging with breakpoints and step execution
-- Professional code editor with line numbers
-- Interactive turtle graphics with export
-- Comprehensive help system and examples
+### 🔧 **For Developers**
+- **[⚙️ Technical Reference](../docs/TECHNICAL_REFERENCE.md)** — Architecture, APIs, and implementation details
+- **[🌐 Web Architecture](../docs/TECHNICAL_REFERENCE.md#web-implementation)** — Client-side design and performance
+- **[🏗️ Contributing Guide](../docs/CONTRIBUTING.md)** — How to extend and improve Time Warp
 
-## Development
+## 🛠️ Technical Architecture
 
-The code is well-structured for educational purposes and further development:
+### **Client-Side Excellence**
+- **Pure JavaScript ES6+**: No frameworks, maximum compatibility
+- **HTML5 Canvas Graphics**: Smooth, hardware-accelerated turtle graphics
+- **Responsive CSS3**: Perfect scaling from phones to desktops
+- **Local Storage**: Persistent program saves without servers
 
-- `interpreter.js`: Contains the core language interpreters
-- `graphics.js`: Turtle graphics implementation
-- `ui.js`: User interface management and interactions
-- `app.js`: Application lifecycle and initialization
+### **Performance & Reliability**
+- **Efficient Interpreter**: Optimized for mobile processors
+- **Memory Management**: Safe execution with configurable limits
+- **Error Handling**: Graceful degradation and helpful messages
+- **Progressive Enhancement**: Works on older devices too
 
-## License
+## 🔗 Quick Links
 
-Part of the Time Warp educational programming suite.
+- **🚀 [Try Online](index.html)** — Open directly in your browser
+- **📱 [Mobile Setup](../docs/USER_GUIDE.md#mobile-setup)** — Optimize for tablets and phones
+- **🏫 [Classroom Deployment](../docs/TEACHER_GUIDE.md#web-deployment)** — School network guidelines
+- **🧪 [Examples Library](examples/)** — Ready-to-run educational programs
 
-## Version History
+---
 
-- **2.1.0 Web**: Complete web-based IDE with all desktop features
+<div align="center">
+
+**🌐 Time Warp IDE - Web Implementation**
+
+*Programming education that works everywhere*
+
+📱 **Mobile Ready** • 🏫 **School Friendly** • ⚡ **Instant Access**
+
+Made with ❤️ for digital learning and accessibility
+
+</div>
 - **2.0.x**: Desktop versions with native implementations
 - **1.x**: Original PILOT interpreter versions
 

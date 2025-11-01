@@ -1,8 +1,22 @@
-# Time Warp IDE (TempleCode)
+# 🚀 Time Warp IDE - Rust Implementation
 
-A modern educational programming environment written in Rust.
+**🦀 Native Performance Educational Programming Platform**
 
-Time Warp IDE implements TempleCode — a unified language that combines the best of BASIC, PILOT, and Logo — with integrated turtle graphics, safe expression evaluation, and a modern egui UI. You can freely mix commands (PRINT / T: / FORWARD, etc.) in a single program.
+[![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-22%20passing-green.svg)](TEST_RESULTS.md)
+
+> **🎯 Part of the Time Warp Educational Platform** — See [main documentation](../docs/) for complete guides and curriculum materials.
+
+The **Rust implementation** of Time Warp IDE delivers **native performance** for intensive computational tasks while maintaining the full educational experience. Built with modern Rust and egui, this version excels at real-time graphics, complex simulations, and performance-critical educational projects.
+
+## ⚡ Why Choose the Rust Version?
+
+- **🚀 Native Speed**: Perfect for computational mathematics and real-time graphics
+- **🔒 Memory Safety**: Rust's ownership system prevents crashes and memory leaks  
+- **⚙️ Cross-Platform**: Single binary runs on Windows, macOS, and Linux
+- **🎨 Modern UI**: Beautiful egui interface with 8 professional themes
+- **🔧 Developer-Friendly**: Easy to extend and customize for advanced users
 
 ## Quick Start
 
@@ -60,26 +74,22 @@ T:Hello *NAME*!
 
 PNG export: use View → "Save Canvas as PNG…" in the UI.
 
-## Learning Resources
+## 📚 Learning & Documentation
 
-- [User Guide (Unified)](../USER_GUIDE.md) — Covers both Rust and Python versions
+### 🎓 **For Students & Beginners**
+- **[📖 Student Lesson Book](../docs/STUDENT_LESSON_BOOK.md)** — Progressive 24-lesson curriculum with hands-on projects
+- **[🎯 User Guide](../docs/USER_GUIDE.md)** — Complete installation and usage guide for all platforms  
+- **[⚡ Quick Start Examples](examples/)** — 33 ready-to-run programs organized by difficulty
 
-**Getting Started**:
+### 👨‍🏫 **For Educators**  
+- **[🍎 Teacher Guide & Curriculum](../docs/TEACHER_GUIDE.md)** — Complete educational framework with lesson plans
+- **[📋 Assessment Tools](../docs/TEACHER_GUIDE.md#assessment-rubrics)** — Rubrics and evaluation strategies
+- **[🎮 Interactive Projects](../docs/STUDENT_LESSON_BOOK.md#level-4-loops-and-patterns)** — Engaging programming challenges
 
-- [Getting Started Guide](docs/GETTING_STARTED.md) — Your first 5 minutes with Time Warp
-- [Quick Reference](docs/QUICK_REFERENCE.md) — Complete command reference for all languages
-- [Student Guide](docs/STUDENT_GUIDE.md) — Language cheatsheets and challenges
-
-**For Teachers**:
-
-- [Lesson Plans](docs/LESSON_PLANS.md) — Complete 8-week curriculum for middle school
-- [Teacher Guide](docs/TEACHER_GUIDE.md) — Session outlines and assessment ideas
-- [Programming Challenges](docs/PROGRAMMING_CHALLENGES.md) — 12 challenges with solutions
-
-**For Developers**:
-
-- [Developer Reference](docs/DEVELOPER_REFERENCE.md) — API documentation and extension guide
-- [Parsing & Language Detection](docs/PARSING_REFERENCE.md) — Command precedence, line numbers, comparisons
+### 🔧 **For Developers**
+- **[⚙️ Technical Reference](../docs/TECHNICAL_REFERENCE.md)** — Architecture, APIs, and implementation details
+- **[🏗️ Contributing Guide](../docs/CONTRIBUTING.md)** — How to extend and improve Time Warp
+- **[🧪 Test Results](TEST_RESULTS.md)** — Comprehensive testing and quality metrics
 
 ### TempleCode Compiler (experimental)
 

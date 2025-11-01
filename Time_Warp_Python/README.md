@@ -1,24 +1,23 @@
-# Time Warp IDE - Python Implementation
+# 🐍 Time Warp IDE - Python Implementation
 
-**Educational TempleCode Programming Environment**
+**🎓 Educational Programming Platform - Accessibility & Portability Focus**
 
-A portable, pure-Python implementation of Time Warp IDE featuring **TempleCode** — a unified programming language combining BASIC, PILOT, and Logo with full turtle graphics support.
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+[![Tests: Passing](https://img.shields.io/badge/Tests-Passing-success.svg)](../docs/TECHNICAL_REFERENCE.md)
 
-![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-![Tests: Passing](https://img.shields.io/badge/Tests-Passing-success.svg)
+> **🎯 Part of the Time Warp Educational Platform** — See [main documentation](../docs/) for complete guides and curriculum materials.
 
----
+The **Python implementation** of Time Warp IDE prioritizes **accessibility and educational value**. With its pure-Python codebase, this version runs on any system with Python 3.8+, making it perfect for schools, coding camps, and educational environments where easy installation and cross-platform compatibility are essential.
 
-## Overview
+## 🎯 Why Choose the Python Version?
 
-Time Warp IDE (Python) is a modern educational programming platform built around **TempleCode** — a single, unified language that seamlessly blends three classic educational languages:
-
-- **PILOT-style** text/label commands for interactive tutorials (T:, A:, M:, Y:/N:, L:, E:)
-- **BASIC-style** control flow and expressions (PRINT, INPUT, IF/THEN, FOR/NEXT, GOTO, GOSUB)
-- **Logo-style** turtle graphics with procedures (FORWARD, LEFT/RIGHT, REPEAT, TO/END, colors)
-
-All commands work together in harmony — you can freely mix styles in a single program!
+- **📱 Universal Compatibility**: Runs on any device with Python (including Raspberry Pi)
+- **🔧 Easy Installation**: Simple `pip install` or run directly from source
+- **👨‍🏫 Education-First**: Designed specifically for classroom environments
+- **🔍 Readable Code**: Students can explore the implementation to learn Python
+- **📦 Lightweight**: Minimal dependencies make it perfect for restricted networks
+- **🎨 Full Feature Set**: Complete TempleCode language with turtle graphics
 
 ---
 
@@ -450,15 +449,42 @@ MIT License - see [LICENSE](../LICENSE) file in repository root.
 - **Main Repository**: [Time_Warp](https://github.com/James-HoneyBadger/Time_Warp)
 - **Rust Version**: [Time_Warp_Rust/](../Time_Warp_Rust/)
 - **Examples**: [examples/](examples/)
-- **Documentation**: [docs/](docs/)
+## 📚 Learning & Documentation
+
+### 🎓 **For Students & Beginners**
+- **[📖 Student Lesson Book](../docs/STUDENT_LESSON_BOOK.md)** — Progressive 24-lesson curriculum with hands-on projects
+- **[🎯 User Guide](../docs/USER_GUIDE.md)** — Complete installation and usage guide for all platforms  
+- **[⚡ Quick Start Examples](examples/)** — Ready-to-run programs for immediate learning
+
+### 👨‍🏫 **For Educators**  
+- **[🍎 Teacher Guide & Curriculum](../docs/TEACHER_GUIDE.md)** — Complete educational framework with lesson plans
+- **[📋 Assessment Tools](../docs/TEACHER_GUIDE.md#assessment-rubrics)** — Rubrics and evaluation strategies
+- **[🎮 Interactive Projects](../docs/STUDENT_LESSON_BOOK.md#level-4-loops-and-patterns)** — Engaging programming challenges
+
+### 🔧 **For Developers**
+- **[⚙️ Technical Reference](../docs/TECHNICAL_REFERENCE.md)** — Architecture, APIs, and implementation details
+- **[🏗️ Contributing Guide](../docs/CONTRIBUTING.md)** — How to extend and improve Time Warp
+- **[📊 Project Status](../docs/TECHNICAL_REFERENCE.md#implementation-status)** — Development progress and roadmap
+
+---
+
+## 🔗 Links
+
+- **Main Repository**: [Time_Warp](https://github.com/James-HoneyBadger/Time_Warp)
+- **Rust Version**: [Time_Warp_Rust/](../Time_Warp_Rust/)
+- **Web Version**: [Time_Warp_Web/](../Time_Warp_Web/)
 - **Issues**: [GitHub Issues](https://github.com/James-HoneyBadger/Time_Warp/issues)
 
 ---
 
 <div align="center">
 
-**Time Warp IDE** - *Bringing classic educational programming into the modern era* 🚀
+**🐍 Time Warp IDE - Python Implementation** 
 
-Made with ❤️ for educators, students, and retro computing enthusiasts
+*Educational programming made accessible everywhere* 
+
+🎓 **Perfect for Schools** • 📱 **Runs Anywhere** • � **Easy Setup**
+
+Made with ❤️ for educators, students, and lifelong learners
 
 </div>
