@@ -179,7 +179,7 @@ dosbox -conf dosbox-timewarp.conf
 
 ## 🏗️ Project Architecture
 
-```
+```text
 🚀 Time Warp IDE Ecosystem
 ├─ � Core Implementations
 │  ├─ 🦀 Rust Implementation (Native Performance)
