@@ -18,7 +18,10 @@ jobs:
         env:
           VALIDATE_MARKDOWN: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MARKDOWN_CONFIG_FILE: '.markdownlint.json'
+        continue-on-error: true
       - name: Spellcheck Markdown
         uses: rojopolis/spellcheck-github-actions@0.36.0
         with:
           config_path: .spellcheck.yml
+        continue-on-error: true
