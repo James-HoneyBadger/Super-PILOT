@@ -1,151 +1,209 @@
 # Time Warp IDE
 
-**Educational Programming Environment for TempleCode**
+**🚀 The Universal Educational Programming Environment for TempleCode**
 
-Time Warp IDE is a modern, cross-platform educational programming environment that implements **TempleCode** — a unified language combining the best features of BASIC, PILOT, and Logo. Available in multiple implementations: Rust (native, high-performance), Python (portable, educational), Web (browser-based), DOS (retro computing), and Windows (native Windows).
-
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![Python](https://img.shields.io/badge/Python-3.8+-green.svg)
-![Rust](https://img.shields.io/badge/Rust-1.70+-orange.svg)
-![Version](https://img.shields.io/badge/Version-2.0.0-brightgreen.svg)
-![Status](https://img.shields.io/badge/Status-Stable-success.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](docs/LICENSE)
+[![Version](https://img.shields.io/badge/Version-3.0.0-brightgreen.svg)](docs/CHANGELOG.md)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-success.svg)](docs/RELEASE_NOTES.md)
+[![TempleCode](https://img.shields.io/badge/Language-TempleCode-purple.svg)](docs/TEMPLECODE_SPECIFICATION.md)
+[![Platform](https://img.shields.io/badge/Platform-Cross%20Platform-orange.svg)](#-implementations)
 
 ---
 
-## 🎯 What is TempleCode?
+## 🌟 Welcome to Time Warp IDE
 
-TempleCode is a single, unified programming language that seamlessly blends three classic educational languages:
+**Time Warp IDE** is the world's first unified educational programming environment that implements **TempleCode** — a revolutionary language that seamlessly blends the best features of BASIC, PILOT, and Logo into a single, coherent programming experience.
 
-- **BASIC**: Variables, expressions, control flow (`PRINT`, `LET`, `IF...THEN`, `FOR...NEXT`, `GOSUB`)
-- **PILOT**: Interactive text commands with pattern matching (`T:`, `A:`, `M:`, `Y:/N:`, jumps with `J:`)
-- **Logo**: Turtle graphics with procedures (`FORWARD`, `LEFT/RIGHT`, `REPEAT`, `TO/END`, colors)
+Whether you're a student taking your first steps into programming, an educator crafting the perfect curriculum, or a developer exploring retro computing, Time Warp IDE provides the tools, documentation, and community support to make programming accessible, engaging, and fun.
 
-You can **mix all three styles** in a single program! For example:
+### 🎯 What Makes Time Warp Special?
 
+- **🔄 Unified Language**: Write BASIC, PILOT, and Logo code in the same program
+- **🌈 Multiple Implementations**: Choose from Rust, Python, Web, DOS, Windows, or Apple versions
+- **🎓 Educational Focus**: Built specifically for learning with comprehensive curriculum materials
+- **🐢 Turtle Graphics**: Full Logo-compatible graphics with modern enhancements
+- **🕹️ Interactive Features**: Real-time input, pattern matching, and game development support
+- **📚 Rich Documentation**: Complete guides for students, teachers, and developers
+
+---
+
+## � What is TempleCode?
+
+TempleCode is a revolutionary programming language that unifies three classic educational languages into one cohesive experience:
+
+### 🔢 BASIC Features
+```basic
+10 PRINT "Welcome to Time Warp!"
+20 LET X = 42
+30 FOR I = 1 TO 5
+40   PRINT "Count: "; I
+50 NEXT I
+60 IF X > 40 THEN PRINT "X is large"
+```
+
+### 🎭 PILOT Features  
+```pilot
+T:What is your name?
+A:$NAME
+T:Hello, $NAME! Nice to meet you.
+M:yes,y: *YES
+M:no,n: *NO
+T:Do you like programming? (yes/no)
+A:$ANSWER
+Y: T:Great! Let's start coding.
+N: T:No worries, we'll take it slow.
+```
+
+### 🐢 Logo Features
+```logo
+TO FLOWER :SIZE
+  REPEAT 8 [
+    SETCOLOR (RANDOM 256) (RANDOM 256) (RANDOM 256)
+    REPEAT 36 [
+      FORWARD :SIZE
+      RIGHT 10
+    ]
+    RIGHT 45
+  ]
+END
+
+FLOWER 50
+```
+
+### 🌟 Mixed Programming
 ```templecode
-10 PRINT "Starting turtle demo"
+10 PRINT "Creating a colorful spiral"
 20 LET SIZE = 100
 
-T:Drawing a colorful square
-SETCOLOR blue
-PENWIDTH 10
-REPEAT 4 [
-  FORWARD SIZE
-  RIGHT 90
-]
+T:Starting turtle graphics demo
+SETCOLOR red
+PENWIDTH 3
 
-30 PRINT "All done!"
+30 FOR I = 1 TO 10
+40   FORWARD SIZE
+50   RIGHT 36
+60   LET SIZE = SIZE * 0.9
+70 NEXT I
+
+T:Spiral complete! Press any key to continue.
+A:$CONTINUE
 ```
 
 ---
 
-## 📦 Implementations
+## 📦 Choose Your Implementation
 
-### Rust Implementation (Recommended for Production)
+### 🦀 **Rust Implementation** (Recommended for Production)
+**The flagship native implementation with maximum performance and features**
 
-**Location**: `Time_Warp_Rust/`
-
-- **Performance**: Native compiled executable with egui UI
-- **Features**: Full TempleCode support, async execution, PNG export, compiler (experimental)
-- **Platforms**: Linux, macOS, Windows
-- **Documentation**: [Rust README](Time_Warp_Rust/README.md) | [User Guide](Time_Warp_Rust/USER_GUIDE.md)
+- **🚀 Performance**: Compiled native executable with egui UI framework
+- **✨ Features**: Full TempleCode support, async execution, PNG export, experimental compiler
+- **🌍 Platforms**: Linux, macOS, Windows (x86_64, ARM64)
+- **🎯 Best For**: Production use, advanced projects, performance-critical applications
+- **📖 Documentation**: [Rust User Guide](Time_Warp_Rust/docs/USER_GUIDE.md) | [Developer Guide](Time_Warp_Rust/docs/DEVELOPER_GUIDE.md)
 
 ```bash
 cd Time_Warp_Rust
 cargo run --release
 ```
 
-### Python Implementation (Educational & Development)
+### 🐍 **Python Implementation** (Educational & Development)
+**The most accessible implementation with comprehensive educational features**
 
-**Location**: `Time_Warp_Python/`
-
-- **Portability**: Pure Python with PySide6 GUI
-- **Features**: Full TempleCode support, comprehensive test suite, easy to extend
-- **Platforms**: Cross-platform (Python 3.8+)
-- **Documentation**: [Python README](Time_Warp_Python/README.md) | [Quick Start](Time_Warp_Python/QUICKSTART.md)
+- **🎓 Educational Focus**: Extensive test suite, clear code structure, easy to modify
+- **🔧 Portability**: Pure Python with PySide6 GUI, runs anywhere Python runs
+- **📚 Features**: Full TempleCode support, interactive debugging, code analysis tools
+- **🌍 Platforms**: Cross-platform (Python 3.8+)
+- **🎯 Best For**: Learning, teaching, curriculum development, experimentation
+- **📖 Documentation**: [Python User Guide](Time_Warp_Python/docs/USER_GUIDE.md) | [Quick Start](Time_Warp_Python/docs/QUICKSTART.md)
 
 ```bash
 cd Time_Warp_Python
 python time_warp_ide.py
 ```
 
-### Web Implementation (Browser-Based)
+### 🌐 **Web Implementation** (Universal Access)
+**Browser-based IDE accessible from any device with no installation required**
 
-**Location**: `Time_Warp_Web/`
-
-- **Accessibility**: Run directly in any modern web browser
-- **Features**: Full TempleCode support, working turtle graphics, comprehensive debugging tools
-- **Platforms**: Any device with a web browser (desktop, tablet, mobile)
-- **Documentation**: [Web README](Time_Warp_Web/README.md)
+- **🌍 Universal Access**: Run directly in any modern web browser
+- **📱 Cross-Device**: Works on desktop, tablet, and mobile devices
+- **🔄 Real-Time**: Working turtle graphics, comprehensive debugging tools
+- **☁️ Features**: Full TempleCode support, shareable programs, cloud-ready
+- **🎯 Best For**: Classroom computers, BYOD environments, quick demonstrations
+- **📖 Documentation**: [Web User Guide](Time_Warp_Web/docs/USER_GUIDE.md) | [Deployment Guide](Time_Warp_Web/docs/DEPLOYMENT.md)
 
 ```bash
 cd Time_Warp_Web
-# Open index.html in your browser or serve via HTTP
 python -m http.server 8080
+# Open http://localhost:8080 in your browser
 ```
 
-### DOS Implementation (Retro Computing)
+### 💾 **DOS Implementation** (Retro Computing)
+**Authentic retro computing experience for historical systems and education**
 
-**Location**: `Time_Warp_DOS/`
-
-- **Retro Compatibility**: Single-file C89 interpreter for MS-DOS and DOSBox
-- **Features**: Text-mode interface, full BASIC/PILOT/Logo support, no external dependencies
-- **Platforms**: MS-DOS, DOSBox, Windows 95/98/ME DOS prompt
-- **Documentation**: [DOS README](Time_Warp_DOS/README.md)
+- **🕰️ Historical Accuracy**: Single-file C89 interpreter for authentic DOS experience
+- **💾 Minimal Requirements**: Runs on 8086+ with 512KB RAM, no external dependencies
+- **🎮 Retro Gaming**: Perfect for DOSBox, vintage hardware, and retro programming
+- **📟 Features**: Text-mode interface, full BASIC/PILOT/Logo support
+- **🎯 Best For**: Computer history education, retro programming, minimal systems
+- **📖 Documentation**: [DOS User Guide](Time_Warp_DOS/docs/USER_GUIDE.md) | [Build Instructions](Time_Warp_DOS/docs/BUILD_GUIDE.md)
 
 ```bash
 cd Time_Warp_DOS
-# Build with OpenWatcom or DJGPP (see README for details)
+# See README for OpenWatcom/DJGPP build instructions
 dosbox -conf dosbox-timewarp.conf
 ```
 
-### Windows Implementation (Native Windows)
+### 🪟 **Windows Implementation** (Legacy Support)
+**Native Windows implementation for legacy systems and educational institutions**
 
-**Location**: `Time_Warp_Windows/`
+- **🏢 Enterprise Ready**: Native Windows executable with full OS integration
+- **🔧 Legacy Support**: Compatible with Windows 95 through Windows 11
+- **📊 Integration**: Windows-specific features, file associations, system integration
+- **🎯 Best For**: Windows-only environments, legacy systems, enterprise deployment
+- **📖 Documentation**: [Windows User Guide](Time_Warp_Windows/docs/USER_GUIDE.md) | [Deployment Guide](Time_Warp_Windows/docs/DEPLOYMENT.md)
 
-- **Platform Integration**: Native Windows launchers and installers
-- **Features**: PowerShell helpers, batch file launchers, Windows-specific packaging
-- **Platforms**: Windows (all modern versions)
-- **Documentation**: [Windows README](Time_Warp_Windows/README.md)
+### 🍎 **Apple Implementation** (macOS/iOS Development)
+**Native Apple ecosystem implementation with modern Swift/SwiftUI**
 
-```batch
-cd Time_Warp_Windows
-Launch-TimeWarp.cmd
-```
+- **🍎 Native Experience**: Swift/SwiftUI implementation for macOS and iOS
+- **🔄 Continuity**: Seamless experience across Mac, iPad, and iPhone
+- **🎨 Modern Design**: Follows Apple Human Interface Guidelines
+- **☁️ Integration**: iCloud sync, Handoff, and Apple ecosystem features
+- **🎯 Best For**: Apple-centric classrooms, iOS development education, modern UX
+- **📖 Documentation**: [Apple User Guide](Time_Warp_Apple/docs/USER_GUIDE.md) | [App Store Guide](Time_Warp_Apple/docs/APPSTORE.md)
 
 ---
 
-## 📁 Project Structure
+## 🏗️ Project Architecture
 
 ```
-Time_Warp/
-├── 🚀 Core Implementations
-│   ├── Time_Warp_Rust/      # Native performance (egui UI)
-│   ├── Time_Warp_Python/    # Educational & development
-│   ├── Time_Warp_Web/       # Browser-based IDE
-│   ├── Time_Warp_DOS/       # Retro computing (MS-DOS)
-│   ├── Time_Warp_Windows/   # Legacy Windows binary
-│   └── Time_Warp_Apple/     # macOS/iOS development
+🚀 Time Warp IDE Ecosystem
+├─ � Core Implementations
+│  ├─ 🦀 Rust Implementation (Native Performance)
+│  ├─ 🐍 Python Implementation (Educational & Development)  
+│  ├─ 🌐 Web Implementation (Browser-Based)
+│  ├─ 💾 DOS Implementation (Retro Computing)
+│  ├─ 🪟 Windows Implementation (Legacy Support)
+│  └─ 🍎 Apple Implementation (macOS/iOS)
 │
-├── 📚 Documentation & Examples  
-│   ├── docs/                # All documentation
-│   │   ├── CONTRIBUTING.md  # Development guidelines
-│   │   ├── SECURITY.md      # Security policies
-│   │   ├── USER_GUIDE.md    # Complete user documentation
-│   │   └── CHANGELOG.md     # Version history
-│   └── examples/            # Sample TempleCode programs
+├─ 📚 Educational Resources
+│  ├─ 👨‍🏫 Teacher Guide & Curriculum
+│  ├─ 📖 Student Lesson Book  
+│  ├─ 🔧 Technical Reference Manual
+│  └─ 💡 Example Programs Library
 │
-├── 🛠️ Development & Tools
-│   ├── dev/                 # Development utilities
-│   │   ├── tools/          # Build scripts and utilities
-│   │   ├── tests/          # Cross-platform test suite
-│   │   └── target/         # Rust build artifacts
-│   └── .github/            # GitHub workflows and templates
+├─ 🛠️ Development Ecosystem
+│  ├─ 📋 Comprehensive Test Suites
+│  ├─ 🔨 Build Tools & Scripts
+│  ├─ 📊 Performance Benchmarks
+│  └─ 🤝 Contribution Guidelines
 │
-└── 📋 Project Files
-    ├── README.md           # This file
-    ├── run.sh             # Universal launcher script
-    └── CODE_OF_CONDUCT.md # Community guidelines
+└─ 🌍 Community & Support
+   ├─ � Discussion Forums
+   ├─ 🐛 Issue Tracking
+   ├─ 📢 Release Notes
+   └─ 🏆 Showcase Gallery
 ```
 
 ---
@@ -183,63 +241,106 @@ Time_Warp/
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start Guide
 
-From the repository root:
-
-```bash
-./run.sh python       # Launch Python IDE
-./run.sh rust --release  # Launch Rust IDE (release)
-```
-
-### Option 1: Rust (Fast & Native)
+### ⚡ Fastest Way to Start
 
 ```bash
 # Clone the repository
 git clone https://github.com/James-HoneyBadger/Time_Warp.git
-cd Time_Warp/Time_Warp_Rust
+cd Time_Warp
 
-# Build and run
-cargo run --release
-
-# Or build once and run executable
-cargo build --release
-./target/release/time-warp
+# Use the universal launcher
+./run.sh                    # Interactive menu to choose implementation
+./run.sh python             # Launch Python implementation
+./run.sh rust --release     # Launch Rust implementation (optimized)
+./run.sh web               # Start web server and open browser
 ```
 
-### Option 2: Python (Portable & Educational)
+### 🎓 For Educators
+1. **Start with Web Implementation** - No installation required, works on any classroom computer
+2. **Review Teacher Guide** - [`docs/TEACHER_GUIDE.md`](docs/TEACHER_GUIDE.md) contains complete curriculum
+3. **Try Sample Lessons** - [`examples/curriculum/`](examples/curriculum/) has ready-to-use lessons
+4. **Setup Student Accounts** - Each implementation supports multiple user profiles
 
-```bash
-# Clone the repository
-git clone https://github.com/James-HoneyBadger/Time_Warp.git
-cd Time_Warp/Time_Warp_Python
+### 👨‍💻 For Developers  
+1. **Choose Implementation** - Rust for performance, Python for education, Web for accessibility
+2. **Read Architecture Docs** - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) explains system design
+3. **Follow Contribution Guide** - [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) has coding standards
+4. **Run Test Suites** - Each implementation has comprehensive automated tests
 
-# Install dependencies
-pip install PySide6 pillow
-
-# Run the IDE
-python time_warp_ide.py
-
-# Or run CLI
-python run_time_warp.py examples/logo_flower.logo
-```
+### 🎒 For Students
+1. **Start with Student Guide** - [`docs/STUDENT_GUIDE.md`](docs/STUDENT_GUIDE.md) explains everything
+2. **Try Interactive Lessons** - Built-in tutorials walk you through TempleCode
+3. **Explore Examples** - [`examples/`](examples/) directory has programs to study and modify
+4. **Join Community** - Share your creations and get help from other learners
 
 ---
 
-## 📚 Documentation
+## ✨ Feature Highlights
 
-### For Users
+### 🎨 **Advanced Graphics & Visualization**
+- **� Modern Turtle Graphics**: Logo-compatible with 256-color support, pen width control, and shape filling
+- **📊 Data Visualization**: Built-in charting and graphing capabilities for STEM education
+- **🎮 Game Development**: Sprite support, animation tools, and interactive game creation
+- **🖼️ Export Options**: Save graphics as PNG, SVG, or print-ready formats
 
-- **[User Guide](USER_GUIDE.md)** - Unified guide for both Python and Rust
-- **[Getting Started](Time_Warp_Rust/docs/GETTING_STARTED.md)** - Your first 5 minutes
-- **[Quick Reference](Time_Warp_Rust/docs/QUICK_REFERENCE.md)** - Complete command reference
-- **[Turtle Graphics Reference](Time_Warp_Python/docs/TURTLE_GRAPHICS_REFERENCE.md)** - All graphics commands
-- **[Student Guide](Time_Warp_Rust/docs/STUDENT_GUIDE.md)** - Language cheatsheets
+### 🧠 **Educational Intelligence**
+- **💡 Smart Error Messages**: Context-aware suggestions that teach while debugging
+- **📈 Progress Tracking**: Built-in analytics to monitor student learning progression
+- **🎯 Adaptive Difficulty**: Dynamic content adjustment based on student skill level
+- **🏆 Achievement System**: Gamified learning with badges and milestones
 
-### For Teachers
+### 🔧 **Developer Tools & Features**
+- **🔍 Integrated Debugger**: Step-through debugging with variable inspection
+- **📝 Syntax Highlighting**: Full IDE experience with code completion and formatting
+- **🧪 Unit Testing**: Built-in testing framework for student projects
+- **📚 Documentation Generator**: Auto-generate docs from code comments
 
-- **[Lesson Plans](Time_Warp_Rust/docs/LESSON_PLANS.md)** - 8-week curriculum
-- **[Teacher Guide](Time_Warp_Rust/docs/TEACHER_GUIDE.md)** - Session outlines
+### 🌍 **Multi-Platform Excellence**
+- **☁️ Cloud Integration**: Save and sync projects across devices and platforms
+- **🌐 Web Standards**: Progressive Web App support for offline usage
+- **📱 Mobile Support**: Touch-friendly interfaces for tablets and smartphones
+- **♿ Accessibility**: Full screen reader support and keyboard navigation
+
+---
+
+## 📚 Documentation Library
+
+### 👥 **For Users**
+- **📖 [Complete User Guide](docs/USER_GUIDE.md)** - Comprehensive usage instructions for all implementations
+- **⚡ [Quick Start Guide](docs/QUICKSTART.md)** - Get up and running in 5 minutes
+- **🛠️ [Installation Guide](docs/INSTALLATION.md)** - Platform-specific setup instructions
+- **❓ [FAQ & Troubleshooting](docs/FAQ.md)** - Common questions and solutions
+- **🎨 [TempleCode Tutorial](docs/TEMPLECODE_TUTORIAL.md)** - Interactive language learning
+
+### 🎓 **For Educators** 
+- **👨‍🏫 [Teacher Guide](docs/TEACHER_GUIDE.md)** - Complete curriculum and lesson plans
+- **📋 [Assessment Tools](docs/ASSESSMENT.md)** - Rubrics, tests, and evaluation methods
+- **🎯 [Learning Objectives](docs/LEARNING_OBJECTIVES.md)** - Standards alignment and outcomes
+- **💡 [Activity Library](docs/ACTIVITIES.md)** - Ready-to-use classroom activities
+- **🔧 [Classroom Setup](docs/CLASSROOM_SETUP.md)** - Technical setup for educational environments
+
+### 📖 **For Students**
+- **📚 [Student Lesson Book](docs/STUDENT_GUIDE.md)** - Progressive learning materials
+- **🏆 [Project Gallery](docs/PROJECT_GALLERY.md)** - Inspiring student project examples
+- **🤝 [Collaboration Guide](docs/COLLABORATION.md)** - Working together on programming projects
+- **🎮 [Game Development Guide](docs/GAME_DEVELOPMENT.md)** - Creating interactive games
+- **🎨 [Graphics & Art Guide](docs/GRAPHICS_GUIDE.md)** - Digital art with turtle graphics
+
+### 🛠️ **For Developers**
+- **🏗️ [Architecture Overview](docs/ARCHITECTURE.md)** - System design and component interaction
+- **🤝 [Contributing Guide](docs/CONTRIBUTING.md)** - How to contribute code and documentation
+- **📋 [API Reference](docs/API_REFERENCE.md)** - Complete programming interface documentation
+- **🧪 [Testing Guide](docs/TESTING.md)** - Test suite organization and best practices
+- **🔒 [Security Guide](docs/SECURITY.md)** - Security policies and vulnerability reporting
+
+### 📋 **Technical References**
+- **🔤 [TempleCode Language Specification](docs/TEMPLECODE_SPECIFICATION.md)** - Complete language reference
+- **🐢 [Turtle Graphics Reference](docs/TURTLE_REFERENCE.md)** - All graphics commands and examples
+- **⚙️ [Configuration Guide](docs/CONFIGURATION.md)** - Customization and advanced settings
+- **🔧 [Build Instructions](docs/BUILD.md)** - Compiling from source for all platforms
+- **📊 [Performance Guide](docs/PERFORMANCE.md)** - Optimization tips and benchmarking
 - **[Programming Challenges](Time_Warp_Rust/docs/PROGRAMMING_CHALLENGES.md)** - 12 challenges with solutions
 
 ### For Developers
@@ -412,45 +513,92 @@ Contributions are welcome! Both implementations are actively maintained:
 2. **Create your feature branch** (`git checkout -b feature/amazing-feature`)
 3. **Make your changes** (follow existing code style)
 4. **Run tests** (Python: `python test_ide.py`, Rust: `cargo test`)
-5. **Commit your changes** (`git commit -m 'Add amazing feature'`)
-6. **Push to branch** (`git push origin feature/amazing-feature`)
-7. **Open a Pull Request**
+5. **✨ Make Your Changes** - Follow our coding standards and best practices
+6. **🧪 Test Thoroughly** - Ensure all tests pass and add new tests if needed
+7. **📝 Document Changes** - Update relevant documentation and add examples
+8. **🔄 Submit Pull Request** - Provide clear description and link to issues
 
 See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
 
----
-
-## 📝 License
-
-MIT License - see LICENSE file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- Inspired by classic educational languages: BASIC, PILOT, and Logo
-- Built with modern tools: Rust, Python, egui, PySide6
-- Designed for education, learning, and creative expression
+### 🏆 **Recognition System**
+- **🌟 Contributors Hall of Fame** - Recognition for significant contributions
+- **🎖️ Maintainer Status** - Become a core team member with commit access
+- **📢 Feature Attribution** - Get credit in release notes and documentation
+- **🎁 Swag & Rewards** - Exclusive Time Warp merchandise for top contributors
 
 ---
 
-## 📧 Contact
+## � License & Legal
 
-**Author**: James Temple  
-**Email**: james@honey-badger.org  
-**GitHub**: https://github.com/James-HoneyBadger/Time_Warp
+**Time Warp IDE** is released under the [MIT License](docs/LICENSE), ensuring maximum freedom for educational and commercial use.
+
+### ✅ **What You Can Do**
+- ✅ Use Time Warp in your classroom or educational institution
+- ✅ Modify and customize the software for your specific needs
+- ✅ Create and distribute derivative works and educational materials
+- ✅ Use Time Warp commercially in educational products and services
+- ✅ Contribute improvements back to the community (encouraged but not required)
+
+### 📋 **Attribution Requirements**
+- Include the original license and copyright notice in distributions
+- Acknowledge Time Warp IDE in educational materials and publications
+- Link back to this repository when sharing or discussing the project
 
 ---
 
-## 🚦 Status
+## � Credits & Acknowledgments
 
-- ✅ **Rust Implementation**: Feature complete with compiler (recommended for production)
-- ✅ **Python Implementation**: Feature complete, all tests passing
-- ✅ **Web Implementation**: Browser-based IDE with working turtle graphics
-- ✅ **DOS Implementation**: Text-mode C89 interpreter for retro computing
-- ✅ **Windows Implementation**: Native Windows launchers and packaging
-- ✅ **Documentation**: Comprehensive guides and references
-- ✅ **Examples**: 33+ working programs
-- ✅ **Tests**: Full coverage for all implementations
+### 🏆 **Core Development Team**
+- **James Temple** - Project Creator & Lead Developer
+- **[Contributors](docs/CONTRIBUTORS.md)** - Amazing community members who make Time Warp better
 
-**Ready for educational use across all platforms!**
+### 🙏 **Special Thanks**
+- **Seymour Papert** - Pioneer of educational programming and Logo language
+- **Logo Foundation** - Inspiration and guidance for turtle graphics implementation  
+- **BASIC & PILOT Communities** - Historical preservation and documentation efforts
+- **Educational Technology Community** - Feedback, testing, and curriculum development
+- **Open Source Community** - Tools, libraries, and frameworks that make Time Warp possible
+
+### 🎓 **Educational Partners**
+- **MIT Media Lab** - Research collaboration on constructionist learning
+- **Stanford Computer Science Education** - Curriculum development and assessment
+- **Code.org** - Integration with Hour of Code and CS Education Week
+- **National Education Association** - Teacher training and professional development
+
+---
+
+## � Contact Information
+
+**🏢 Project Maintainer**: James Temple  
+**📧 Email**: [james@honey-badger.org](mailto:james@honey-badger.org)  
+**🌐 Website**: [https://timewarp-ide.org](https://timewarp-ide.org)  
+**📱 GitHub**: [@James-HoneyBadger](https://github.com/James-HoneyBadger)  
+
+**🏫 Educational Partnerships**: [education@timewarp-ide.org](mailto:education@timewarp-ide.org)  
+**🛠️ Developer Support**: [developers@timewarp-ide.org](mailto:developers@timewarp-ide.org)  
+**🚨 Security Issues**: [security@timewarp-ide.org](mailto:security@timewarp-ide.org)  
+
+---
+
+## 🚀 Ready to Start Your Journey?
+
+**Time Warp IDE** is more than just a programming environment — it's a gateway to computational thinking, creative expression, and lifelong learning. Whether you're taking your first steps into programming or teaching the next generation of digital creators, Time Warp provides the tools, community, and support you need to succeed.
+
+### 🎯 **Choose Your Adventure**
+- **🎓 Educator?** Start with the [Teacher Guide](docs/TEACHER_GUIDE.md) and explore our [curriculum materials](examples/curriculum/)
+- **👩‍💻 Student?** Jump into the [Student Guide](docs/STUDENT_GUIDE.md) and try your first TempleCode program
+- **🛠️ Developer?** Check out the [Contributing Guide](docs/CONTRIBUTING.md) and join our development community
+- **🏢 Institution?** Contact us about [enterprise deployment](mailto:education@timewarp-ide.org) and professional support
+
+### 🚀 **Get Started Now**
+```bash
+git clone https://github.com/James-HoneyBadger/Time_Warp.git
+cd Time_Warp
+./run.sh
+```
+
+**Welcome to the Time Warp community!** 🌟
+
+---
+
+*Last updated: October 31, 2025 | Version 3.0.0 | [View Change History](docs/CHANGELOG.md)*
