@@ -6,7 +6,7 @@
 [![Version](https://img.shields.io/badge/Version-2.1.0-brightgreen.svg)](https://github.com/James-HoneyBadger/Time_Warp/releases/tag/v2.1.0)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-success.svg)](docs/RELEASE_NOTES.md)
 [![TempleCode](https://img.shields.io/badge/Language-TempleCode-purple.svg)](docs/TEMPLECODE_SPECIFICATION.md)
-[![Platform](https://img.shields.io/badge/Platform-Cross%20Platform-orange.svg)](#-implementations)
+[![Platform](https://img.shields.io/badge/Platform-Cross%20Platform-orange.svg)](#🚀-implementations)
 
 > **📚 [Complete Documentation System Available](docs/DOCUMENTATION_INDEX.md)** - Navigate our comprehensive guides for students, educators, developers, and administrators.
 
