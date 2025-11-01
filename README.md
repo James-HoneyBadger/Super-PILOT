@@ -2,7 +2,7 @@
 
 **Educational Programming Environment for TempleCode**
 
-Time Warp IDE is a modern, cross-platform educational programming environment that implements **TempleCode** — a unified language combining the best features of BASIC, PILOT, and Logo. Available in Rust (native, high-performance), Python (portable, educational), and Web (browser-based) implementations.
+Time Warp IDE is a modern, cross-platform educational programming environment that implements **TempleCode** — a unified language combining the best features of BASIC, PILOT, and Logo. Available in multiple implementations: Rust (native, high-performance), Python (portable, educational), Web (browser-based), DOS (retro computing), and Windows (native Windows).
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.8+-green.svg)
@@ -82,6 +82,35 @@ python time_warp_ide.py
 cd Time_Warp_Web
 # Open index.html in your browser or serve via HTTP
 python -m http.server 8080
+```
+
+### DOS Implementation (Retro Computing)
+
+**Location**: `Time_Warp_DOS/`
+
+- **Retro Compatibility**: Single-file C89 interpreter for MS-DOS and DOSBox
+- **Features**: Text-mode interface, full BASIC/PILOT/Logo support, no external dependencies
+- **Platforms**: MS-DOS, DOSBox, Windows 95/98/ME DOS prompt
+- **Documentation**: [DOS README](Time_Warp_DOS/README.md)
+
+```bash
+cd Time_Warp_DOS
+# Build with OpenWatcom or DJGPP (see README for details)
+dosbox -conf dosbox-timewarp.conf
+```
+
+### Windows Implementation (Native Windows)
+
+**Location**: `Time_Warp_Windows/`
+
+- **Platform Integration**: Native Windows launchers and installers
+- **Features**: PowerShell helpers, batch file launchers, Windows-specific packaging
+- **Platforms**: Windows (all modern versions)
+- **Documentation**: [Windows README](Time_Warp_Windows/README.md)
+
+```batch
+cd Time_Warp_Windows
+Launch-TimeWarp.cmd
 ```
 
 ---
@@ -380,11 +409,13 @@ MIT License - see LICENSE file for details.
 
 ## 🚦 Status
 
+- ✅ **Rust Implementation**: Feature complete with compiler (recommended for production)
 - ✅ **Python Implementation**: Feature complete, all tests passing
-- ✅ **Rust Implementation**: Feature complete with compiler
 - ✅ **Web Implementation**: Browser-based IDE with working turtle graphics
+- ✅ **DOS Implementation**: Text-mode C89 interpreter for retro computing
+- ✅ **Windows Implementation**: Native Windows launchers and packaging
 - ✅ **Documentation**: Comprehensive guides and references
 - ✅ **Examples**: 33+ working programs
 - ✅ **Tests**: Full coverage for all implementations
 
-**Ready for educational use!**
+**Ready for educational use across all platforms!**
