@@ -336,7 +336,7 @@ Future features for:
 - Consistent Rust formatting (`cargo fmt`)
 - Type-safe variable management
 
-## Testing Strategy
+## Rust Testing Strategy
 
 Tests focus on:
 - Individual language executor functionality
@@ -347,19 +347,19 @@ Tests focus on:
 
 When adding features, ensure compatibility across all supported languages and maintain the educational focus of the platform.
 
-### File Naming Conventions
+### Rust File Naming Conventions
 
 - **Test files**: `test_*.py` for unit tests, `*_test.py` for integration tests
 - **Language demos**: `*.pilot`, `*.bas`, `*.logo` for example programs
 - **Compiled output**: `*_compiled` files for interpreter execution results
 
-### Configuration Management
+### Rust Configuration Management
 
 - User settings stored in application state (future: config file)
 - Theme preferences persist between sessions
 - Virtual environment not needed (compiled binary)
 
-### Error Handling Patterns
+### Rust Error Handling Patterns
 
 ```rust
 // Standard Time_Warp error pattern

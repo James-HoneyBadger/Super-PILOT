@@ -414,7 +414,7 @@ cargo test test_name
 
 ## 🔧 Project Structure
 
-```
+```text
 Time_Warp/
 ├── Time_Warp_Python/          # Python implementation
 │   ├── time_warp/             # Main package
