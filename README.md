@@ -2,7 +2,7 @@
 
 **Educational Programming Environment for TempleCode**
 
-Time Warp IDE is a modern, cross-platform educational programming environment that implements **TempleCode** — a unified language combining the best features of BASIC, PILOT, and Logo. Available in both Rust (native, high-performance) and Python (portable, educational) implementations.
+Time Warp IDE is a modern, cross-platform educational programming environment that implements **TempleCode** — a unified language combining the best features of BASIC, PILOT, and Logo. Available in Rust (native, high-performance), Python (portable, educational), and Web (browser-based) implementations.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.8+-green.svg)
@@ -67,6 +67,21 @@ cargo run --release
 ```bash
 cd Time_Warp_Python
 python time_warp_ide.py
+```
+
+### Web Implementation (Browser-Based)
+
+**Location**: `Time_Warp_Web/`
+
+- **Accessibility**: Run directly in any modern web browser
+- **Features**: Full TempleCode support, working turtle graphics, comprehensive debugging tools
+- **Platforms**: Any device with a web browser (desktop, tablet, mobile)
+- **Documentation**: [Web README](Time_Warp_Web/README.md)
+
+```bash
+cd Time_Warp_Web
+# Open index.html in your browser or serve via HTTP
+python -m http.server 8080
 ```
 
 ---
@@ -367,8 +382,9 @@ MIT License - see LICENSE file for details.
 
 - ✅ **Python Implementation**: Feature complete, all tests passing
 - ✅ **Rust Implementation**: Feature complete with compiler
+- ✅ **Web Implementation**: Browser-based IDE with working turtle graphics
 - ✅ **Documentation**: Comprehensive guides and references
 - ✅ **Examples**: 33+ working programs
-- ✅ **Tests**: Full coverage for both implementations
+- ✅ **Tests**: Full coverage for all implementations
 
 **Ready for educational use!**
